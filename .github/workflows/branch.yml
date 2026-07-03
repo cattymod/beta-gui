@@ -1,0 +1,34 @@
+name: Create Branch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create blank overwrite branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Create an orphan branch (no history)
+          git switch --orphan overwrite
+
+          # Remove all tracked files
+          git rm -rf . || true
+
+          # Create an empty commit
+          git commit --allow-empty -m "Initial empty overwrite branch"
+
+          # Push the branch
+          git push --force origin overwrite
