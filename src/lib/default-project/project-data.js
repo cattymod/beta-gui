@@ -67,6 +67,33 @@ const projectData = translateFunction => {
                         dataFormat: 'svg',
                         rotationCenterX: 30.74937882782359,
                         rotationCenterY: 58.864768144346826
+                    },
+                    {
+                        assetId: 'b3cd1258812e557b4b1a4390fb2031a5',
+                        name: translator(messages.costume, {index: 2}),
+                        bitmapResolution: 1,
+                        md5ext: 'b3cd1258812e557b4b1a4390fb2031a5.svg',
+                        dataFormat: 'svg',
+                        rotationCenterX: 50, // Standard default center
+                        rotationCenterY: 50
+                    },
+                    {
+                        assetId: 'c4de2369923f668c5c2b54a1fc3142b6',
+                        name: translator(messages.costume, {index: 3}),
+                        bitmapResolution: 1,
+                        md5ext: 'c4de2369923f668c5c2b54a1fc3142b6.svg',
+                        dataFormat: 'svg',
+                        rotationCenterX: 50,
+                        rotationCenterY: 50
+                    },
+                    {
+                        assetId: 'd5ef3470034a779d6d3c65b2fd4253c7',
+                        name: translator(messages.costume, {index: 4}),
+                        bitmapResolution: 1,
+                        md5ext: 'd5ef3470034a779d6d3c65b2fd4253c7.svg',
+                        dataFormat: 'svg',
+                        rotationCenterX: 50,
+                        rotationCenterY: 50
                     }
                 ],
                 sounds: [],
@@ -87,6 +114,5 @@ const projectData = translateFunction => {
         }
     });
 };
-
 
 export default projectData;
