@@ -14,7 +14,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "https://beta.cattymod.app",
+  "start_url": "https://studio.cattymod.app",
   "background_color": "#333333",
   "display": "standalone",
   "theme_color": "#333333"
