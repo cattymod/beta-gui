@@ -1104,7 +1104,7 @@ class AddonSettingsComponent extends React.Component {
                             />
                         </div>
                         <a
-                            href="https://scratch.mit.edu/users/GarboMuffin/#comments"
+                            href="https://scratch.mit.edu/users/Noahscratch493/#comments"
                             target="_blank"
                             rel="noreferrer"
                             className={styles.feedbackButtonOuter}
