@@ -750,6 +750,7 @@ const myBlocks = function (isInitialSetup, isStage, targetId, colors) {
 const extraTurboWarpBlocks = `
 <block type="argument_reporter_boolean"><field name="VALUE">is compiled?</field></block>
 <block type="argument_reporter_boolean"><field name="VALUE">is TurboWarp?</field></block>
+<block type="argument_reporter_boolean"><field name="VALUE">is CattyMod?</field></block>
 `;
 /* eslint-enable no-unused-vars */
 
