@@ -128,7 +128,7 @@ const Footer = () => (
                     </a>
                 </div>
                 <div className={styles.footerSection}>
-                    <a href="https://cattymod.app/scratch-gui/#1334179304">
+                    <a href="https://studio.cattymod.app/#1334179304">
                         {/* Do not translate */}
                         {'Idea Generator'}
                     </a>
