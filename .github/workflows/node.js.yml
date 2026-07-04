@@ -52,7 +52,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          publish_branch: desktop
+          publish_branch: build
           force_orphan: true
 
       - name: Upload pages artifact
