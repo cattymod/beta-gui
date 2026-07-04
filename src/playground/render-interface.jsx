@@ -89,7 +89,7 @@ const Footer = () => (
                 <FormattedMessage
                     // eslint-disable-next-line max-len
                     defaultMessage="{APP_NAME} is not affiliated with Scratch, the Scratch Team, or the Scratch Foundation."
-                    description="Disclaimer that TurboWarp is not connected to Scratch"
+                    description="Disclaimer that CattyMod is not connected to Scratch"
                     id="tw.footer.disclaimer"
                     values={{
                         APP_NAME
@@ -128,13 +128,13 @@ const Footer = () => (
                     </a>
                 </div>
                 <div className={styles.footerSection}>
-                    <a href="https://desktop.turbowarp.org/">
+                    <a href="https://cattymod.app/scratch-gui/#1334179304">
                         {/* Do not translate */}
-                        {'TurboWarp Desktop'}
+                        {'Idea Generator'}
                     </a>
-                    <a href="https://packager.turbowarp.org/">
+                    <a href="https:/cattymod.app/packager">
                         {/* Do not translate */}
-                        {'TurboWarp Packager'}
+                        {'CattyMod Packager'}
                     </a>
                     <a href="https://docs.turbowarp.org/embedding">
                         <FormattedMessage
@@ -143,30 +143,30 @@ const Footer = () => (
                             id="tw.footer.embed"
                         />
                     </a>
-                    <a href="https://docs.turbowarp.org/url-parameters">
+                    <a href="https://scratch2.cattymod.app">
                         <FormattedMessage
-                            defaultMessage="URL Parameters"
-                            description="Link in footer to URL parameters documentation"
+                            defaultMessage="Scratch 2 Legacy"
+                            description="Run Scratch 2 anytime, anywhere!"
                             id="tw.footer.parameters"
                         />
                     </a>
-                    <a href="https://docs.turbowarp.org/">
+                    <a href="https://cattymod.app/desktop">
                         <FormattedMessage
-                            defaultMessage="Documentation"
-                            description="Link in footer to additional documentation"
+                            defaultMessage="Desktop"
+                            description="Run CattyMod Offline"
                             id="tw.footer.documentation"
                         />
                     </a>
                 </div>
                 <div className={styles.footerSection}>
-                    <a href="https://scratch.mit.edu/users/GarboMuffin/#comments">
+                    <a href="https://scratch.mit.edu/users/Noahscratch493/#comments">
                         <FormattedMessage
                             defaultMessage="Feedback & Bugs"
                             description="Link to feedback/bugs page"
                             id="tw.feedback"
                         />
                     </a>
-                    <a href="https://github.com/TurboWarp/">
+                    <a href="https://github.com/CattyMod/">
                         <FormattedMessage
                             defaultMessage="Source Code"
                             description="Link to source code"
