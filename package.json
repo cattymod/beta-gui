@@ -89,7 +89,7 @@
     "redux": "3.7.2",
     "redux-throttle": "0.1.1",
     "scratch-audio": "github:turbowarp/scratch-audio#develop",
-    "scratch-blocks": "github:cattymod/scratch-blocks#develop",
+    "scratch-blocks": "github:cattymod/scratch-blocks#develop-builds",
     "scratch-paint": "github:cattymod/scratch-paint#develop",
     "scratch-render": "github:turbowarp/scratch-render",
     "scratch-vm": "github:cattymod/scratch-vm",
