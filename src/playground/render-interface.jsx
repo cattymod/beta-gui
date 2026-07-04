@@ -136,10 +136,10 @@ const Footer = () => (
                         {/* Do not translate */}
                         {'CattyMod Packager'}
                     </a>
-                    <a href="https://docs.turbowarp.org/embedding">
+                    <a href="https://cattymod.app">
                         <FormattedMessage
-                            defaultMessage="Embedding"
-                            description="Link in footer to embedding documentation for embedding link"
+                            defaultMessage="Homepage"
+                            description="Go to the homepage"
                             id="tw.footer.embed"
                         />
                     </a>
