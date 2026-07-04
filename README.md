@@ -1,8 +1,8 @@
-scratch-gui modified for use in [TurboWarp](https://turbowarp.org/)
+scratch-gui modified for use in [TurboWarp](https://turbowarp.org/) then for [CattyMod](https://cattymod.app)
 
 ## Setup
 
-See https://docs.turbowarp.org/development/getting-started to setup the complete TurboWarp environment.
+See https://docs.turbowarp.org/development/getting-started to setup the complete environment.
 
 If you just want to play with the GUI then it's the same process as upstream scratch-gui.
 
