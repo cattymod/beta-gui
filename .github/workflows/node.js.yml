@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "deploy"
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
@@ -28,23 +28,36 @@ jobs:
           node-version: 20
           cache: npm
 
-      # FIX: do NOT use npm ci in Scratch forks
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build scratch-gui
+      - name: Build project
         run: npm run build
         env:
           NODE_ENV: production
           ROUTING_STYLE: hash
 
-      - name: Fix artifact permissions
-        run: chmod -R +rwx ./build/
+      - name: Debug build output
+        run: ls -R
+
+      - name: Ensure build folder exists
+        run: |
+          if [ ! -d "build" ]; then
+            echo "ERROR: build/ folder not found"
+            exit 1
+          fi
+
+      - name: Check index.html exists
+        run: |
+          if [ ! -f "build/index.html" ]; then
+            echo "ERROR: index.html missing in build/"
+            exit 1
+          fi
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build/
+          path: build
 
   deploy:
     runs-on: ubuntu-latest
