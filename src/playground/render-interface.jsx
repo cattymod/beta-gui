@@ -341,7 +341,7 @@ class Interface extends React.Component {
                                 </p>
                             </div>
                             <div className={styles.section}>
-                                <FeaturedProjects studio="27205657" />
+                                <FeaturedProjects studio="51500179" />
                             </div>
                         </React.Fragment>
                     ) : null}
