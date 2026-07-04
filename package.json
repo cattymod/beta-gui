@@ -7,7 +7,7 @@
   "homepage": "https://github.com/LLK/scratch-gui#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LLK/scratch-gui.git"
+    "url": "https://github.com/cattymod/scratch-gui.git"
   },
   "main": "./dist/scratch-gui.js",
   "scripts": {
@@ -90,9 +90,9 @@
     "redux-throttle": "0.1.1",
     "scratch-audio": "github:TurboWarp/scratch-audio#develop",
     "scratch-blocks": "github:TurboWarp/scratch-blocks#develop-builds",
-    "scratch-paint": "github:TurboWarp/scratch-paint#develop",
-    "scratch-render": "github:TurboWarp/scratch-render#develop",
-    "scratch-vm": "github:TurboWarp/scratch-vm#develop",
+    "scratch-paint": "github:cattymod/scratch-paint",
+    "scratch-render": "github:cattymod/scratch-render",
+    "scratch-vm": "github:cattymod/scratch-vm",
     "style-loader": "^0.23.0",
     "text-encoding": "0.7.0",
     "to-style": "1.3.3",
