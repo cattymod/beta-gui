@@ -6,7 +6,7 @@ on:
     branches: [develop]
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -45,15 +45,6 @@ jobs:
 
       - name: Fix artifact permissions
         run: chmod -R +rwx ./build/
-
-      # ✅ NEW: push build to desktop branch
-      - name: Deploy Desktop Branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          publish_branch: build
-          force_orphan: true
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
