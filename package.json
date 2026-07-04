@@ -90,7 +90,7 @@
     "redux-throttle": "0.1.1",
     "scratch-audio": "github:TurboWarp/scratch-audio#develop",
     "scratch-blocks": "github:TurboWarp/scratch-blocks#develop-builds",
-    "scratch-paint": "github:cattymod/scratch-paint",
+    "scratch-paint": "github:turbowarp/scratch-paint#develop",
     "scratch-render": "github:cattymod/scratch-render",
     "scratch-vm": "github:cattymod/scratch-vm",
     "style-loader": "^0.23.0",
