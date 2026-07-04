@@ -59,11 +59,18 @@ const Credits = () => (
                 {APP_NAME} Credits
             </h1>
         </header>
+
         <section>
             <p>
                 The {APP_NAME} project is made possible by the work of many volunteers.
             </p>
         </section>
+
+        <section>
+            <h2>Developers</h2>
+            <UserList users={UserData.developers} />
+        </section>
+
         {APP_NAME !== 'TurboWarp' && (
             // Be kind and considerate. Don't remove this :)
             <section>
@@ -73,6 +80,7 @@ const Credits = () => (
                 </p>
             </section>
         )}
+
         <section>
             <h2>Scratch</h2>
             <p>
@@ -84,22 +92,32 @@ const Credits = () => (
                 </a>
             </p>
         </section>
+
         <section>
-            <h2>Contributors</h2>
+            <h2>TurboWarp's Contributors</h2>
             <UserList users={UserData.contributors} />
         </section>
+
         <section>
             <h2>Addons</h2>
             <UserList users={UserData.addonDevelopers} />
         </section>
+
         <section>
-            <h2>TurboWarp Extension Gallery</h2>
+            <h2>Extension Gallery</h2>
             <UserList users={UserData.extensionDevelopers} />
         </section>
+
         <section>
-            <h2>Documentation</h2>
+            <h2>TurboWarp's Documentation</h2>
             <UserList users={UserData.docs} />
         </section>
+
+        <section>
+            <h2>Testers</h2>
+            <UserList users={UserData.testers} />
+        </section>
+
         <section>
             <h2>Translators</h2>
             <p>
@@ -107,6 +125,7 @@ const Credits = () => (
                 &mdash; far more than we could hope to list here.
             </p>
         </section>
+
         <section>
             <p>
                 <i>
