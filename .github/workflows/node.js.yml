@@ -40,8 +40,8 @@ jobs:
 
       - name: Replace green flag assets (post-build patch)
         run: |
-          find ./build -type f -exec sed -i 's|/static/blocks-media/default/green-flag.svg|https://cattymod.app/editor/static/blocks-media/blue-flag.svg|g' {} +
-          find ./build -type f -exec sed -i 's|/static/blocks-media/high-contrast/green-flag.svg|https://cattymod.app/editor/static/blocks-media/blue-flag.svg|g' {} +
+          find ./build -type f -exec sed -i 's|/static/blocks-media/default/green-flag.svg|https://cattymod.app/assets/green-flag.svg|g' {} +
+          find ./build -type f -exec sed -i 's|/static/blocks-media/high-contrast/green-flag.svg|https://cattymod.app/assets/green-flag.svg|g' {} +
 
       - name: Fix artifact permissions
         run: chmod -R +rwx ./build/
