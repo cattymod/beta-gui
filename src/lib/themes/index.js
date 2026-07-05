@@ -5,6 +5,13 @@ import * as accentBlue from './accent/blue';
 import * as accentRed from './accent/red';
 import * as accentRainbow from './accent/rainbow';
 
+// 🌈 NEW rainbow accents
+import * as accentOrange from './accent/orange';
+import * as accentYellow from './accent/yellow';
+import * as accentGreen from './accent/green';
+import * as accentIndigo from './accent/indigo';
+import * as accentViolet from './accent/violet';
+
 import * as guiLight from './gui/light';
 import * as guiDark from './gui/dark';
 
@@ -16,28 +23,49 @@ const ACCENT_PURPLE = 'purple';
 const ACCENT_BLUE = 'blue';
 const ACCENT_RED = 'red';
 const ACCENT_RAINBOW = 'rainbow';
+
+// 🌈 NEW accent keys
+const ACCENT_ORANGE = 'orange';
+const ACCENT_YELLOW = 'yellow';
+const ACCENT_GREEN = 'green';
+const ACCENT_INDIGO = 'indigo';
+const ACCENT_VIOLET = 'violet';
+
 const ACCENT_MAP = {
     [ACCENT_PURPLE]: accentPurple,
     [ACCENT_BLUE]: accentBlue,
     [ACCENT_RED]: accentRed,
-    [ACCENT_RAINBOW]: accentRainbow
+    [ACCENT_RAINBOW]: accentRainbow,
+
+    // 🌈 new rainbow accents
+    [ACCENT_ORANGE]: accentOrange,
+    [ACCENT_YELLOW]: accentYellow,
+    [ACCENT_GREEN]: accentGreen,
+    [ACCENT_INDIGO]: accentIndigo,
+    [ACCENT_VIOLET]: accentViolet
 };
+
 const ACCENT_DEFAULT = ACCENT_BLUE;
 
 const GUI_LIGHT = 'light';
 const GUI_DARK = 'dark';
+
 const GUI_MAP = {
     [GUI_LIGHT]: guiLight,
     [GUI_DARK]: guiDark
 };
+
 const GUI_DEFAULT = GUI_LIGHT;
 
 const BLOCKS_THREE = 'three';
 const BLOCKS_DARK = 'dark';
 const BLOCKS_HIGH_CONTRAST = 'high-contrast';
 const BLOCKS_CUSTOM = 'custom';
+
 const BLOCKS_DEFAULT = BLOCKS_THREE;
+
 const defaultBlockColors = blocksThree.blockColors;
+
 const BLOCKS_MAP = {
     [BLOCKS_THREE]: {
         blocksMediaFolder: 'blocks-media/default',
@@ -74,15 +102,19 @@ let themeObjectsCreated = 0;
 
 class Theme {
     constructor (accent, gui, blocks) {
-        // do not modify these directly
-        /** @readonly */
         this.id = ++themeObjectsCreated;
-        /** @readonly */
-        this.accent = Object.prototype.hasOwnProperty.call(ACCENT_MAP, accent) ? accent : ACCENT_DEFAULT;
-        /** @readonly */
-        this.gui = Object.prototype.hasOwnProperty.call(GUI_MAP, gui) ? gui : GUI_DEFAULT;
-        /** @readonly */
-        this.blocks = Object.prototype.hasOwnProperty.call(BLOCKS_MAP, blocks) ? blocks : BLOCKS_DEFAULT;
+
+        this.accent = Object.prototype.hasOwnProperty.call(ACCENT_MAP, accent)
+            ? accent
+            : ACCENT_DEFAULT;
+
+        this.gui = Object.prototype.hasOwnProperty.call(GUI_MAP, gui)
+            ? gui
+            : GUI_DEFAULT;
+
+        this.blocks = Object.prototype.hasOwnProperty.call(BLOCKS_MAP, blocks)
+            ? blocks
+            : BLOCKS_DEFAULT;
     }
 
     static light = new Theme(ACCENT_DEFAULT, GUI_LIGHT, BLOCKS_DEFAULT);
@@ -147,8 +179,13 @@ export {
     defaultBlockColors,
 
     ACCENT_RED,
-    ACCENT_PURPLE,
+    ACCENT_ORANGE,
+    ACCENT_YELLOW,
+    ACCENT_GREEN,
     ACCENT_BLUE,
+    ACCENT_INDIGO,
+    ACCENT_VIOLET,
+    ACCENT_PURPLE,
     ACCENT_RAINBOW,
     ACCENT_MAP,
 
