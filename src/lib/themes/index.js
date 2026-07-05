@@ -55,7 +55,7 @@ const GUI_MAP = {
     [GUI_DARK]: guiDark
 };
 
-const GUI_DEFAULT = GUI_LIGHT;
+const GUI_DEFAULT = GUI_DARK;
 
 const BLOCKS_THREE = 'three';
 const BLOCKS_DARK = 'dark';
