@@ -3110,7 +3110,7 @@
         "blocks": {}
     },
     {
-        "name": "Dango",
+        "name": "Dango Emoji",
         "tags": [
             "food"
         ],
@@ -3130,28 +3130,54 @@
         "sounds": [],
         "blocks": {}
     },
+{
+  "name": "Dango",
+  "tags": [
+    "animals"
+  ],
+  "isStage": false,
+  "variables": {},
+  "costumes": [
     {
-        "name": "Dango Cat",
-        "tags": [
-            "food",
-            "animals"
-        ],
-        "isStage": false,
-        "variables": {},
-        "costumes": [
-            {
-                "assetId": "927d672925e7b99f7813735c484c6922",
-                "name": "dango cat",
-                "bitmapResolution": 1,
-                "md5ext": "927d672925e7b99f7813735c484c6922.svg",
-                "dataFormat": "svg",
-                "rotationCenterX": 44,
-                "rotationCenterY": 44
-            }
-        ],
-        "sounds": [],
-        "blocks": {}
+      "assetId": "54340d031038257da843a92a9709edea",
+      "name": "costume1",
+      "bitmapResolution": 1,
+      "md5ext": "54340d031038257da843a92a9709edea.svg",
+      "dataFormat": "svg",
+      "rotationCenterX": 30.74937811242981,
+      "rotationCenterY": 44.1730748476198
     },
+    {
+      "assetId": "aaeabac240d068893ffc007b1a3e29c4",
+      "name": "costume2",
+      "bitmapResolution": 1,
+      "md5ext": "aaeabac240d068893ffc007b1a3e29c4.svg",
+      "dataFormat": "svg",
+      "rotationCenterX": 32.081095272904946,
+      "rotationCenterY": 52.73103417165271
+    },
+    {
+      "assetId": "6762e34d001304dd6e6a24dee91b86bd",
+      "name": "costume3",
+      "bitmapResolution": 1,
+      "md5ext": "6762e34d001304dd6e6a24dee91b86bd.svg",
+      "dataFormat": "svg",
+      "rotationCenterX": 30.720929056214914,
+      "rotationCenterY": 44.17307742380987
+    },
+    {
+      "assetId": "1a052f8ec0b398ec3ead9884bd17b2b0",
+      "name": "costume4",
+      "bitmapResolution": 1,
+      "md5ext": "1a052f8ec0b398ec3ead9884bd17b2b0.svg",
+      "dataFormat": "svg",
+      "rotationCenterX": 62.30316965465545,
+      "rotationCenterY": 60.53499922681809
+    }
+  ],
+  "sounds": [],
+  "blocks": {}
+}
     {
         "name": "Dani",
         "tags": [
