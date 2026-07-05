@@ -6,7 +6,7 @@ on:
     branches: [develop]
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -28,7 +28,6 @@ jobs:
           node-version: 20
           cache: npm
 
-      # FIX: do NOT use npm ci in Scratch forks
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
@@ -41,9 +40,7 @@ jobs:
       - name: Replace green flag assets (post-build patch)
         run: |
           curl -L https://cattymod.app/assets/green-flag.svg -o /tmp/green-flag.svg
-
           find ./build -type f -name "green-flag*.svg" -exec cp /tmp/green-flag.svg {} \;
-
           rm /tmp/green-flag.svg
 
       - name: Fix artifact permissions
@@ -53,6 +50,24 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./build/
+
+      # NEW: Prepare build branch
+      - name: Publish build branch
+        run: |
+          cd build
+
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b build
+
+          git add .
+          git commit -m "Latest build from $GITHUB_SHA"
+
+          git push --force \
+            https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git \
+            build
 
   deploy:
     runs-on: ubuntu-latest
