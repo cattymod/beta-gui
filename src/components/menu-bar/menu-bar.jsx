@@ -1015,7 +1015,7 @@ class MenuBar extends React.Component {
                     <div className={styles.menuBarItem}>
                         <a
                             className={styles.feedbackLink}
-                            href="https://scratch.mit.edu/users/Noahscratch493/#comments"
+                            href="https://scratch.mit.edu/projects/1335032585/"
                             rel="noopener noreferrer"
                             target="_blank"
                         >
