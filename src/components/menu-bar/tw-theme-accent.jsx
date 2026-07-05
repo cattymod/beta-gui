@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage, defineMessages} from 'react-intl';
+import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 
 import check from './check.svg';
@@ -27,7 +27,21 @@ import {persistTheme} from '../../lib/themes/themePersistance.js';
 import styles from './settings-menu.css';
 
 
-// 🌈 Labels (safe + extendable)
+// 🌈 ORDER CONTROL (this is the important part)
+const ACCENT_ORDER = [
+    'red',
+    'orange',
+    'yellow',
+    'green',
+    'blue',
+    'indigo',
+    'violet',
+    'purple',
+    'rainbow'
+];
+
+
+// 🌈 Labels
 const ACCENT_LABELS = {
     red: {
         defaultMessage: 'Red',
@@ -77,13 +91,13 @@ const ACCENT_LABELS = {
 };
 
 
-// Icons (optional overrides)
+// Icons
 const icons = {
     rainbow: rainbowIcon
 };
 
 
-// 🎨 Color icon renderer
+// 🎨 Color icon
 const ColorIcon = props => (
     icons[props.id] ? (
         <img
@@ -171,16 +185,18 @@ const AccentThemeMenu = ({
         </div>
 
         <Submenu place={isRtl ? 'left' : 'right'}>
-            {Object.keys(ACCENT_MAP).map(item => (
-                <AccentMenuItem
-                    key={item}
-                    id={item}
-                    isSelected={theme.accent === item}
-                    onClick={() =>
-                        onChangeTheme(theme.set('accent', item))
-                    }
-                />
-            ))}
+            {ACCENT_ORDER
+                .filter(id => ACCENT_MAP[id])
+                .map(item => (
+                    <AccentMenuItem
+                        key={item}
+                        id={item}
+                        isSelected={theme.accent === item}
+                        onClick={() =>
+                            onChangeTheme(theme.set('accent', item))
+                        }
+                    />
+                ))}
         </Submenu>
     </MenuItem>
 );
