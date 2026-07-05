@@ -2603,7 +2603,7 @@
         "rotationCenterY": 200
     },
     {
-        "name": "Dango",
+        "name": "Dango Emoji",
         "tags": [
             "food"
         ],
@@ -2614,18 +2614,54 @@
         "rotationCenterX": 44,
         "rotationCenterY": 44
     },
+[
     {
-        "name": "Dango Cat",
+        "name": "Dango-a",
         "tags": [
-            "food",
             "animals"
         ],
-        "assetId": "927d672925e7b99f7813735c484c6922",
+        "assetId": "54340d031038257da843a92a9709edea",
         "bitmapResolution": 1,
         "dataFormat": "svg",
-        "md5ext": "927d672925e7b99f7813735c484c6922.svg",
-        "rotationCenterX": 44,
-        "rotationCenterY": 44
+        "md5ext": "54340d031038257da843a92a9709edea.svg",
+        "rotationCenterX": 30.74937811242981,
+        "rotationCenterY": 44.1730748476198
+    },
+    {
+        "name": "Dango-b",
+        "tags": [
+            "animals"
+        ],
+        "assetId": "aaeabac240d068893ffc007b1a3e29c4",
+        "bitmapResolution": 1,
+        "dataFormat": "svg",
+        "md5ext": "aaeabac240d068893ffc007b1a3e29c4.svg",
+        "rotationCenterX": 32.081095272904946,
+        "rotationCenterY": 52.73103417165271
+    },
+    {
+        "name": "Dango-c",
+        "tags": [
+            "animals"
+        ],
+        "assetId": "6762e34d001304dd6e6a24dee91b86bd",
+        "bitmapResolution": 1,
+        "dataFormat": "svg",
+        "md5ext": "6762e34d001304dd6e6a24dee91b86bd.svg",
+        "rotationCenterX": 30.720929056214914,
+        "rotationCenterY": 44.17307742380987
+    },
+    {
+        "name": "Dango-d",
+        "tags": [
+            "animals"
+        ],
+        "assetId": "9dd36d03acb6f3842d0e82fb03ad7d1a",
+        "bitmapResolution": 1,
+        "dataFormat": "svg",
+        "md5ext": "9dd36d03acb6f3842d0e82fb03ad7d1a.svg",
+        "rotationCenterX": 62.30316965465545,
+        "rotationCenterY": 60.53499922681809
     },
     {
         "name": "Dani-a",
