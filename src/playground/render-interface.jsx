@@ -159,7 +159,7 @@ const Footer = () => (
                     </a>
                 </div>
                 <div className={styles.footerSection}>
-                    <a href="https://scratch.mit.edu/users/Noahscratch493/#comments">
+                    <a href="https://scratch.mit.edu/projects/1335032585/">
                         <FormattedMessage
                             defaultMessage="Feedback & Bugs"
                             description="Link to feedback/bugs page"
