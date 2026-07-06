@@ -410,7 +410,7 @@ export default [
         name: (
             <FormattedMessage
                 defaultMessage="Custom Extension"
-                description="Name of library item to load a custom extension from a remote source"
+                description="Name of a library item to load a custom extension from a remote source"
                 id="tw.customExtension.name"
             />
         ),
@@ -419,14 +419,37 @@ export default [
         description: (
             <FormattedMessage
                 defaultMessage="Load custom extensions from URLs, files, or JavaScript source code."
-                description="Description of library item to load a custom extension from a custom source"
+                description="Description of a library item to load a custom extension from a custom source"
                 id="tw.customExtension.description"
             />
         ),
         tags: ['tw'],
         featured: true
         // Not marked as incompatible with Scratch so that clicking on it doesn't show a prompt
-    }
+    },
+    {
+    name: (
+        <FormattedMessage
+            defaultMessage="Variables+"
+            description="Name for the Variables+ extension"
+            id="cattymod.extension.variablesPlus.name"
+        />
+    ),
+    extensionId: 'variablesplus',
+    extensionURL: 'https://cattymod.app/assets/variables-plus.js',
+    author: 'Noahscratch493',
+    authorURL: 'https://scratch.mit.edu/users/Noahscratch493/',
+    iconURL: '/cattymod/variableplus.svg',
+    description: (
+        <FormattedMessage
+            defaultMessage="Create special variables anytime inside your code!"
+            description="Description for the Variables+ extension"
+            id="cattymod.extension.variablesPlus.description"
+        />
+    ),
+    tags: ['tw'],
+    featured: true,
+    incompatibleWithScratch: true
 ];
 
 export const galleryLoading = {
