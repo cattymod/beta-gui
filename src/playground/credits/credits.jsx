@@ -117,6 +117,13 @@ const Credits = () => (
         </section>
 
         <section>
+            <h2>Lovable</h2>
+            <p>
+                CattyMod's homepage was created using the site <a href="https://lovable.dev">Lovable</a> but is not endorsed by them in any way.
+            </p>
+        </section>
+        
+        <section>
             <h2>Testers</h2>
             <UserList users={UserData.testers} />
         </section>
