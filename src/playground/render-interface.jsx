@@ -132,9 +132,9 @@ const Footer = () => (
                         {/* Do not translate */}
                         {'Idea Generator'}
                     </a>
-                    <a href="https:/cattymod.app/packager">
+                    <a href="https://packager.turbowarp.org">
                         {/* Do not translate */}
-                        {'CattyMod Packager'}
+                        {'Packager'}
                     </a>
                     <a href="https://cattymod.app">
                         <FormattedMessage
