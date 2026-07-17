@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>404 Not Found</title>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --scratch-blue: #4D97FF;
+      --scratch-blue-dark: #3373CC;
+      --background: #ffffff;
+      --text: #575E75;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      border-top: 5px solid var(--scratch-blue-dark);
+    }
+
+    header {
+      background: var(--scratch-blue);
+      color: white;
+      text-align: center;
+      padding: 24px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--scratch-blue-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #111827;
+        --text: #e5e7eb;
+      }
+
+      body {
+        background: var(--background);
+        color: var(--text);
+      }
+
+      header {
+        background: var(--scratch-blue-dark);
+      }
+
+      a {
+        color: #7db8ff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>404 Not Found</h1>
+  </header>
+
+  <main>
+    <p>Sorry, it looks like that page doesn't exist.</p>
+
+    <p>
+      Perhaps you should
+      <a href="/">go back to the homepage</a>?
+    </p>
+
+    <p>
+      If you believe you're seeing this message in error,
+      please
+      <a href="https://scratch.mit.edu/projects/1335032585/">let me know</a>.
+    </p>
+  </main>
+</body>
+</html>
