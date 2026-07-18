@@ -390,9 +390,9 @@ class MenuBar extends React.Component {
 handleClickSeeInside () {
     this.props.onClickSeeInside();
 
-    // Go to editor URL
     if (window.location.pathname !== '/editor') {
         window.history.pushState({}, '', '/editor');
+        window.dispatchEvent(new PopStateEvent('popstate'));
     }
 }
     buildAboutMenu (onClickAbout) {
@@ -1233,8 +1233,14 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true)),
-    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode))
+onSeeCommunity: () => {
+    dispatch(setPlayer(true));
+
+    if (window.location.pathname !== '/') {
+        window.history.pushState({}, '', '/');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+},    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode))
 });
 
 export default compose(
