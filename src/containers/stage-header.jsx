@@ -11,7 +11,6 @@ import {connect} from 'react-redux';
 
 import StageHeaderComponent from '../components/stage-header/stage-header.jsx';
 
-// eslint-disable-next-line react/prefer-stateless-function
 class StageHeader extends React.Component {
     constructor (props) {
         super(props);
@@ -103,21 +102,35 @@ const mapDispatchToProps = dispatch => ({
     onSetStageFull: () => dispatch(setStageSize(STAGE_SIZE_MODES.full)),
 
     onSetStageFullScreen: () => {
+        sessionStorage.setItem(
+            'fullscreenPreviousPath',
+            window.location.pathname
+        );
+
         history.pushState(
             {},
             '',
             `/fullscreen${window.location.hash}`
         );
 
+        window.dispatchEvent(new PopStateEvent('popstate'));
+
         dispatch(setFullScreen(true));
     },
 
     onSetStageUnFullScreen: () => {
+        const previousPath =
+            sessionStorage.getItem('fullscreenPreviousPath') || '/editor';
+
         history.pushState(
             {},
             '',
-            `/editor${window.location.hash}`
+            `${previousPath}${window.location.hash}`
         );
+
+        window.dispatchEvent(new PopStateEvent('popstate'));
+
+        sessionStorage.removeItem('fullscreenPreviousPath');
 
         dispatch(setFullScreen(false));
     },
