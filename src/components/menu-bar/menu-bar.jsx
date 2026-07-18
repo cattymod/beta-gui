@@ -387,9 +387,14 @@ class MenuBar extends React.Component {
         }
         }
     }
-    handleClickSeeInside () {
-        this.props.onClickSeeInside();
+handleClickSeeInside () {
+    this.props.onClickSeeInside();
+
+    // Go to editor URL
+    if (window.location.pathname !== '/editor') {
+        window.history.pushState({}, '', '/editor');
     }
+}
     buildAboutMenu (onClickAbout) {
         if (!onClickAbout) {
             // hide the button
