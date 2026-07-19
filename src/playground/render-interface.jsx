@@ -47,7 +47,7 @@ import {APP_NAME} from '../lib/brand.js';
 import styles from './interface.css';
 
 const isEmbedded = window.parent !== window;
-const isEditor = window.location.pathname.includes('editor.html');
+const isEditor = window.location.pathname.includes('editor');
 
 const isInvalidEmbed = isEmbedded && !isEditor;
 
