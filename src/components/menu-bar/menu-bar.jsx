@@ -987,6 +987,8 @@ handleClickSeeInside () {
                             {remixButton}
                         </div>
                     )}
+                    
+                    {!(window.parent !== window && window.location.pathname.includes('editor')) && (
                     <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
                         {this.props.enableCommunity ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
@@ -1016,6 +1018,7 @@ handleClickSeeInside () {
                             />
                         ) : []))}
                     </div>
+                )}
                     {/* tw: add a feedback button */}
                     <div className={styles.menuBarItem}>
                         <a
