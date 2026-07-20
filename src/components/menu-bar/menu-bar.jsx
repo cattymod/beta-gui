@@ -391,7 +391,11 @@ handleClickSeeInside () {
     this.props.onClickSeeInside();
 
     if (window.location.pathname !== '/editor') {
-        window.history.pushState({}, '', '/editor');
+        window.history.pushState(
+    {},
+    '',
+    `/editor${window.location.search}${window.location.hash}`
+);
         window.dispatchEvent(new PopStateEvent('popstate'));
     }
 }
@@ -1240,7 +1244,11 @@ onSeeCommunity: () => {
     dispatch(setPlayer(true));
 
     if (window.location.pathname !== '/') {
-        window.history.pushState({}, '', '/');
+        window.history.pushState(
+    {},
+    '',
+    `/${window.location.search}${window.location.hash}`
+);
         window.dispatchEvent(new PopStateEvent('popstate'));
     }
 },    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode))
