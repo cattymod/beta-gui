@@ -29,7 +29,7 @@ import {fetchProjectMeta} from './tw-project-meta-fetcher-hoc.jsx';
 
 // TW: Temporary hack for project tokens
 const fetchProjectToken = async projectId => {
-    if (projectId === '0') {
+    if (projectId === '') {
         return null;
     }
     // Parse ?token=abcdef
