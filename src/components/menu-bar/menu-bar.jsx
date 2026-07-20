@@ -715,13 +715,6 @@ handleClickSeeInside () {
                                         </MenuSection>
                                     )}
                                     <MenuSection>
-                                        <MenuItem onClick={() => { this.props.onRequestCloseFile(); window.location.href = '/tabs.html'; }}>
-                                            <FormattedMessage
-                                                defaultMessage="Tabs Workspace"
-                                                description="Menu bar item to swap to tabs mode"
-                                                id="tw.menuBar.restorePoints"
-                                            />
-                                        </MenuItem>
                                         <MenuItem onClick={this.handleClickRestorePoints}>
                                             <FormattedMessage
                                                 defaultMessage="Restore points"
