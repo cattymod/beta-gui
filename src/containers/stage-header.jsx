@@ -108,10 +108,10 @@ const mapDispatchToProps = dispatch => ({
         );
 
         history.pushState(
-            {},
-            '',
-            `/fullscreen${window.location.hash}`
-        );
+    {},
+    '',
+    `/fullscreen${window.location.search}${window.location.hash}`
+);
 
         window.dispatchEvent(new PopStateEvent('popstate'));
 
@@ -123,10 +123,10 @@ const mapDispatchToProps = dispatch => ({
             sessionStorage.getItem('fullscreenPreviousPath') || '/editor';
 
         history.pushState(
-            {},
-            '',
-            `${previousPath}${window.location.hash}`
-        );
+    {},
+    '',
+    `${previousPath}${window.location.search}${window.location.hash}`
+);
 
         window.dispatchEvent(new PopStateEvent('popstate'));
 
