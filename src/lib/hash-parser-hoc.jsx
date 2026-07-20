@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {
-    defaultProjectId,
     getIsFetchingWithoutId,
     setProjectId
 } from '../reducers/project-state';
@@ -38,7 +37,14 @@ const HashParserHOC = function (WrappedComponent) {
         }
         handleHashChange () {
             const hashMatch = window.location.hash.match(/#(\d+)/);
-            const hashProjectId = hashMatch === null ? defaultProjectId : hashMatch[1];
+
+            // No project ID in the URL, keep it empty
+            if (hashMatch === null) {
+                this.props.setProjectId('');
+                return;
+            }
+
+            const hashProjectId = hashMatch[1];
             this.props.setProjectId(hashProjectId.toString());
         }
         render () {
@@ -57,11 +63,13 @@ const HashParserHOC = function (WrappedComponent) {
             );
         }
     }
+
     HashParserComponent.propTypes = {
         isFetchingWithoutId: PropTypes.bool,
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         setProjectId: PropTypes.func
     };
+
     const mapStateToProps = state => {
         const loadingState = state.scratchGui.projectState.loadingState;
         return {
@@ -69,15 +77,18 @@ const HashParserHOC = function (WrappedComponent) {
             reduxProjectId: state.scratchGui.projectState.projectId
         };
     };
+
     const mapDispatchToProps = dispatch => ({
         setProjectId: projectId => {
             dispatch(setProjectId(projectId));
         }
     });
+
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(
         {}, stateProps, dispatchProps, ownProps
     );
+
     return connect(
         mapStateToProps,
         mapDispatchToProps,
