@@ -79,7 +79,7 @@ const Credits = () => (
                     {APP_NAME} is based on <a href="https://turbowarp.org/">TurboWarp</a>.
                 </p>
                 <p>
-                    Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a> which is also where the extension icon is from.
+                    Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a> which is where the extension icon is from.
                 </p>
             </section>
         )}
