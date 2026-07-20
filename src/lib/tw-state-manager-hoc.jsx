@@ -121,7 +121,7 @@ class FileHashRouter extends HashRouter {
         let newPathname = '';
         let newHash = '';
 
-        if (projectId !== '') {
+        if (projectId !== '0') {
             newHash = projectId;
         }
         const hashQuery = location.hash.split('?')[1];
