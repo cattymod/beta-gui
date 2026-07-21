@@ -5,13 +5,12 @@ import * as accentBlue from './accent/blue';
 import * as accentRed from './accent/red';
 import * as accentRainbow from './accent/rainbow';
 
+// 🌈 NEW rainbow accents
 import * as accentOrange from './accent/orange';
 import * as accentYellow from './accent/yellow';
 import * as accentGreen from './accent/green';
 import * as accentIndigo from './accent/indigo';
 import * as accentViolet from './accent/violet';
-
-import * as accentCustom from './accent/custom';
 
 import * as guiLight from './gui/light';
 import * as guiDark from './gui/dark';
@@ -25,13 +24,12 @@ const ACCENT_BLUE = 'blue';
 const ACCENT_RED = 'red';
 const ACCENT_RAINBOW = 'rainbow';
 
+// 🌈 NEW accent keys
 const ACCENT_ORANGE = 'orange';
 const ACCENT_YELLOW = 'yellow';
 const ACCENT_GREEN = 'green';
 const ACCENT_INDIGO = 'indigo';
 const ACCENT_VIOLET = 'violet';
-
-const ACCENT_CUSTOM = 'custom';
 
 const ACCENT_MAP = {
     [ACCENT_PURPLE]: accentPurple,
@@ -39,26 +37,15 @@ const ACCENT_MAP = {
     [ACCENT_RED]: accentRed,
     [ACCENT_RAINBOW]: accentRainbow,
 
+    // 🌈 new rainbow accents
     [ACCENT_ORANGE]: accentOrange,
     [ACCENT_YELLOW]: accentYellow,
     [ACCENT_GREEN]: accentGreen,
     [ACCENT_INDIGO]: accentIndigo,
-    [ACCENT_VIOLET]: accentViolet,
-
-    [ACCENT_CUSTOM]: accentCustom
+    [ACCENT_VIOLET]: accentViolet
 };
 
 const ACCENT_DEFAULT = ACCENT_BLUE;
-
-const createCustomAccent = (hsla) => ({
-    guiColors: {
-        'looks-secondary': hsla,
-        'looks-transparent': hsla.replace('1)', '0.35)'),
-        'looks-light-transparent': hsla.replace('1)', '0.15)'),
-        'looks-secondary-dark': hsla
-    },
-    blockColors: {}
-});
 
 const GUI_LIGHT = 'light';
 const GUI_DARK = 'dark';
@@ -87,7 +74,6 @@ const BLOCKS_MAP = {
         customExtensionColors: {},
         useForStage: true
     },
-
     [BLOCKS_HIGH_CONTRAST]: {
         blocksMediaFolder: 'blocks-media/high-contrast',
         colors: defaultsDeep({}, blocksHighContrast.blockColors, defaultBlockColors),
@@ -95,7 +81,6 @@ const BLOCKS_MAP = {
         customExtensionColors: blocksHighContrast.customExtensionColors,
         useForStage: true
     },
-
     [BLOCKS_DARK]: {
         blocksMediaFolder: 'blocks-media/default',
         colors: defaultsDeep({}, blocksDark.blockColors, defaultBlockColors),
@@ -103,8 +88,8 @@ const BLOCKS_MAP = {
         customExtensionColors: blocksDark.customExtensionColors,
         useForStage: false
     },
-
     [BLOCKS_CUSTOM]: {
+        // to be filled by editor-theme3 addon
         blocksMediaFolder: 'blocks-media/default',
         colors: blocksThree.blockColors,
         extensions: {},
@@ -116,14 +101,12 @@ const BLOCKS_MAP = {
 let themeObjectsCreated = 0;
 
 class Theme {
-    constructor (accent, gui, blocks, customAccent = null) {
+    constructor (accent, gui, blocks) {
         this.id = ++themeObjectsCreated;
 
         this.accent = Object.prototype.hasOwnProperty.call(ACCENT_MAP, accent)
             ? accent
             : ACCENT_DEFAULT;
-
-        this.customAccent = customAccent;
 
         this.gui = Object.prototype.hasOwnProperty.call(GUI_MAP, gui)
             ? gui
@@ -140,17 +123,12 @@ class Theme {
 
     set (what, to) {
         if (what === 'accent') {
-            return new Theme(to, this.gui, this.blocks, this.customAccent);
+            return new Theme(to, this.gui, this.blocks);
+        } else if (what === 'gui') {
+            return new Theme(this.accent, to, this.blocks);
+        } else if (what === 'blocks') {
+            return new Theme(this.accent, this.gui, to);
         }
-
-        if (what === 'gui') {
-            return new Theme(this.accent, to, this.blocks, this.customAccent);
-        }
-
-        if (what === 'blocks') {
-            return new Theme(this.accent, this.gui, to, this.customAccent);
-        }
-
         throw new Error(`Unknown theme property: ${what}`);
     }
 
@@ -161,9 +139,7 @@ class Theme {
     getGuiColors () {
         return defaultsDeep(
             {},
-            this.accent === ACCENT_CUSTOM && this.customAccent
-                ? this.customAccent.guiColors
-                : ACCENT_MAP[this.accent].guiColors,
+            ACCENT_MAP[this.accent].guiColors,
             GUI_MAP[this.gui].guiColors,
             guiLight.guiColors
         );
@@ -172,9 +148,7 @@ class Theme {
     getBlockColors () {
         return defaultsDeep(
             {},
-            this.accent === ACCENT_CUSTOM && this.customAccent
-                ? this.customAccent.blockColors
-                : ACCENT_MAP[this.accent].blockColors,
+            ACCENT_MAP[this.accent].blockColors,
             GUI_MAP[this.gui].blockColors,
             BLOCKS_MAP[this.blocks].colors
         );
@@ -192,7 +166,6 @@ class Theme {
         if (BLOCKS_MAP[this.blocks].useForStage) {
             return this.getBlockColors();
         }
-
         return Theme.light.getBlockColors();
     }
 
@@ -214,10 +187,7 @@ export {
     ACCENT_VIOLET,
     ACCENT_PURPLE,
     ACCENT_RAINBOW,
-    ACCENT_CUSTOM,
-
     ACCENT_MAP,
-    createCustomAccent,
 
     GUI_LIGHT,
     GUI_DARK,
