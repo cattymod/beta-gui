@@ -15,6 +15,10 @@ const manifest = {
     {
       "name": "lisa_wolfgang",
       "link": "https://scratch.mit.edu/users/lisa_wolfgang/"
+    },    
+    {
+      "name": "Noahscratch493",
+      "link": "https://scratch.mit.edu/users/Noahscratch493/"
     },
     {
       "name": "GarboMuffin",
