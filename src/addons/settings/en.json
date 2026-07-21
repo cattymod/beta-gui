@@ -14,7 +14,7 @@
   "tagBeta": "Beta",
   "tagNew": "New!",
   "groupNew": "New ({number})",
-  "groupOthers": "Others ({number})",
+  "groupOthers": "All ({number})",
   "groupDanger": "Dangerous ({number})",
   "search": "Search",
   "noResults": "No results.",
