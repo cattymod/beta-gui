@@ -15,13 +15,17 @@ const manifest = {
     {
       "name": "lisa_wolfgang",
       "link": "https://scratch.mit.edu/users/lisa_wolfgang/"
+    },    
+    {
+      "name": "Noahscratch493",
+      "link": "https://scratch.mit.edu/users/Noahscratch493/"
     },
     {
       "name": "GarboMuffin",
       "link": "https://scratch.mit.edu/users/GarboMuffin/"
     }
   ],
-  "enabledByDefault": false,
+  "enabledByDefault": true,
   "dynamicDisable": true,
   "userscripts": [
     {
@@ -51,7 +55,7 @@ const manifest = {
       "id": "cornerSize",
       "type": "integer",
       "min": 0,
-      "default": 100,
+      "default": 200,
       "max": 300
     },
     {
@@ -60,11 +64,21 @@ const manifest = {
       "id": "notchSize",
       "type": "integer",
       "min": 0,
-      "default": 100,
+      "default": 0,
       "max": 150
     }
   ],
   "presets": [
+    {
+      "name": "Round Blocks",
+      "id": "roundBlocks",
+      "description": "Rounded blocks with no notches",
+      "values": {
+        "paddingSize": 100,
+        "cornerSize": 200,
+        "notchSize": 0
+      }
+    },
     {
       "name": "3.0 Blocks",
       "id": "default3",
@@ -107,4 +121,5 @@ const manifest = {
     }
   ]
 };
+
 export default manifest;
