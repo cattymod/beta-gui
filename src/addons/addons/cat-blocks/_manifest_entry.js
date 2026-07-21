@@ -36,6 +36,6 @@ const manifest = {
   "tags": [
     "theme"
   ],
-  "enabledByDefault": false
+  "enabledByDefault": true
 };
 export default manifest;
