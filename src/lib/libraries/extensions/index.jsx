@@ -53,6 +53,7 @@ import twIcon from './tw/tw.svg';
 import customExtensionIcon from './custom/custom.svg';
 import returnIcon from './custom/return.svg';
 import galleryIcon from './gallery/gallery.svg';
+import cattyModGalleryIcon from './gallery/cattymod-library.svg';
 import {APP_NAME} from '../../brand';
 
 export default [
@@ -405,6 +406,15 @@ export default [
         incompatibleWithScratch: true,
         tags: ['tw'],
         featured: true
+    },
+    {
+    name: 'CattyMod Extension Gallery',
+    href: 'https://cattymod.app/extensions',
+    extensionId: 'cattymod_gallery',
+    iconURL: cattyModGalleryIcon,
+    description: 'Browse and load extensions made for CattyMod.',
+    tags: ['tw'],
+    featured: true
     },
     {
         name: (
