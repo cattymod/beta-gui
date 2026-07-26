@@ -413,7 +413,16 @@ export default [
     extensionId: 'cattymod_gallery',
     iconURL: cattyModGalleryIcon,
     description: 'Browse and load extensions made for CattyMod.',
-    tags: ['tw'],
+    tags: ['cattymod'],
+    featured: true
+    },
+    {
+    name: 'Modals',
+    extensionId: 'cattymod_modals',
+    extensionURL: 'https://cattymod.app/extensions/modals.js',
+    iconURL: 'https://cattymod.app/extensions/modals.svg',
+    description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
+    tags: ['cattymod'],
     featured: true
     },
     {
