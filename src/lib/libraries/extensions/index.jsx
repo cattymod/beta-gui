@@ -434,7 +434,7 @@ export default [
                 id="tw.customExtension.description"
             />
         ),
-        tags: ['tw'],
+        tags: ['cattymod'],
         featured: true
         // Not marked as incompatible with Scratch so that clicking on it doesn't show a prompt
     },
