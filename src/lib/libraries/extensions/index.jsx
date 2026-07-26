@@ -383,6 +383,16 @@ export default [
         incompatibleWithScratch: true,
         featured: true
     },
+    
+    {
+    name: 'CattyMod Extension Gallery',
+    href: 'https://cattymod.app/extensions',
+    extensionId: 'cattymod_gallery',
+    iconURL: cattyModGalleryIcon,
+    description: 'Browse and load extensions made for CattyMod.',
+    tags: ['cattymod'],
+    featured: true
+    },
     {
         name: (
             <FormattedMessage
@@ -404,26 +414,8 @@ export default [
             />
         ),
         incompatibleWithScratch: true,
-        tags: ['tw'],
+        tags: ['cattymod'],
         featured: true
-    },
-    {
-    name: 'CattyMod Extension Gallery',
-    href: 'https://cattymod.app/extensions',
-    extensionId: 'cattymod_gallery',
-    iconURL: cattyModGalleryIcon,
-    description: 'Browse and load extensions made for CattyMod.',
-    tags: ['cattymod'],
-    featured: true
-    },
-    {
-    name: 'Modals',
-    extensionId: 'cattymod_modals',
-    extensionURL: 'https://cattymod.app/extensions/modals.js',
-    iconURL: 'https://cattymod.app/extensions/modals.svg',
-    description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
-    tags: ['cattymod'],
-    featured: true
     },
     {
         name: (
@@ -445,6 +437,15 @@ export default [
         tags: ['tw'],
         featured: true
         // Not marked as incompatible with Scratch so that clicking on it doesn't show a prompt
+    },
+    {
+    name: 'Modals',
+    extensionId: 'cattymod_modals',
+    extensionURL: 'https://cattymod.app/extensions/modals.js',
+    iconURL: 'https://cattymod.app/extensions/modals.svg',
+    description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
+    tags: ['cattymod'],
+    featured: true
     }
 ];
 
