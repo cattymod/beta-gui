@@ -444,7 +444,8 @@ export default [
     extensionURL: 'https://cattymod.app/extensions/modals.js',
     iconURL: 'https://cattymod.app/extensions/modals.svg',
     description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
-    tags: ['cattymod'],
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
     featured: true
     }
 ];
