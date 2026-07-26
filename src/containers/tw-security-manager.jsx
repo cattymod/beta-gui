@@ -30,6 +30,9 @@ const isTrustedExtension = url => (
     // For development.
     url.startsWith('http://localhost:8000/') ||
 
+    // CattyMod's extension gallery
+    url.startsWith('https://cattymod.app/') ||
+
     extensionsTrustedByUser.has(url)
 );
 
