@@ -91,7 +91,14 @@ class HashRouter extends Router {
 
     generateURL ({projectId}) {
         const hashQuery = location.hash.split('?')[1];
-        return `${location.pathname}${location.search}#${projectId}${hashQuery ? `?${hashQuery}` : ''}`;
+        let hash = '';
+        if (projectId !== '0') {
+            hash = `#${projectId}`;
+        }
+        if (hashQuery) {
+            hash += `?${hashQuery}`;
+        }
+        return `${location.pathname}${location.search}${hash}`;
     }
 }
 
