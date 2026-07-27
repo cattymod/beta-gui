@@ -40,6 +40,11 @@ const HashParserHOC = function (WrappedComponent) {
             const hashMatch = window.location.hash.match(/#(\d+)/);
             const hashProjectId = hashMatch === null ? defaultProjectId : hashMatch[1];
             this.props.setProjectId(hashProjectId.toString());
+            
+            // If there's no valid hash or the hash is for the default project, remove the hash
+            if (hashMatch === null || hashProjectId === defaultProjectId.toString()) {
+                history.pushState('', '', window.location.pathname + window.location.search);
+            }
         }
         render () {
             const {
