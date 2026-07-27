@@ -32,6 +32,11 @@ const HashParserHOC = function (WrappedComponent) {
                 history.pushState('new-project', 'new-project',
                     window.location.pathname + window.location.search);
             }
+            
+            // Clear hash if projectId is the default and hash exists
+            if (this.props.reduxProjectId === defaultProjectId && window.location.hash !== '') {
+                history.replaceState('', '', window.location.pathname + window.location.search);
+            }
         }
         componentWillUnmount () {
             window.removeEventListener('hashchange', this.handleHashChange);
@@ -40,13 +45,6 @@ const HashParserHOC = function (WrappedComponent) {
             const hashMatch = window.location.hash.match(/#(\d+)/);
             const hashProjectId = hashMatch === null ? defaultProjectId : hashMatch[1];
             this.props.setProjectId(hashProjectId.toString());
-            
-            // If there's no valid hash or the hash is for the default project, remove the hash
-            if (hashMatch === null || hashProjectId === defaultProjectId.toString()) {
-                if (window.location.hash !== '') {
-                    history.pushState('', '', window.location.pathname + window.location.search);
-                }
-            }
         }
         render () {
             const {
