@@ -32,6 +32,11 @@ const HashParserHOC = function (WrappedComponent) {
                 history.pushState('new-project', 'new-project',
                     window.location.pathname + window.location.search);
             }
+            
+            // Clear hash if projectId is the default and hash exists
+            if (this.props.reduxProjectId === defaultProjectId && window.location.hash !== '') {
+                history.replaceState('', '', window.location.pathname + window.location.search);
+            }
         }
         componentWillUnmount () {
             window.removeEventListener('hashchange', this.handleHashChange);
