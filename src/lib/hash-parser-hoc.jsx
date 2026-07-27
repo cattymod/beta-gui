@@ -43,7 +43,9 @@ const HashParserHOC = function (WrappedComponent) {
             
             // If there's no valid hash or the hash is for the default project, remove the hash
             if (hashMatch === null || hashProjectId === defaultProjectId.toString()) {
-                history.pushState('', '', window.location.pathname + window.location.search);
+                if (window.location.hash !== '') {
+                    history.pushState('', '', window.location.pathname + window.location.search);
+                }
             }
         }
         render () {
