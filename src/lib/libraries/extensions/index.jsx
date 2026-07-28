@@ -443,11 +443,16 @@ export default [
     extensionId: 'cattymod_modals',
     extensionURL: 'https://cattymod.app/extensions/modals.js',
     iconURL: 'https://cattymod.app/extensions/modals.svg',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
     description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
     tags: ['cattymod'],        
     incompatibleWithScratch: true,
     featured: true
-    }
+}
 ];
 
 export const galleryLoading = {
