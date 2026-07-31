@@ -79,6 +79,9 @@ const Credits = () => (
                     {APP_NAME} is based on <a href="https://turbowarp.org/">TurboWarp</a>.
                 </p>
                 <p>
+                    The extensions icon used in the editor is provided by <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide Icons</a> (licensed under the ISC License).
+                </p>
+                <p>
                     Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a>.
                 </p>
             </section>
