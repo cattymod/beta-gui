@@ -85,7 +85,7 @@ const Credits = () => (
                     Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a>.
                 </p>
                 <p>
-                    The quote, Try it out icon and Happy face icon are from <a href="https://penguinmod.com/">PenguinMod</a>.
+                    The quote, Try it out icon and Happy face icon from the homepage are from <a href="https://penguinmod.com/">PenguinMod</a>.
                 </p>
             </section>
         )}
