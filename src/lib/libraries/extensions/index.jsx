@@ -452,7 +452,7 @@ export default [
     tags: ['cattymod'],        
     incompatibleWithScratch: true,
     featured: true
-}
+},
 {
     name: 'Prompts',
     extensionId: 'cattymod_prompts',
