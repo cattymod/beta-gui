@@ -10,7 +10,7 @@ const EmbedModal = props => (
             <React.Fragment>
                 <p>
                     <FormattedMessage
-                        defaultMessage="The project wants to embed HTML content over the stage:"
+                        defaultMessage="The project wants to embed HTML content over either the stage or editor:"
                         description="Part of modal when a project attempts to embed another page over the stage"
                         id="tw.embed.title1"
                     />
