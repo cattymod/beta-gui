@@ -448,7 +448,7 @@ export default [
         'Noahscratch493'
     ],
     
-    description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
+    description: 'Create Scratch 3 style popup windows, embeds, and interactive prompts.',
     tags: ['cattymod'],        
     incompatibleWithScratch: true,
     featured: true
