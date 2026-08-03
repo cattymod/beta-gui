@@ -440,7 +440,7 @@ export default [
     },
     {
     name: 'Modals',
-    extensionId: 'cattymod_modals',
+    extensionId: 'modals',
     extensionURL: 'https://cattymod.app/extensions/modals.js',
     iconURL: 'https://cattymod.app/extensions/modals.svg',
     
@@ -449,21 +449,6 @@ export default [
     ],
     
     description: 'Create Scratch-style popup windows with titles, text, buttons, and embedded web pages.',
-    tags: ['cattymod'],        
-    incompatibleWithScratch: true,
-    featured: true
-},
-{
-    name: 'Prompts',
-    extensionId: 'cattymod_prompts',
-    extensionURL: 'https://cattymod.app/extensions/prompts.js',
-    iconURL: 'https://cattymod.app/extensions/prompts.svg',
-    
-    credits: [
-        'Noahscratch493'
-    ],
-    
-    description: 'Ask your users to pick colours, answer a question and more.',
     tags: ['cattymod'],        
     incompatibleWithScratch: true,
     featured: true
