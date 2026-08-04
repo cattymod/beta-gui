@@ -257,11 +257,10 @@ class MenuBar extends React.Component {
         this.props.onRequestCloseFile();
     }
     handleClickNewTab () {
-    window.location.href = '/tabs';
-    );
-    window.dispatchEvent(new PopStateEvent('popstate'));
-    this.props.onRequestCloseFile();
-}
+        window.location.href = '/tabs';
+        window.dispatchEvent(new PopStateEvent('popstate'));
+        this.props.onRequestCloseFile();
+    }
     handleClickRemix () {
         this.props.onClickRemix();
         this.props.onRequestCloseFile();
