@@ -632,6 +632,12 @@ handleClickSeeInside () {
                                             />
                                         </MenuItem>
                                     )}
+                                    <MenuItem
+    isRtl={this.props.isRtl}
+    onClick={this.handleClickNewTab}
+>
+    New Tab
+</MenuItem>
                                     {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
                                         <MenuSection>
                                             {this.props.canSave && (
