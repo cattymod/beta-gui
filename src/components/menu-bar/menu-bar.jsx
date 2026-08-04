@@ -215,6 +215,7 @@ class MenuBar extends React.Component {
             'handleClickSeeInside',
             'handleClickNew',
             'handleClickNewWindow',
+            'handleClickNewTab',
             'handleClickRemix',
             'handleClickSave',
             'handleClickSaveAsCopy',
@@ -253,6 +254,11 @@ class MenuBar extends React.Component {
     }
     handleClickNewWindow () {
         this.props.onClickNewWindow();
+        this.props.onRequestCloseFile();
+    }
+    handleClickNewTab () {
+        window.location.href = '/tabs';
+        window.dispatchEvent(new PopStateEvent('popstate'));
         this.props.onRequestCloseFile();
     }
     handleClickRemix () {
@@ -619,6 +625,12 @@ handleClickSeeInside () {
                                             />
                                         </MenuItem>
                                     )}
+                                    <MenuItem
+    isRtl={this.props.isRtl}
+    onClick={this.handleClickNewTab}
+>
+    New Tab
+</MenuItem>
                                     {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
                                         <MenuSection>
                                             {this.props.canSave && (
