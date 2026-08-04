@@ -34,12 +34,9 @@
       padding:0 12px 8px 12px;
     }
 
-    .address-fake{
-      height:10px;
-      margin:10px 0 8px 0;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(0,0,0,.05), rgba(0,0,0,.02));
-      opacity:.35;
+    .window-spacer{
+      height:4px;
+      margin:0 0 4px 0;
     }
 
     .tabs{
@@ -242,7 +239,7 @@
 </head>
 <body>
   <div class="topbar">
-    <div class="address-fake" aria-hidden="true"></div>
+    <div class="window-spacer" aria-hidden="true"></div>
 
     <div class="tabs" id="tabs"></div>
   </div>
@@ -271,8 +268,6 @@
   <script>
     const HOME_URL = "https://studio.cattymod.app/";
     const EDITOR_URL = "https://studio.cattymod.app/editor";
-
-    let nextTabNumber = 2;
 
     const tabsEl = document.getElementById("tabs");
     const framesEl = document.getElementById("frames");
@@ -382,7 +377,7 @@
           <path d="M5 12h14"/>
         </svg>
       `;
-      btn.addEventListener("click", () => createProjectTab(nextTabNumber++));
+      btn.addEventListener("click", () => createProjectTab());
       return btn;
     }
 
@@ -392,18 +387,30 @@
       closeTab(tabId);
     }
 
-    function createProjectTab(tabNumber){
-      const tabId = `tab-${tabNumber}-${crypto.randomUUID?.() ?? Math.random().toString(16).slice(2)}`;
+    function processTitle(rawTitle) {
+      if (!rawTitle) return "Project";
+      const trimmed = rawTitle.trim();
+      if (trimmed === "CattyMod - Run Scratch projects faster") {
+        return "Project";
+      }
+      if (trimmed.length > 11) {
+        return trimmed.slice(0, -11).trim();
+      }
+      return trimmed;
+    }
+
+    function createProjectTab(){
+      const tabId = `tab-${crypto.randomUUID?.() ?? Math.random().toString(16).slice(2)}`;
 
       const tab = document.createElement("button");
       tab.type = "button";
       tab.className = "tab";
       tab.setAttribute("role","tab");
-      tab.setAttribute("aria-label", `Project ${tabNumber}`);
+      tab.setAttribute("aria-label", "Project");
 
       const title = document.createElement("div");
       title.className = "title";
-      title.textContent = `Project ${tabNumber}`;
+      title.textContent = "Project";
 
       const x = document.createElement("button");
       x.type = "button";
@@ -416,44 +423,48 @@
       tab.appendChild(x);
 
       const iframe = document.createElement("iframe");
-iframe.title = `Project ${tabNumber}`;
-iframe.src = EDITOR_URL;
+      iframe.title = "Project";
+      iframe.src = EDITOR_URL;
 
-function updateTabTitle() {
-  try {
-    const t = iframe.contentDocument?.title?.trim();
-    if (t) {
-      title.textContent = t;
-      iframe.title = t;
-    }
-  } catch {}
-}
-
-iframe.addEventListener("load", () => {
-  updateTabTitle();
-
-  try {
-    const observer = new MutationObserver(updateTabTitle);
-
-    observer.observe(
-      iframe.contentDocument.querySelector("title"),
-      {
-        childList: true,
-        subtree: true,
-        characterData: true
+      function updateTabTitle() {
+        try {
+          const rawTitle = iframe.contentDocument?.title;
+          const finalTitle = processTitle(rawTitle);
+          if (finalTitle) {
+            title.textContent = finalTitle;
+            iframe.title = finalTitle;
+          }
+        } catch {}
       }
-    );
-  } catch {}
 
-  setInterval(updateTabTitle, 500);
-});
+      iframe.addEventListener("load", () => {
+        updateTabTitle();
+
+        try {
+          const observer = new MutationObserver(updateTabTitle);
+
+          observer.observe(
+            iframe.contentDocument.querySelector("title"),
+            {
+              childList: true,
+              subtree: true,
+              characterData: true
+            }
+          );
+        } catch {}
+
+        setInterval(updateTabTitle, 500);
+      });
 
       tab.addEventListener("click", () => {
         setActive(tabId);
         setTimeout(() => {
           try{
             const t = iframe.contentWindow?.document?.title;
-            if (t && t.trim().length) title.textContent = t.trim();
+            const finalTitle = processTitle(t);
+            if (finalTitle) {
+              title.textContent = finalTitle;
+            }
           }catch{}
         }, 200);
       });
@@ -466,18 +477,18 @@ iframe.addEventListener("load", () => {
       framesEl.appendChild(iframe);
       tabsEl.insertBefore(tab, newTabBtnEl);
 
-      tabs.set(tabId, { tabNumber, tabEl: tab, iframe, titleEl: title });
+      tabs.set(tabId, { tabEl: tab, iframe, titleEl: title });
 
       setActive(tabId);
-
 
       const poll = setInterval(() => {
         const info = tabs.get(tabId);
         if (!info) { clearInterval(poll); return; }
         try{
           const t = iframe.contentWindow?.document?.title;
-          if (t && t.trim().length && info.titleEl.textContent !== t.trim()){
-            info.titleEl.textContent = t.trim();
+          const finalTitle = processTitle(t);
+          if (finalTitle && info.titleEl.textContent !== finalTitle){
+            info.titleEl.textContent = finalTitle;
           }
         }catch{}
       }, 1000);
@@ -498,11 +509,9 @@ iframe.addEventListener("load", () => {
           setActive(remaining[0]);
         } else {
           activeTabId = null;
-          // If there are no tabs left, redirect to home
           window.location.href = HOME_URL;
         }
       } else {
-        // If somehow we removed the last tab while not active, still redirect
         if (remaining.length === 0) window.location.href = HOME_URL;
       }
     }
@@ -514,7 +523,7 @@ iframe.addEventListener("load", () => {
       tabsEl.appendChild(homeBtnEl);
       tabsEl.appendChild(newTabBtnEl);
 
-      createProjectTab(1);
+      createProjectTab();
     }
 
     init();
