@@ -215,6 +215,7 @@ class MenuBar extends React.Component {
             'handleClickSeeInside',
             'handleClickNew',
             'handleClickNewWindow',
+            'handleClickNewTab',
             'handleClickRemix',
             'handleClickSave',
             'handleClickSaveAsCopy',
@@ -254,6 +255,18 @@ class MenuBar extends React.Component {
     handleClickNewWindow () {
         this.props.onClickNewWindow();
         this.props.onRequestCloseFile();
+    }
+    handleClickNewTab () {
+    window.history.pushState(
+        {},
+        '',
+        `/tabs${window.location.search}${window.location.hash}`
+    );
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    this.props.onRequestCloseFile();
+}
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    this.props.onRequestCloseFile();
     }
     handleClickRemix () {
         this.props.onClickRemix();
