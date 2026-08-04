@@ -455,6 +455,9 @@ handleClickSeeInside () {
         };
     }
     render () {
+        const isEmbeddedEditor = window.parent !== window &&
+    window.location.pathname.includes('editor');
+        
         const saveNowMessage = (
             <FormattedMessage
                 defaultMessage="Save now"
@@ -625,12 +628,14 @@ handleClickSeeInside () {
                                             />
                                         </MenuItem>
                                     )}
-                                    <MenuItem
-    isRtl={this.props.isRtl}
-    onClick={this.handleClickNewTab}
->
-    New Tab
-</MenuItem>
+{!isEmbeddedEditor && (
+    <MenuItem
+        isRtl={this.props.isRtl}
+        onClick={this.handleClickNewTab}
+    >
+        New Tab
+    </MenuItem>
+)}
                                     {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
                                         <MenuSection>
                                             {this.props.canSave && (
