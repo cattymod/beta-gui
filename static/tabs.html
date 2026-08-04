@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CattyMod Studio</title>
+  <title>CattyMod Tabs</title>
   <style>
     :root{
       --bg:#f5f6f7;
@@ -416,8 +416,37 @@
       tab.appendChild(x);
 
       const iframe = document.createElement("iframe");
-      iframe.title = `Project ${tabNumber}`;
-      iframe.src = EDITOR_URL;
+iframe.title = `Project ${tabNumber}`;
+iframe.src = EDITOR_URL;
+
+function updateTabTitle() {
+  try {
+    const t = iframe.contentDocument?.title?.trim();
+    if (t) {
+      title.textContent = t;
+      iframe.title = t;
+    }
+  } catch {}
+}
+
+iframe.addEventListener("load", () => {
+  updateTabTitle();
+
+  try {
+    const observer = new MutationObserver(updateTabTitle);
+
+    observer.observe(
+      iframe.contentDocument.querySelector("title"),
+      {
+        childList: true,
+        subtree: true,
+        characterData: true
+      }
+    );
+  } catch {}
+
+  setInterval(updateTabTitle, 500);
+});
 
       tab.addEventListener("click", () => {
         setActive(tabId);
@@ -441,12 +470,6 @@
 
       setActive(tabId);
 
-      setTimeout(() => {
-        try{
-          const t = iframe.contentWindow?.document?.title;
-          if (t && t.trim().length) title.textContent = t.trim();
-        }catch{}
-      }, 250);
 
       const poll = setInterval(() => {
         const info = tabs.get(tabId);
