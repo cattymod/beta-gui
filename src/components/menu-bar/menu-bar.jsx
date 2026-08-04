@@ -265,9 +265,6 @@ class MenuBar extends React.Component {
     window.dispatchEvent(new PopStateEvent('popstate'));
     this.props.onRequestCloseFile();
 }
-    window.dispatchEvent(new PopStateEvent('popstate'));
-    this.props.onRequestCloseFile();
-    }
     handleClickRemix () {
         this.props.onClickRemix();
         this.props.onRequestCloseFile();
