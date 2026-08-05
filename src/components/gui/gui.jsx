@@ -8,8 +8,9 @@ import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
-const hideSeeProjectPage = window.parent !== window && window.location.pathname.includes('editor');
-
+const hideSeeProjectPage =
+    window.parent !== window &&
+    window.location.hostname !== "studio.cattymod.app";
 import Blocks from '../../containers/blocks.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
