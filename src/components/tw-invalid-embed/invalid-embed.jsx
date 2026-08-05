@@ -24,7 +24,7 @@ const InvalidEmbed = () => (
             {' for more information. You need to replace the iframe src with the embed page:'}
         </p>
         <p className={styles.code}>
-            {'https://studio.cattymod.app/embed#project'}
+            {'https://studio.cattymod.app/embed.html#project'}
         </p>
         <p>
             {'Here\'s an example of a full iframe to embed a project:'}
