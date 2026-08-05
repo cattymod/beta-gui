@@ -225,6 +225,7 @@ const Footer = () => (
         </a>
     </div>
 </div>
+</footer>
 );
 
 class Interface extends React.Component {
