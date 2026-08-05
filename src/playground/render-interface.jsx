@@ -120,112 +120,111 @@ const Footer = () => (
                 />
             </div>
 
-           <div className={styles.footerColumns}>
-    <div className={styles.footerSection}>
-        <a
-            href="credits.html"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Credits"
-                description="Credits link in footer"
-                id="tw.footer.credits"
-            />
-        </a>
-    </div>
+            <div className={styles.footerColumns}>
+                <div className={styles.footerSection}>
+                    <a
+                        href="credits.html"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Credits"
+                            description="Credits link in footer"
+                            id="tw.footer.credits"
+                        />
+                    </a>
+                </div>
 
-    <div className={styles.footerSection}>
-        <a href="https://studio.cattymod.app/#1334179304">
-            {/* Do not translate */}
-            {'Idea Generator'}
-        </a>
+                <div className={styles.footerSection}>
+                    <a href="https://studio.cattymod.app/#1334179304">
+                        {'Idea Generator'}
+                    </a>
 
-        <a
-            href="https://cattymod.app/docs"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            {/* Do not translate */}
-            {'CattyMod Docs'}
-        </a>
+                    <a
+                        href="https://cattymod.app/docs"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        {'CattyMod Docs'}
+                    </a>
 
-        <a
-            href="https://cattymod.app"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Homepage"
-                description="Go to the homepage"
-                id="tw.footer.embed"
-            />
-        </a>
+                    <a
+                        href="https://cattymod.app"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Homepage"
+                            description="Go to the homepage"
+                            id="tw.footer.embed"
+                        />
+                    </a>
 
-        <a
-            href="https://scratch2.cattymod.app"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Scratch 2 Legacy"
-                description="Run Scratch 2 anytime, anywhere!"
-                id="tw.footer.parameters"
-            />
-        </a>
+                    <a
+                        href="https://scratch2.cattymod.app"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Scratch 2 Legacy"
+                            description="Run Scratch 2 anytime, anywhere!"
+                            id="tw.footer.parameters"
+                        />
+                    </a>
 
-        <a
-            href="https://cattymod.app/desktop"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Desktop"
-                description="Run CattyMod Offline"
-                id="tw.footer.documentation"
-            />
-        </a>
-    </div>
+                    <a
+                        href="https://cattymod.app/desktop"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Desktop"
+                            description="Run CattyMod Offline"
+                            id="tw.footer.documentation"
+                        />
+                    </a>
+                </div>
 
-    <div className={styles.footerSection}>
-        <a
-            href="https://scratch.mit.edu/projects/1335032585/"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Feedback & Bugs"
-                description="Link to feedback/bugs page"
-                id="tw.feedback"
-            />
-        </a>
+                <div className={styles.footerSection}>
+                    <a
+                        href="https://scratch.mit.edu/projects/1335032585/"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Feedback & Bugs"
+                            description="Link to feedback/bugs page"
+                            id="tw.feedback"
+                        />
+                    </a>
 
-        <a
-            href="https://github.com/CattyMod/"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Source Code"
-                description="Link to source code"
-                id="tw.code"
-            />
-        </a>
+                    <a
+                        href="https://github.com/CattyMod/"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Source Code"
+                            description="Link to source code"
+                            id="tw.code"
+                        />
+                    </a>
 
-        <a
-            href="privacy.html"
-            target={isEmbedded ? "_blank" : undefined}
-            rel={isEmbedded ? "noopener noreferrer" : undefined}
-        >
-            <FormattedMessage
-                defaultMessage="Privacy Policy"
-                description="Link to privacy policy"
-                id="tw.privacy"
-            />
-        </a>
-    </div>
-</div>
-</footer>
+                    <a
+                        href="privacy.html"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Privacy Policy"
+                            description="Link to privacy policy"
+                            id="tw.privacy"
+                        />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
 );
 
 class Interface extends React.Component {
