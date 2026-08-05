@@ -14,17 +14,17 @@ const InvalidEmbed = () => (
         <p>
             {'See '}
             <a
-                href="https://docs.turbowarp.org/embedding"
+                href="https://cattymod.app/docs/embedding"
                 target="_blank"
                 rel="noreferrer"
             >
-                {'docs.turbowarp.org/embedding'}
+                {'cattymod.app/docs/embedding'}
             </a>
             {/* eslint-disable-next-line max-len */}
             {' for more information. You need to replace the iframe src with the embed page:'}
         </p>
         <p className={styles.code}>
-            {'https://turbowarp.org/<project ID>/embed'}
+            {'https://studio.cattymod.app/embed#project'}
         </p>
         <p>
             {'Here\'s an example of a full iframe to embed a project:'}
