@@ -455,8 +455,7 @@ handleClickSeeInside () {
         };
     }
     render () {
-        const isEmbeddedEditor = window.parent !== window &&
-    window.location.pathname.includes('editor');
+        const isEmbeddedEditor = window.parent !== window;
         
         const saveNowMessage = (
             <FormattedMessage
