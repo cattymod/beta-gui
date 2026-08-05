@@ -47,10 +47,9 @@ import {APP_NAME} from '../lib/brand.js';
 import styles from './interface.css';
 
 const isEmbedded = window.parent !== window;
+const isEditor = window.location.pathname.includes('editor');
 
-const parentIsStudio = document.referrer.startsWith('https://studio.cattymod.app/');
-
-const isInvalidEmbed = isEmbedded && parentIsStudio;
+const isInvalidEmbed = isEmbedded && !isEditor;
 
 const handleClickAddonSettings = addonId => {
     // addonId might be a string of the addon to focus on, undefined, or an event (treat like undefined)
