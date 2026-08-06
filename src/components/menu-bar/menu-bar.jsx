@@ -1008,7 +1008,8 @@ handleClickSeeInside () {
                         </div>
                     )}
                     
-                    {!(window.parent !== window && window.location.pathname.includes('editor')) && (
+                    {!(window.parent !== window &&
+  !new URLSearchParams(window.location.search).has("showprojectpage")) && (
                     <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
                         {this.props.enableCommunity ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
