@@ -3140,7 +3140,7 @@
   "costumes": [
     {
       "assetId": "54340d031038257da843a92a9709edea",
-      "name": "costume1",
+      "name": "Dango-a",
       "bitmapResolution": 1,
       "md5ext": "54340d031038257da843a92a9709edea.svg",
       "dataFormat": "svg",
@@ -3149,7 +3149,7 @@
     },
     {
       "assetId": "aaeabac240d068893ffc007b1a3e29c4",
-      "name": "costume2",
+      "name": "Dango-b",
       "bitmapResolution": 1,
       "md5ext": "aaeabac240d068893ffc007b1a3e29c4.svg",
       "dataFormat": "svg",
@@ -3158,7 +3158,7 @@
     },
     {
       "assetId": "6762e34d001304dd6e6a24dee91b86bd",
-      "name": "costume3",
+      "name": "Dango-c",
       "bitmapResolution": 1,
       "md5ext": "6762e34d001304dd6e6a24dee91b86bd.svg",
       "dataFormat": "svg",
@@ -3167,7 +3167,7 @@
     },
     {
       "assetId": "9dd36d03acb6f3842d0e82fb03ad7d1a",
-      "name": "costume4",
+      "name": "Dango-d",
       "bitmapResolution": 1,
       "md5ext": "9dd36d03acb6f3842d0e82fb03ad7d1a.svg",
       "dataFormat": "svg",
