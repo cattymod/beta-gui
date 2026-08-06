@@ -136,7 +136,11 @@ const Footer = () => (
                 </div>
 
                 <div className={styles.footerSection}>
-                    <a href="https://studio.cattymod.app/#1334179304">
+                    <a
+                        href="https://studio.cattymod.app/#1334179304"
+                        target={isEmbedded ? '_blank' : undefined}
+                        rel={isEmbedded ? 'noopener noreferrer' : undefined}
+                    >
                         {'Idea Generator'}
                     </a>
 
