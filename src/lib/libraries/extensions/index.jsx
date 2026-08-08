@@ -452,6 +452,21 @@ export default [
     tags: ['cattymod'],        
     incompatibleWithScratch: true,
     featured: true
+},
+{
+    name: 'Python',
+    extensionId: 'python',
+    extensionURL: 'https://cattymod.app/extensions/python.js',
+    iconURL: 'https://cattymod.app/extensions/python.svg',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
+    description: 'Run Python code and integrate Python scripts directly into your projects.',
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
+    featured: true
 }
 ];
 
