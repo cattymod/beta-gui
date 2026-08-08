@@ -8,7 +8,7 @@
     position: relative;
     width: 100%;
     padding: 0.6rem 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: system-ui, "Segoe UI", sans-serif;
 }
 
 .body {
