@@ -10,7 +10,7 @@ const NEWS_ITEMS = {
         id: 'cattymod-beta',
         body: (
             <>
-                You are on CattyMod Beta right now.
+                You are currently on CattyMod Beta.
             </>
         )
     },
