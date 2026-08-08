@@ -23,19 +23,7 @@ const messages = defineMessages({
     }
 });
 
-const TURBOWARP_INSET_ICON = `data:image/svg+xml,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" fill="#FF4C4C"/>
-    <image
-        href="https://cattymod.app/assets/turbowarp.svg"
-        x="18"
-        y="18"
-        width="64"
-        height="64"
-        preserveAspectRatio="xMidYMid meet"
-    />
-</svg>
-`)}`;
+const TURBOWARP_INSET_ICON = 'https://cattymod.app/assets/turbowarp.svg';
 
 const toLibraryItem = extension => {
     if (typeof extension === 'object') {
