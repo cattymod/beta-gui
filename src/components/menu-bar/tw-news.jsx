@@ -3,77 +3,98 @@ import {isScratchDesktop} from '../../lib/isScratchDesktop';
 import CloseButton from '../close-button/close-button.jsx';
 import styles from './tw-news.css';
 
-const LOCAL_STORAGE_KEY = 'tw:closedNews';
-const NEWS_ID = 'scratch-vulnerability';
+const LOCAL_STORAGE_KEY = 'cattymod:closedNews';
 
-const newsAppliesToUser = () => false;
+const NEWS_ITEMS = {
+    beta: {
+        id: 'cattymod-beta',
+        body: (
+            <>
+                You are on CattyMod Beta. Go to{' '}
+                <a href="https://studio.cattymod.app">
+                    studio.cattymod.app
+                </a>{' '}
+                for the full release.
+            </>
+        )
+    },
+    release: {
+        id: 'python-extension',
+        body: (
+            <>
+                Introducing the new Python Extension for CattyMod! Check it
+                out in the extension gallery.
+            </>
+        )
+    }
+};
 
-const NewsBody = () => (
-    <div
-        className={styles.text}
-        lang="en"
-    >
-        <div>
-            {/* eslint-disable-next-line max-len */}
-            {'We discovered a critical vulnerability in all versions of Scratch. In the desktop app, opening a malicious project could install ransomware on your computer.'}
-        </div>
-        <div>
-            {/* eslint-disable-next-line max-len */}
-            {'We reported this to Scratch two years ago, but no fix has been released yet. The latest TurboWarp is not affected. '}
-            <a
-                href="https://muffin.ink/blog/scratch-vulnerability-disclosure/"
-                target="_blank"
-                rel="noreferrer"
-            >
-                {'More details on my blog.'}
-            </a>
-        </div>
-    </div>
-);
+const getCurrentNews = () => {
+    if (window.location.hostname === 'beta.cattymod.app') {
+        return NEWS_ITEMS.beta;
+    }
 
-const getIsClosedInLocalStorage = () => {
+    return NEWS_ITEMS.release;
+};
+
+const getIsClosedInLocalStorage = (newsId) => {
     try {
-        return localStorage.getItem(LOCAL_STORAGE_KEY) === NEWS_ID;
+        return localStorage.getItem(LOCAL_STORAGE_KEY) === newsId;
     } catch (e) {
         return false;
     }
 };
 
-const markAsClosedInLocalStorage = () => {
+const markAsClosedInLocalStorage = (newsId) => {
     try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, NEWS_ID);
+        localStorage.setItem(LOCAL_STORAGE_KEY, newsId);
     } catch (e) {
         // ignore
     }
 };
 
 class TWNews extends React.Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
+
+        const news = getCurrentNews();
+
         this.state = {
-            closed: getIsClosedInLocalStorage() || !newsAppliesToUser()
+            closed: getIsClosedInLocalStorage(news.id)
         };
+
         this.handleClose = this.handleClose.bind(this);
     }
-    handleClose () {
-        markAsClosedInLocalStorage();
+
+    handleClose() {
+        const news = getCurrentNews();
+
+        markAsClosedInLocalStorage(news.id);
+
         this.setState({
             closed: true
         }, () => {
             window.dispatchEvent(new Event('resize'));
         });
     }
-    render () {
+
+    render() {
         if (this.state.closed || isScratchDesktop()) {
             return null;
         }
+
+        const news = getCurrentNews();
+
         return (
             <div className={styles.news}>
-                <NewsBody />
                 <CloseButton
-                    className={styles.close}
+                    className={styles.closeButton}
                     onClick={this.handleClose}
                 />
+
+                <div className={styles.body}>
+                    {news.body}
+                </div>
             </div>
         );
     }
