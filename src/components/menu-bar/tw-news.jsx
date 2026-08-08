@@ -10,11 +10,7 @@ const NEWS_ITEMS = {
         id: 'cattymod-beta',
         body: (
             <>
-                You are on CattyMod Beta. Go to{' '}
-                <a href="https://studio.cattymod.app">
-                    studio.cattymod.app
-                </a>{' '}
-                for the full release.
+                You are on CattyMod Beta. Go to <a href="https://studio.cattymod.app">studio.cattymod.app</a> for the full release.
             </>
         )
     },
@@ -22,8 +18,7 @@ const NEWS_ITEMS = {
         id: 'python-extension',
         body: (
             <>
-                Introducing the new Python Extension for CattyMod! Check it
-                out in the extension gallery.
+                Introducing the new Python Extension for CattyMod! Check it out in the extension gallery.
             </>
         )
     }
