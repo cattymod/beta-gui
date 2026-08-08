@@ -15,7 +15,7 @@ const NEWS_ITEMS = {
         )
     },
     release: {
-        id: 'python-extension',
+        id: 'new-extensions',
         body: (
             <>
                 New extensions are here! 🚀 Explore the latest additions to CattyMod.
