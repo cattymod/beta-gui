@@ -23,6 +23,8 @@ const messages = defineMessages({
     }
 });
 
+const TURBOWARP_INSET_ICON = 'https://cattymod.app/assets/turbowarp.svg';
+
 const toLibraryItem = extension => {
     if (typeof extension === 'object') {
         return ({
@@ -42,11 +44,16 @@ const translateGalleryItem = (extension, locale) => ({
 let cachedGallery = null;
 
 const fetchLibrary = async () => {
-    const res = await fetch('https://extensions.turbowarp.org/generated-metadata/extensions-v0.json');
+    const res = await fetch(
+        'https://extensions.turbowarp.org/generated-metadata/extensions-v0.json'
+    );
+
     if (!res.ok) {
         throw new Error(`HTTP status ${res.status}`);
     }
+
     const data = await res.json();
+
     return data.extensions.map(extension => ({
         name: extension.name,
         nameTranslations: extension.nameTranslations || {},
@@ -54,8 +61,15 @@ const fetchLibrary = async () => {
         descriptionTranslations: extension.descriptionTranslations || {},
         extensionId: extension.id,
         extensionURL: `https://extensions.turbowarp.org/${extension.slug}.js`,
-        iconURL: `https://extensions.turbowarp.org/${extension.image || 'images/unknown.svg'}`,
+
+        iconURL: `https://extensions.turbowarp.org/${
+            extension.image || 'images/unknown.svg'
+        }`,
+
         tags: ['tw'],
+
+        insetIconURL: TURBOWARP_INSET_ICON,
+
         credits: [
             ...(extension.original || []),
             ...(extension.by || [])
@@ -65,20 +79,31 @@ const fetchLibrary = async () => {
                     <a
                         href={credit.link}
                         target="_blank"
-                        rel="noreferrer"
-                        key={credit.name}
+                        rel="noopener noreferrer"
                     >
                         {credit.name}
                     </a>
                 );
             }
+
             return credit.name;
         }),
-        docsURI: extension.docs ? `https://extensions.turbowarp.org/${extension.slug}` : null,
-        samples: extension.samples ? extension.samples.map(sample => ({
-            href: `${process.env.ROOT}editor?project_url=https://extensions.turbowarp.org/samples/${encodeURIComponent(sample)}.sb3`,
-            text: sample
-        })) : null,
+
+        docsURI: extension.docs
+            ? `https://extensions.turbowarp.org/${extension.slug}`
+            : null,
+
+        samples: extension.samples
+            ? extension.samples.map(sample => ({
+                href: `${
+                    process.env.ROOT
+                }editor?project_url=https://extensions.turbowarp.org/samples/${encodeURIComponent(
+                    sample
+                )}.sb3`,
+                text: sample
+            }))
+            : null,
+
         incompatibleWithScratch: !extension.scratchCompatible,
         featured: true
     }));
@@ -87,15 +112,18 @@ const fetchLibrary = async () => {
 class ExtensionLibrary extends React.PureComponent {
     constructor (props) {
         super(props);
+
         bindAll(this, [
             'handleItemSelect'
         ]);
+
         this.state = {
             gallery: cachedGallery,
             galleryError: null,
             galleryTimedOut: false
         };
     }
+
     componentDidMount () {
         if (!this.state.gallery) {
             const timeout = setTimeout(() => {
@@ -107,20 +135,25 @@ class ExtensionLibrary extends React.PureComponent {
             fetchLibrary()
                 .then(gallery => {
                     cachedGallery = gallery;
+
                     this.setState({
                         gallery
                     });
+
                     clearTimeout(timeout);
                 })
                 .catch(error => {
                     log.error(error);
+
                     this.setState({
                         galleryError: error
                     });
+
                     clearTimeout(timeout);
                 });
         }
     }
+
     handleItemSelect (item) {
         if (item.href) {
             return;
@@ -140,6 +173,7 @@ class ExtensionLibrary extends React.PureComponent {
         }
 
         const url = item.extensionURL ? item.extensionURL : extensionId;
+
         if (!item.disabled) {
             if (this.props.vm.extensionManager.isExtensionLoaded(extensionId)) {
                 this.props.onCategorySelected(extensionId);
@@ -156,14 +190,24 @@ class ExtensionLibrary extends React.PureComponent {
             }
         }
     }
+
     render () {
         let library = null;
-        if (this.state.gallery || this.state.galleryError || this.state.galleryTimedOut) {
+
+        if (
+            this.state.gallery ||
+            this.state.galleryError ||
+            this.state.galleryTimedOut
+        ) {
             library = extensionLibraryContent.map(toLibraryItem);
+
             library.push('---');
+
             if (this.state.gallery) {
                 library.push(toLibraryItem(galleryMore));
+
                 const locale = this.props.intl.locale;
+
                 library.push(
                     ...this.state.gallery
                         .filter(i => i.extensionId !== 'faceSensing')

@@ -25,15 +25,21 @@ const messages = defineMessages({
     }
 });
 
+const TURBOWARP_INSET_ICON = 'https://cattymod.app/assets/turbowarp.svg';
+
 /* eslint-disable react/prefer-stateless-function */
 class LibraryItemComponent extends React.PureComponent {
     render () {
         const favoriteMessage = this.props.intl.formatMessage(
             this.props.favorite ? messages.unfavorite : messages.favorite
         );
+
         const favorite = (
             <button
-                className={classNames(styles.favoriteContainer, {[styles.active]: this.props.favorite})}
+                className={classNames(
+                    styles.favoriteContainer,
+                    {[styles.active]: this.props.favorite}
+                )}
                 onClick={this.props.onFavorite}
             >
                 <img
@@ -46,6 +52,8 @@ class LibraryItemComponent extends React.PureComponent {
             </button>
         );
 
+        const isTurboWarpInset = this.props.insetIconURL === TURBOWARP_INSET_ICON;
+
         return this.props.featured ? (
             <div
                 className={classNames(
@@ -54,7 +62,8 @@ class LibraryItemComponent extends React.PureComponent {
                     {
                         [styles.disabled]: this.props.disabled
                     },
-                    typeof this.props.extensionId === 'string' ? styles.libraryItemExtension : null,
+                    typeof this.props.extensionId === 'string' ?
+                        styles.libraryItemExtension : null,
                     this.props.hidden ? styles.hidden : null
                 )}
                 onClick={this.props.onClick}
@@ -69,6 +78,7 @@ class LibraryItemComponent extends React.PureComponent {
                             />
                         </div>
                     ) : null}
+
                     <img
                         className={styles.featuredImage}
                         loading="lazy"
@@ -76,23 +86,44 @@ class LibraryItemComponent extends React.PureComponent {
                         src={this.props.iconURL}
                     />
                 </div>
+
                 {this.props.insetIconURL ? (
-                    <div className={styles.libraryItemInsetImageContainer}>
+                    <div
+                        className={styles.libraryItemInsetImageContainer}
+                        style={isTurboWarpInset ? {
+                            backgroundColor: '#FF4C4C'
+                        } : undefined}
+                    >
                         <img
                             className={styles.libraryItemInsetImage}
                             src={this.props.insetIconURL}
                             draggable={false}
+                            style={isTurboWarpInset ? {
+                                width: '70%',
+                                height: '70%',
+                                objectFit: 'contain'
+                            } : undefined}
                         />
                     </div>
                 ) : null}
+
                 <div
-                    className={typeof this.props.extensionId === 'string' ?
-                        classNames(styles.featuredExtensionText, styles.featuredText) : styles.featuredText
+                    className={
+                        typeof this.props.extensionId === 'string' ?
+                            classNames(
+                                styles.featuredExtensionText,
+                                styles.featuredText
+                            ) :
+                            styles.featuredText
                     }
                 >
-                    <span className={styles.libraryItemName}>{this.props.name}</span>
+                    <span className={styles.libraryItemName}>
+                        {this.props.name}
+                    </span>
                     <br />
-                    <span className={styles.featuredDescription}>{this.props.description}</span>
+                    <span className={styles.featuredDescription}>
+                        {this.props.description}
+                    </span>
                 </div>
 
                 {(this.props.docsURI || this.props.samples) && (
@@ -121,7 +152,7 @@ class LibraryItemComponent extends React.PureComponent {
                                 <FormattedMessage
                                     defaultMessage="Sample project"
                                     // eslint-disable-next-line max-len
-                                    description="Appears in the extension list. Links to a sample project for an extension."
+                                    description="Appears in the extension list. Links to additional extension documentation."
                                     id="tw.sample"
                                 />
                             </a>
@@ -150,10 +181,13 @@ class LibraryItemComponent extends React.PureComponent {
                     </div>
                 )}
 
-                {this.props.bluetoothRequired || this.props.internetConnectionRequired || this.props.collaborator ? (
+                {this.props.bluetoothRequired ||
+                this.props.internetConnectionRequired ||
+                this.props.collaborator ? (
                     <div className={styles.featuredExtensionMetadata}>
                         <div className={styles.featuredExtensionRequirement}>
-                            {this.props.bluetoothRequired || this.props.internetConnectionRequired ? (
+                            {this.props.bluetoothRequired ||
+                            this.props.internetConnectionRequired ? (
                                 <div>
                                     <div>
                                         <FormattedMessage
@@ -162,6 +196,7 @@ class LibraryItemComponent extends React.PureComponent {
                                             id="gui.extensionLibrary.requires"
                                         />
                                     </div>
+
                                     <div
                                         className={styles.featuredExtensionMetadataDetail}
                                     >
@@ -171,6 +206,7 @@ class LibraryItemComponent extends React.PureComponent {
                                                 draggable={false}
                                             />
                                         ) : null}
+
                                         {this.props.internetConnectionRequired ? (
                                             <img
                                                 src={internetConnectionIconURL}
@@ -181,6 +217,7 @@ class LibraryItemComponent extends React.PureComponent {
                                 </div>
                             ) : null}
                         </div>
+
                         <div className={styles.featuredExtensionCollaboration}>
                             {this.props.collaborator ? (
                                 <div>
@@ -191,6 +228,7 @@ class LibraryItemComponent extends React.PureComponent {
                                             id="gui.extensionLibrary.collaboration"
                                         />
                                     </div>
+
                                     <div
                                         className={styles.featuredExtensionMetadataDetail}
                                     >
@@ -207,7 +245,8 @@ class LibraryItemComponent extends React.PureComponent {
         ) : (
             <Box
                 className={classNames(
-                    styles.libraryItem, {
+                    styles.libraryItem,
+                    {
                         [styles.hidden]: this.props.hidden
                     }
                 )}
@@ -217,15 +256,31 @@ class LibraryItemComponent extends React.PureComponent {
                 onClick={this.props.onClick}
                 onFocus={this.props.onFocus}
                 onKeyPress={this.props.onKeyPress}
-                onMouseEnter={this.props.showPlayButton ? null : this.props.onMouseEnter}
-                onMouseLeave={this.props.showPlayButton ? null : this.props.onMouseLeave}
+                onMouseEnter={
+                    this.props.showPlayButton ?
+                        null :
+                        this.props.onMouseEnter
+                }
+                onMouseLeave={
+                    this.props.showPlayButton ?
+                        null :
+                        this.props.onMouseLeave
+                }
             >
                 {/* Layers of wrapping is to prevent layout thrashing on animation */}
                 <Box className={styles.libraryItemImageContainerWrapper}>
                     <Box
                         className={styles.libraryItemImageContainer}
-                        onMouseEnter={this.props.showPlayButton ? this.props.onMouseEnter : null}
-                        onMouseLeave={this.props.showPlayButton ? this.props.onMouseLeave : null}
+                        onMouseEnter={
+                            this.props.showPlayButton ?
+                                this.props.onMouseEnter :
+                                null
+                        }
+                        onMouseLeave={
+                            this.props.showPlayButton ?
+                                this.props.onMouseLeave :
+                                null
+                        }
                     >
                         <img
                             className={styles.libraryItemImage}
@@ -235,7 +290,11 @@ class LibraryItemComponent extends React.PureComponent {
                         />
                     </Box>
                 </Box>
-                <span className={styles.libraryItemName}>{this.props.name}</span>
+
+                <span className={styles.libraryItemName}>
+                    {this.props.name}
+                </span>
+
                 {this.props.showPlayButton ? (
                     <PlayButton
                         isPlaying={this.props.isPlaying}
@@ -250,7 +309,6 @@ class LibraryItemComponent extends React.PureComponent {
     }
 }
 /* eslint-enable react/prefer-stateless-function */
-
 
 LibraryItemComponent.propTypes = {
     intl: intlShape,
@@ -272,15 +330,19 @@ LibraryItemComponent.propTypes = {
         PropTypes.string,
         PropTypes.node
     ]),
-    credits: PropTypes.arrayOf(PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.node
-    ])),
+    credits: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.node
+        ])
+    ),
     docsURI: PropTypes.string,
-    samples: PropTypes.arrayOf(PropTypes.shape({
-        href: PropTypes.string,
-        text: PropTypes.string
-    })),
+    samples: PropTypes.arrayOf(
+        PropTypes.shape({
+            href: PropTypes.string,
+            text: PropTypes.string
+        })
+    ),
     favorite: PropTypes.bool,
     onFavorite: PropTypes.func,
     onBlur: PropTypes.func.isRequired,
