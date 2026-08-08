@@ -77,14 +77,24 @@ class LibraryItemComponent extends React.PureComponent {
                     />
                 </div>
                 {this.props.insetIconURL ? (
-                    <div className={styles.libraryItemInsetImageContainer}>
-                        <img
-                            className={styles.libraryItemInsetImage}
-                            src={this.props.insetIconURL}
-                            draggable={false}
-                        />
-                    </div>
-                ) : null}
+    <div
+        className={styles.libraryItemInsetImageContainer}
+        style={{
+            backgroundColor: '#FF4C4C'
+        }}
+    >
+        <img
+            className={styles.libraryItemInsetImage}
+            src={this.props.insetIconURL}
+            draggable={false}
+            style={{
+                width: '70%',
+                height: '70%',
+                objectFit: 'contain'
+            }}
+        />
+    </div>
+) : null}
                 <div
                     className={typeof this.props.extensionId === 'string' ?
                         classNames(styles.featuredExtensionText, styles.featuredText) : styles.featuredText
