@@ -18,7 +18,7 @@ const NEWS_ITEMS = {
         id: 'new-extensions',
         body: (
             <>
-                New extensions are here! 🚀 Explore the latest additions to CattyMod.
+                New extensions are here! Explore the latest additions to CattyMod.
             </>
         )
     }
