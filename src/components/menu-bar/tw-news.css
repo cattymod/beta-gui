@@ -10,7 +10,7 @@
     padding: 0.375rem 0;
 }
 
-.text {
+.body {
     color: white;
     text-align: center;
     display: flex;
@@ -18,12 +18,12 @@
     gap: 0.25rem;
 }
 
-.text a {
+.body a {
     color: white;
     text-decoration: underline;
 }
 
-.close {
+.closeButton {
     position: absolute;
     right: 1rem;
     top: 50%;
