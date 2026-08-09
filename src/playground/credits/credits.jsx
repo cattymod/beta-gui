@@ -76,7 +76,7 @@ const Credits = () => (
             <section>
                 <h2>Forks, Code Usage and Assets</h2>
                 <p>
-                    {APP_NAME} is based on <a href="https://turbowarp.org/">TurboWarp</a> which is also the base of the Dango sprite.
+                    {APP_NAME} is based on <a href="https://turbowarp.org/">TurboWarp</a> which also contains the base of the Dango sprite.
                 </p>
                 <p>
                      Several icons are provided by <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide Icons</a>.
