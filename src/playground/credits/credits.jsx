@@ -76,7 +76,7 @@ const Credits = () => (
             <section>
                 <h2>Forks, Code Usage and Assets</h2>
                 <p>
-                    {APP_NAME} is based on <a href="https://turbowarp.org/">TurboWarp</a>.
+                    {APP_NAME} is based on <a href="https://turbowarp.org/">TurboWarp</a> which is also the base of the Dango sprite.
                 </p>
                 <p>
                      Several icons are provided by <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide Icons</a>.
@@ -85,7 +85,10 @@ const Credits = () => (
                     Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a>.
                 </p>
                 <p>
-                    The quote, Try it out icon and Happy face icon from the homepage are from <a href="https://penguinmod.com/">PenguinMod</a>.
+                    The quote, Try it out icon, Happy face icon, Dango with blocks are from or based <a href="https://penguinmod.com/">PenguinMod</a>.
+                </p>
+                <p>
+                    The Dango Artwork that have a server are based on <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>'s images.
                 </p>
             </section>
         )}
