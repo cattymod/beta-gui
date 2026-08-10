@@ -467,7 +467,22 @@ export default [
     tags: ['cattymod'],        
     incompatibleWithScratch: true,
     featured: true
-}
+},
+{
+    name: 'JavaScript',
+    extensionId: 'javascript',
+    extensionURL: 'https://cattymod.app/extensions/javascript.js',
+    iconURL: 'https://cattymod.app/extensions/javascript.svg',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
+    description: 'Run JavaScript commands and more inside of your project.',
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
+    featured: true
+},
 ];
 
 export const galleryLoading = {
