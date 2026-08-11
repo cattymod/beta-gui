@@ -18,13 +18,12 @@
 }
 
 .flex-wrapper {
-    display: flex;
-
     /*
         Make 2 columns:
         a) for the blocks + workspace panes, and
         b) for combined stage menu + stage + sprite/stage selectors
     */
+    display: flex;
     flex-direction: row;
     height: 100%;
 
@@ -38,7 +37,7 @@
 
 .editor-wrapper {
     /*
-        This is carefully balanced--  the minimum width at which the GUI will be displayed is 1024px.
+        This is carefully balanced-- the minimum width at which the GUI will be displayed is 1024px.
         At that size, the stage pane is 408px wide, with $space of padding to each side.
         However, we must also add the border width to the stage pane. All-in-all, the stage pane's final width is
         408px + ($space + $stage-standard-border-width * 2) (one border & padding per left/right side).
@@ -56,11 +55,13 @@
     flex-direction: column;
 }
 
+/* Code / Costumes / Sounds tabs */
+
 .tab-list {
     height: $stage-menu-height;
-    width: 250px; /* Match width of the toolbox */
+    width: 250px;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     flex-shrink: 0;
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -72,17 +73,24 @@
     border-bottom: 0 !important;
 
     color: $text-primary;
+
+    /* Space between the tabs */
+    gap: 0.45rem;
+    padding: 0 0.4rem;
 }
 
 .tab {
-    flex-grow: 1;
-    height: 80%;
-    margin-bottom: 0;
+    flex: 1;
+    height: 72%;
+    margin: 0;
 
-    border-radius: 1rem 1rem 0 0;
+    /* Keep the tabs centered vertically */
+    position: relative;
+
+    border-radius: 10px;
     border: 1px solid $ui-black-transparent;
 
-    padding: 0.125rem 1.25rem 0;
+    padding: 0.125rem 0.65rem;
     font-size: 0.75rem;
 
     background-color: $ui-tertiary;
@@ -94,44 +102,48 @@
 
     user-select: none;
     white-space: nowrap;
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.1s ease;
+
+    /*
+        Slight overlap gives the tabs a connected appearance
+        without copying another implementation.
+    */
 }
 
-[dir="ltr"] .tab {
-    margin-left: -0.5rem;
-}
-
-[dir="rtl"] .tab {
-    margin-right: -0.5rem;
-}
-
-[dir="ltr"] .tab:nth-of-type(1) {
-    margin-left: 0;
-}
-
-[dir="rtl"] .tab:nth-of-type(1) {
-    margin-right: 0;
-}
-
-/* Use z-indices to force left-on-top for tabs */
-.tab:nth-of-type(1) {
-    z-index: 3;
-}
-.tab:nth-of-type(2) {
-    z-index: 2;
-}
-.tab:nth-of-type(3) {
-    z-index: 1;
+.tab + .tab {
+    margin-left: -0.15rem;
 }
 
 .tab:hover {
-  background-color: $ui-primary;
+    background-color: $ui-primary;
+    border-color: $looks-secondary;
+    z-index: 3;
 }
 
 .tab.is-selected {
-    height: 90%;
+    height: 72%;
     color: $looks-secondary;
     background-color: $ui-white;
-    z-index: 4; /* Make sure selected is always above */
+    border-color: $ui-black-transparent;
+    z-index: 4;
+}
+
+.tab:nth-of-type(1) {
+    z-index: 3;
+}
+
+.tab:nth-of-type(2) {
+    z-index: 2;
+}
+
+.tab:nth-of-type(3) {
+    z-index: 1;
 }
 
 .tab img {
@@ -201,14 +213,15 @@
 .stage-and-target-wrapper {
     /*
         Makes rows for children:
-          1) stage menu
-          2) stage
-          3) sprite/stage selectors
+        1) stage menu
+        2) stage
+        3) sprite/stage selectors
         Only reason we need this, is so .targetWrapper, which holds the selectors,
         goes to full vertical height of the window
     */
     display: flex;
     flex-direction: column;
+
     /* pad entire wrapper to the left and right; allow children to fill width */
     padding-left: $space;
     padding-right: $space;
@@ -223,7 +236,7 @@
     flex-basis: 0;
 
     padding-top: $space;
-    min-height: 0; /* this makes it work in Firefox */
+    min-height: 0;
 
     /*
         For making the sprite-selector a scrollable pane
@@ -244,7 +257,7 @@
     background: $looks-secondary;
 
     border: 1px solid $looks-secondary;
-    box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
+    box-sizing: content-box;
 }
 
 $fade-out-distance: 15px;
@@ -254,11 +267,13 @@ $fade-out-distance: 15px;
     position: absolute;
     top: calc(calc(-1 * $fade-out-distance) - 1px);
     left: -1px;
-    background: linear-gradient(rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15));
+    background: linear-gradient(
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0.15)
+    );
     height: $fade-out-distance;
     width: calc(100% + 0.5px);
 }
-
 
 .extension-button {
     background: none;
@@ -304,6 +319,7 @@ $fade-out-distance: 15px;
     position: relative;
     z-index: $z-index-menu-bar;
 }
+
 /* Alerts */
 
 .alerts-container {
@@ -331,6 +347,7 @@ $fade-out-distance: 15px;
     left: 0;
     width: 100%;
     height: 100%;
+
     /* overridden by JS; this will be used if the browser can't understand that color */
     background-color: white;
 }
