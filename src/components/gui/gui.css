@@ -58,10 +58,9 @@
 
 .tab-list {
     height: $stage-menu-height;
-    width: 100%;
+    width: 250px;
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-shrink: 0;
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -80,13 +79,13 @@
 }
 
 .tab {
-    flex: 0 0 auto;
+    flex: 1;
     height: 70%;
     margin: 0;
 
-    /* Move the tabs slightly above the editor */
+    /* Vertically centered in the editor bar */
     position: relative;
-    top: -4px;
+    top: 0;
 
     /* Rounded rectangle */
     border-radius: 10px;
