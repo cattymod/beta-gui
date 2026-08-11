@@ -23,6 +23,7 @@
         a) for the blocks + workspace panes, and
         b) for combined stage menu + stage + sprite/stage selectors
     */
+    display: flex;
     flex-direction: row;
     height: 100%;
 
@@ -73,25 +74,23 @@
 
     color: $text-primary;
 
-    /* Space between the rounded tabs */
-    gap: 0.6rem;
+    /* Space between the tabs */
+    gap: 0.45rem;
     padding: 0 0.4rem;
 }
 
 .tab {
     flex: 1;
-    height: 70%;
+    height: 72%;
     margin: 0;
 
-    /* Vertically centered in the editor bar */
+    /* Keep the tabs centered vertically */
     position: relative;
-    top: 0;
 
-    /* Rounded rectangle */
     border-radius: 10px;
     border: 1px solid $ui-black-transparent;
 
-    padding: 0.125rem 0.75rem;
+    padding: 0.125rem 0.65rem;
     font-size: 0.75rem;
 
     background-color: $ui-tertiary;
@@ -108,20 +107,43 @@
     transition:
         background-color 0.15s ease,
         border-color 0.15s ease,
-        color 0.15s ease;
+        color 0.15s ease,
+        transform 0.1s ease;
+
+    /*
+        Slight overlap gives the tabs a connected appearance
+        without copying another implementation.
+    */
+}
+
+.tab + .tab {
+    margin-left: -0.15rem;
 }
 
 .tab:hover {
     background-color: $ui-primary;
     border-color: $looks-secondary;
+    z-index: 3;
 }
 
 .tab.is-selected {
-    height: 70%;
+    height: 72%;
     color: $looks-secondary;
     background-color: $ui-white;
     border-color: $ui-black-transparent;
     z-index: 4;
+}
+
+.tab:nth-of-type(1) {
+    z-index: 3;
+}
+
+.tab:nth-of-type(2) {
+    z-index: 2;
+}
+
+.tab:nth-of-type(3) {
+    z-index: 1;
 }
 
 .tab img {
@@ -214,7 +236,7 @@
     flex-basis: 0;
 
     padding-top: $space;
-    min-height: 0; /* this makes it work in Firefox */
+    min-height: 0;
 
     /*
         For making the sprite-selector a scrollable pane
@@ -235,7 +257,7 @@
     background: $looks-secondary;
 
     border: 1px solid $looks-secondary;
-    box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
+    box-sizing: content-box;
 }
 
 $fade-out-distance: 15px;
