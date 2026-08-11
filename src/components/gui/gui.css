@@ -127,7 +127,7 @@
 }
 
 .tab.is-selected {
-    height: 72%;
+    height: 80%;
     color: $looks-secondary;
     background-color: $ui-white;
     border-color: $ui-black-transparent;
