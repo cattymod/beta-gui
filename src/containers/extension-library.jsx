@@ -114,13 +114,15 @@ class ExtensionLibrary extends React.PureComponent {
         super(props);
 
         bindAll(this, [
-            'handleItemSelect'
+            'handleItemSelect',
+            'handleInstallToggle'
         ]);
 
         this.state = {
             gallery: cachedGallery,
             galleryError: null,
-            galleryTimedOut: false
+            galleryTimedOut: false,
+            installedExtensions: new Set()
         };
     }
 
@@ -138,6 +140,8 @@ class ExtensionLibrary extends React.PureComponent {
 
                     this.setState({
                         gallery
+                    }, () => {
+                        this._updateInstalledSet();
                     });
 
                     clearTimeout(timeout);
@@ -151,6 +155,33 @@ class ExtensionLibrary extends React.PureComponent {
 
                     clearTimeout(timeout);
                 });
+        } else {
+            this._updateInstalledSet();
+        }
+    }
+
+    _updateInstalledSet () {
+        try {
+            const installed = new Set();
+            extensionLibraryContent.forEach(i => {
+                if (i && i.extensionId) {
+                    if (this.props.vm && this.props.vm.extensionManager && this.props.vm.extensionManager.isExtensionLoaded(i.extensionId)) {
+                        installed.add(i.extensionId);
+                    }
+                }
+            });
+            if (this.state.gallery) {
+                this.state.gallery.forEach(i => {
+                    if (i && i.extensionId) {
+                        if (this.props.vm && this.props.vm.extensionManager && this.props.vm.extensionManager.isExtensionLoaded(i.extensionId)) {
+                            installed.add(i.extensionId);
+                        }
+                    }
+                });
+            }
+            this.setState({installedExtensions: installed});
+        } catch (e) {
+            log.warn('Failed to compute installed extensions', e);
         }
     }
 
@@ -172,22 +203,49 @@ class ExtensionLibrary extends React.PureComponent {
             return;
         }
 
+        // Keep clicking the item area from auto-installing; users should use the
+        // Install/Uninstall button. Preserve category selection for already-loaded extensions.
+        if (extensionId && this.props.vm && this.props.vm.extensionManager && this.props.vm.extensionManager.isExtensionLoaded(extensionId)) {
+            this.props.onCategorySelected(extensionId);
+        }
+    }
+
+    handleInstallToggle (item) {
+        if (!item || !item.extensionId) return;
+        const extensionId = item.extensionId;
         const url = item.extensionURL ? item.extensionURL : extensionId;
 
-        if (!item.disabled) {
-            if (this.props.vm.extensionManager.isExtensionLoaded(extensionId)) {
-                this.props.onCategorySelected(extensionId);
-            } else {
-                this.props.vm.extensionManager.loadExtensionURL(url)
-                    .then(() => {
-                        this.props.onCategorySelected(extensionId);
-                    })
-                    .catch(err => {
-                        log.error(err);
-                        // eslint-disable-next-line no-alert
-                        alert(err);
+        const manager = this.props.vm && this.props.vm.extensionManager;
+        if (!manager) return;
+
+        if (manager.isExtensionLoaded(extensionId)) {
+            manager.removeExtension(extensionId)
+                .then(() => {
+                    this.setState(old => {
+                        const s = new Set(old.installedExtensions);
+                        s.delete(extensionId);
+                        return {installedExtensions: s};
                     });
-            }
+                })
+                .catch(err => {
+                    log.error(err);
+                    // eslint-disable-next-line no-alert
+                    alert(err);
+                });
+        } else {
+            manager.loadExtensionURL(url)
+                .then(() => {
+                    this.setState(old => {
+                        const s = new Set(old.installedExtensions);
+                        s.add(extensionId);
+                        return {installedExtensions: s};
+                    });
+                })
+                .catch(err => {
+                    log.error(err);
+                    // eslint-disable-next-line no-alert
+                    alert(err);
+                });
         }
     }
 
@@ -231,6 +289,8 @@ class ExtensionLibrary extends React.PureComponent {
                 title={this.props.intl.formatMessage(messages.extensionTitle)}
                 visible={this.props.visible}
                 onItemSelected={this.handleItemSelect}
+                onItemInstall={this.handleInstallToggle}
+                installedExtensions={this.state.installedExtensions}
                 onRequestClose={this.props.onRequestClose}
             />
         );
