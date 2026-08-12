@@ -70,6 +70,16 @@ const messages = defineMessages({
         // eslint-disable-next-line max-len
         description: 'Button in extension list to learn how to use the "return" block from the Custom Reporters extension.',
         id: 'tw.blocks.PROCEDURES_DOCS'
+    },
+    REMOVE_EXTENSION: {
+        defaultMessage: 'Remove Extension',
+        description: 'Menu/confirmation title for removing an extension',
+        id: 'tw.blocks.REMOVE_EXTENSION'
+    },
+    REMOVE_EXTENSION_CONFIRM: {
+        defaultMessage: 'Remove extension {id}?',
+        description: 'Confirmation text asking user to confirm extension removal. {id} is replaced with extension id/name.',
+        id: 'tw.blocks.REMOVE_EXTENSION_CONFIRM'
     }
 });
 
@@ -122,7 +132,10 @@ class Blocks extends React.Component {
             'onWorkspaceMetricsChange',
             'setBlocks',
             'setLocale',
-            'handleEnableProcedureReturns'
+            'handleEnableProcedureReturns',
+            // newly added
+            'attachCategoryContextMenus',
+            'handleCategoryContextMenu'
         ]);
         this.ScratchBlocks.prompt = this.handlePromptStart;
         this.ScratchBlocks.statusButtonCallback = this.handleConnectionModalStart;
@@ -227,6 +240,9 @@ class Blocks extends React.Component {
         for (const category of this.props.vm.runtime._blockInfo) {
             this.handleExtensionAdded(category);
         }
+
+        // Attach right-click handlers for extension categories (may bind to DOM elements)
+        this.attachCategoryContextMenus();
 
         gentlyRequestPersistentStorage();
     }
@@ -335,6 +351,9 @@ class Blocks extends React.Component {
         } else {
             this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos);
         }
+
+        // Re-attach context menu handlers because toolbox DOM was just (re)created.
+        this.attachCategoryContextMenus();
 
         const queue = this.toolboxUpdateQueue;
         this.toolboxUpdateQueue = [];
@@ -662,6 +681,133 @@ class Blocks extends React.Component {
         this.workspace.enableProcedureReturns();
         this.requestToolboxUpdate();
     }
+
+    /**
+     * Attach contextmenu handlers to toolbox categories so right-click can open extension actions.
+     * This attempts to find likely category elements and attach a single contextmenu listener per element.
+     * If no elements are found yet it will retry once on the next macrotask.
+     */
+    attachCategoryContextMenus () {
+        try {
+            const toolbox = this.workspace.toolbox_ || (this.workspace.getToolbox && this.workspace.getToolbox());
+            const toolboxDiv = toolbox && (toolbox.HtmlDiv || toolbox.htmlDiv || toolbox.HtmlDiv) || null;
+            // Fallback: some scratch-blocks versions embed tree under workspace.toolbox_.tree_.getRoot ?
+            const rootEl = toolboxDiv || (this.workspace.toolbox_ && this.workspace.toolbox_.tree_ && this.workspace.toolbox_.tree_.getRoot && this.workspace.toolbox_.tree_.getRoot().getHtmlDiv && this.workspace.toolbox_.tree_.getRoot().getHtmlDiv()) || null;
+
+            const container = toolboxDiv || rootEl || (document && document.querySelector && document.querySelector('.blocklyTreeRoot')) || null;
+            if (!container) {
+                // If we couldn't find it yet, try again in next macrotask (once DOM has settled)
+                setTimeout(() => {
+                    if (!this.unmounted) this.attachCategoryContextMenus();
+                }, 0);
+                return;
+            }
+
+            // Try a few selectors to grab category entries in the toolbox DOM.
+            const categoryEls = Array.from(container.querySelectorAll('.scratchCategoryMenuItem, .blocklyTreeRow, .blocklyTreeItem, .blocklyTreeLabel'));
+
+            if (!categoryEls || categoryEls.length === 0) {
+                // retry once shortly after
+                setTimeout(() => {
+                    if (!this.unmounted) this.attachCategoryContextMenus();
+                }, 0);
+                return;
+            }
+
+            categoryEls.forEach(el => {
+                if (el.dataset.twContextBound) return;
+                el.dataset.twContextBound = '1';
+                el.addEventListener('contextmenu', e => this.handleCategoryContextMenu(e, el));
+            });
+        } catch (err) {
+            // Nonfatal: log and continue.
+            log.warn('attachCategoryContextMenus failed', err);
+        }
+    }
+
+    /**
+     * Handle right-click on a toolbox category element.
+     * Attempts to discover the category id, asks user to confirm removal, then removes it via VM extensionManager.
+     */
+    handleCategoryContextMenu (e, el) {
+        try {
+            e.preventDefault();
+
+            // Try common attribute names where the category id might be present
+            const categoryId =
+                el.getAttribute('data-category-id') ||
+                el.getAttribute('data-id') ||
+                el.getAttribute('data-name') ||
+                el.getAttribute('id') ||
+                (el.dataset && (el.dataset.categoryId || el.dataset.id)) ||
+                null;
+            if (!categoryId) {
+                // as a last resort try to read a child category element for id attribute (some DOM shapes)
+                const catCandidate = el.querySelector && (el.querySelector('[id]') || el.querySelector('[data-id]'));
+                const fallbackId = catCandidate && (catCandidate.getAttribute('data-id') || catCandidate.getAttribute('id'));
+                if (fallbackId) {
+                    return this.handleCategoryContextMenu(e, catCandidate);
+                }
+                return;
+            }
+
+            // Friendly message: attempt to use localized string
+            const confirmMessage = this.props.intl ?
+                this.props.intl.formatMessage(messages.REMOVE_EXTENSION_CONFIRM, {id: categoryId}) :
+                `Remove extension ${categoryId}?`;
+
+            // Show a simple confirmation modal (replace with better UI as desired)
+            if (!window.confirm(confirmMessage)) return;
+
+            // Try to remove via vm.extensionManager which is present in this runtime
+            if (this.props.vm && this.props.vm.extensionManager && typeof this.props.vm.extensionManager.removeExtension === 'function') {
+                this.props.vm.extensionManager.removeExtension(categoryId)
+                    .then(() => {
+                        // Refresh workspace and toolbox to reflect removed extension
+                        try {
+                            if (typeof this.props.vm.refreshWorkspace === 'function') {
+                                this.props.vm.refreshWorkspace();
+                            } else if (this.props.vm.runtime && typeof this.props.vm.runtime._refreshExtensionPrimitives === 'function') {
+                                // best-effort fallback
+                                this.props.vm.runtime._refreshExtensionPrimitives();
+                            }
+                        } catch (err) {
+                            log.warn('Error refreshing workspace after extension removal', err);
+                        }
+                        // Also request local toolbox update
+                        this.requestToolboxUpdate();
+                    })
+                    .catch(e => {
+                        log.warn(`Failed to remove extension ${categoryId}:`, e);
+                        // still attempt to update UI
+                        this.requestToolboxRequestOnError();
+                    });
+            } else if (this.props.vm && typeof this.props.vm.unloadExtension === 'function') {
+                // alternative vm method (not present in this codebase, but handle if added)
+                try {
+                    this.props.vm.unloadExtension(categoryId);
+                    if (typeof this.props.vm.refreshWorkspace === 'function') this.props.vm.refreshWorkspace();
+                    this.requestToolboxUpdate();
+                } catch (err) {
+                    log.warn('vm.unloadExtension failed', err);
+                }
+            } else {
+                log.warn('No extension removal API available on vm', categoryId);
+            }
+        } catch (err) {
+            log.warn('handleCategoryContextMenu error', err);
+        }
+    }
+
+    // helper to keep trying to update the UI when removals fail; keeps things graceful
+    requestToolboxRequestOnError () {
+        try {
+            this.requestToolboxUpdate();
+        } catch (e) {
+            // ignore
+        }
+    }
+
     render () {
         /* eslint-disable no-unused-vars */
         const {
