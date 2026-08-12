@@ -1,6 +1,8 @@
-scratch-gui modified for use in [TurboWarp](https://turbowarp.org/) then modified for [CattyMod](https://cattymod.app).
+# CattyMod GUI
 
-## Setup
+[scratch-gui](https://github.com/scratchfoundation/scratch-gui) modified for use in [TurboWarp](https://turbowarp.org/) then modified for [CattyMod](https://cattymod.app).
+
+## Building the Editor
 
 See https://docs.turbowarp.org/development/getting-started to setup the complete CattyMod environment.
 
