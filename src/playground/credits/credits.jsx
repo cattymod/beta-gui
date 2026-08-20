@@ -85,7 +85,7 @@ const Credits = () => (
                     Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a>.
                 </p>
                 <p>
-                    The quote, Try it out icon, Happy face icon, Dango with blocks are from or based on <a href="https://penguinmod.com/">PenguinMod</a>.
+                    The quote, Try it out icon, Happy face icon, Dango with blocks are from or based on <a href="https://penguinmod.com/">PenguinMod</a>'s.
                 </p>
                 <p>
                     The Dango Artwork that have a server are based on <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>'s images.
