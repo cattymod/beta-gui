@@ -116,12 +116,12 @@ const Credits = () => (
         </section>
 
         <section>
-            <h2>Extension Gallery</h2>
+            <h2>TurboWarp's Extension Gallery</h2>
             <UserList users={UserData.extensionDevelopers} />
         </section>
 
         <section>
-            <h2>TurboWarp's Documentation</h2>
+            <h2>Documentation</h2>
             <UserList users={UserData.docs} />
         </section>
 
