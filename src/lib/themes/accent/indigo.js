@@ -1,24 +1,24 @@
 const guiColors = {
-    'motion-primary': '#5b5dff',
-    'motion-primary-transparent': '#5b5dffe6',
-    'motion-tertiary': '#4a4ccc',
+    'motion-primary': 'hsla(250, 100%, 65%, 1)',
+    'motion-primary-transparent': 'hsla(250, 100%, 65%, 0.9)',
+    'motion-tertiary': 'hsla(250, 100%, 50%, 1)',
 
-    'looks-secondary': '#5b5dff',
-    'looks-transparent': '#5b5dff59',
-    'looks-light-transparent': '#5b5dff26',
-    'looks-secondary-dark': 'hsla(238, 100%, 51%, 1)',
+    'looks-secondary': 'hsla(250, 100%, 65%, 1)',
+    'looks-transparent': 'hsla(250, 100%, 65%, 0.35)',
+    'looks-light-transparent': 'hsla(250, 100%, 65%, 0.15)',
+    'looks-secondary-dark': 'hsla(250, 60%, 50%, 1)',
 
-    'extensions-primary': 'hsla(238, 100%, 65%, 1)',
-    'extensions-tertiary': 'hsla(238, 100%, 40%, 1)',
-    'extensions-transparent': 'hsla(238, 100%, 65%, 0.35)',
-    'extensions-light': 'hsla(238, 57%, 85%, 1)',
+    'extensions-primary': 'hsla(250, 100%, 65%, 1)',
+    'extensions-tertiary': 'hsla(250, 100%, 40%, 1)',
+    'extensions-transparent': 'hsla(250, 100%, 65%, 0.35)',
+    'extensions-light': 'hsla(250, 57%, 85%, 1)',
 
-    'drop-highlight': '#8a8cff'
+    'drop-highlight': 'hsla(250, 100%, 75%, 1)'
 };
 
 const blockColors = {
-    checkboxActiveBackground: '#5b5dff',
-    checkboxActiveBorder: '#4a4ccc'
+    checkboxActiveBackground: 'hsla(250, 100%, 65%, 1)',
+    checkboxActiveBorder: 'hsla(250, 100%, 50%, 1)'
 };
 
 export {
