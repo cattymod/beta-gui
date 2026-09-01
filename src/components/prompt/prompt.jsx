@@ -43,7 +43,7 @@ const messages = defineMessages({
 
 const Packager = () => (
     <a
-        href="https://packager.turbowarp.org"
+        href="https://cattymod.app/packager"
         target="_blank"
         rel="noopener noreferrer"
     >
