@@ -48,7 +48,7 @@ const Packager = () => (
         rel="noopener noreferrer"
     >
         {/* Should not be translated */}
-        {'TurboWarp Packager'}
+        {'CattyMod Packager'}
     </a>
 );
 
