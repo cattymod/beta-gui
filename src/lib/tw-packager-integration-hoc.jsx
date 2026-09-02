@@ -5,7 +5,7 @@ import log from './log';
 import {getIsShowingProject} from '../reducers/project-state';
 
 const PACKAGER_URL = 'https://cattymod.app/packager';
-const PACKAGER_ORIGIN = PACKAGER_URL;
+const PACKAGER_ORIGIN = 'https://cattymod.app;
 
 const PackagerIntegrationHOC = function (WrappedComponent) {
     class PackagerIntegrationComponent extends React.Component {
