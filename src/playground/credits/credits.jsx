@@ -138,6 +138,16 @@ const Credits = () => (
         </section>
 
         <section>
+            <h2>Hosting and Domains</h2>
+            <p>
+                CattyMod is hosted using <a href="https://pages.github.com">GitHub Pages</a>.
+            </p>
+            <p>
+                The domain, <code>cattymod.app</code>, is registered through <a href="https://ionos.co.uk">IONOS UK</a>.
+            </p>
+        </section>
+        
+        <section>
             <h2>Translators</h2>
             <p>
                 More than 100 people have helped translate {APP_NAME} and its addons into many languages
