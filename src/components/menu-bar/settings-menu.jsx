@@ -7,7 +7,7 @@ import LanguageMenu from './language-menu.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
 import {MenuItem, MenuSection, Submenu} from '../menu/menu.jsx';
 import MenuLabel from './tw-menu-label.jsx';
-import TWAccentThemeMenu from './tw-theme-accent.jsx';
+import TWAccentThemeMenu from './tw-accent-theme.jsx';
 import TWGuiThemeMenu from './tw-theme-gui.jsx';
 import TWBlocksThemeMenu from './tw-theme-blocks.jsx';
 import TWDesktopSettings from './tw-desktop-settings.jsx';
@@ -35,9 +35,41 @@ const FULL_BASE64_GREEN_FLAG =
 
 
 /*
- * Go Icon option.
+ * Go Icon preview.
  *
- * This uses the same option/checkmark styling as the Accent menu.
+ * Unlike Accent icons, Go Icons do not use accentIconOuter because
+ * that class is intended for circular color swatches.
+ *
+ * The filter makes the complete SVG white in the menu.
+ */
+const GoIconPreview = props => (
+    <img
+        src={props.icon}
+        draggable={false}
+        width={20}
+        height={20}
+        alt=""
+        style={{
+            width: 20,
+            height: 20,
+            objectFit: 'contain',
+            background: 'transparent',
+            borderRadius: 0,
+            filter: 'brightness(0) invert(1)'
+        }}
+    />
+);
+
+GoIconPreview.propTypes = {
+    icon: PropTypes.string
+};
+
+
+/*
+ * Individual Go Icon option.
+ *
+ * This follows the same structure as AccentMenuItem:
+ * checkmark + icon + label.
  */
 const GoIconMenuItem = ({
     icon,
@@ -58,14 +90,7 @@ const GoIconMenuItem = ({
                 alt=""
             />
 
-            <img
-                className={styles.accentIconOuter}
-                src={icon}
-                draggable={false}
-                width={20}
-                height={20}
-                alt=""
-            />
+            <GoIconPreview icon={icon} />
 
             <span>{label}</span>
         </div>
@@ -83,13 +108,7 @@ GoIconMenuItem.propTypes = {
 /*
  * Go Icon submenu.
  *
- * This is structured the same way as the Accent submenu:
- *
- * MenuItem expanded
- *   └── option
- *   └── Submenu
- *        ├── option
- *        └── option
+ * Styled and structured like the Accent submenu.
  */
 const GoIconMenu = ({
     goIcon,
@@ -103,17 +122,12 @@ const GoIconMenu = ({
             className={styles.option}
             onClick={onOpen}
         >
-            <img
-                className={styles.accentIconOuter}
-                src={
+            <GoIconPreview
+                icon={
                     goIcon === GO_ICON_GREEN_FLAG ?
                         FULL_BASE64_GREEN_FLAG :
                         CATTY_GREEN_FLAG
                 }
-                draggable={false}
-                width={20}
-                height={20}
-                alt=""
             />
 
             <span className={styles.submenuLabel}>
@@ -145,7 +159,6 @@ const GoIconMenu = ({
         </Submenu>
     </MenuItem>
 );
-
 
 GoIconMenu.propTypes = {
     goIcon: PropTypes.string,
@@ -192,7 +205,6 @@ const SettingsMenu = ({
 
 
     function applyGoIcon(mode) {
-        // Disconnect the previous observer.
         try {
             if (window._cattymod_goIcon_observer) {
                 window._cattymod_goIcon_observer.disconnect();
@@ -201,21 +213,16 @@ const SettingsMenu = ({
             // Ignore observer errors.
         }
 
-
         let imgReplacement;
         let svgHrefReplacement;
 
-
         if (mode === GO_ICON_GREEN_FLAG) {
-            // Green Flag.
             imgReplacement = FULL_BASE64_GREEN_FLAG;
             svgHrefReplacement = TURBO_GREEN_FLAG;
         } else {
-            // Play Button.
             imgReplacement = CATTY_GREEN_FLAG;
             svgHrefReplacement = CATTY_GREEN_FLAG;
         }
-
 
         function replaceAll() {
             try {
@@ -244,7 +251,6 @@ const SettingsMenu = ({
                 // Ignore query errors.
             }
 
-
             try {
                 document.querySelectorAll('image').forEach(e => {
                     try {
@@ -272,12 +278,8 @@ const SettingsMenu = ({
             }
         }
 
-
-        // Apply immediately.
         replaceAll();
 
-
-        // Re-apply whenever the DOM changes.
         try {
             const mo = new MutationObserver(replaceAll);
 
@@ -303,8 +305,12 @@ const SettingsMenu = ({
 
         setGoIcon(mode);
 
-        // Close the Go Icon submenu after selecting an option.
+        // Close the submenu.
         setGoIconMenuOpen(false);
+
+        // Close the entire Settings menu,
+        // just like the other Settings options.
+        onRequestClose();
     }
 
 
@@ -340,7 +346,6 @@ const SettingsMenu = ({
                 width={8}
                 height={5}
             />
-
 
             <MenuBarMenu
                 className={menuBarStyles.menuBarMenu}
@@ -396,6 +401,5 @@ SettingsMenu.propTypes = {
     onRequestOpen: PropTypes.func,
     settingsMenuOpen: PropTypes.bool
 };
-
 
 export default SettingsMenu;
