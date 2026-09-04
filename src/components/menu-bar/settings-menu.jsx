@@ -33,7 +33,6 @@ const CATTY_GREEN_FLAG =
 const FULL_BASE64_GREEN_FLAG =
     'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDAsMCwwLTcuNjksMCIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjAuNzUiIHkxPSIxNi43NSIgeDI9IjAuNzUiIHkyPSIwLjc1Ii8+PC9zdmc+';
 
-
 /*
  * Go Icon preview.
  *
@@ -63,7 +62,6 @@ const GoIconPreview = props => (
 GoIconPreview.propTypes = {
     icon: PropTypes.string
 };
-
 
 /*
  * Individual Go Icon option.
@@ -103,7 +101,6 @@ GoIconMenuItem.propTypes = {
     label: PropTypes.string,
     onClick: PropTypes.func
 };
-
 
 /*
  * Go Icon submenu.
@@ -168,7 +165,6 @@ GoIconMenu.propTypes = {
     onOpen: PropTypes.func
 };
 
-
 const SettingsMenu = ({
     canChangeLanguage,
     canChangeTheme,
@@ -190,9 +186,32 @@ const SettingsMenu = ({
 
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
 
-
     useEffect(() => {
-        applyGoIcon(goIcon);
+        const handleOnline = () => {
+            // Browser is back online.
+            // Apply the selected Go Icon again.
+            applyGoIcon(goIcon);
+        };
+
+        const handleOffline = () => {
+            // Stop the Go Icon observer while offline.
+            try {
+                if (window._cattymod_goIcon_observer) {
+                    window._cattymod_goIcon_observer.disconnect();
+                    window._cattymod_goIcon_observer = null;
+                }
+            } catch (e) {
+                // Ignore observer errors.
+            }
+        };
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        // Only run the Go Icon script when online.
+        if (navigator.onLine) {
+            applyGoIcon(goIcon);
+        }
 
         try {
             localStorage.setItem(GO_ICON_KEY, goIcon);
@@ -200,14 +219,37 @@ const SettingsMenu = ({
             // Ignore localStorage errors.
         }
 
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+
+            // Disconnect observer when this component unmounts.
+            try {
+                if (window._cattymod_goIcon_observer) {
+                    window._cattymod_goIcon_observer.disconnect();
+                    window._cattymod_goIcon_observer = null;
+                }
+            } catch (e) {
+                // Ignore observer errors.
+            }
+        };
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [goIcon]);
 
-
     function applyGoIcon(mode) {
+        /*
+         * IMPORTANT:
+         * Never run the Go Icon replacement script while offline.
+         */
+        if (!navigator.onLine) {
+            return;
+        }
+
         try {
             if (window._cattymod_goIcon_observer) {
                 window._cattymod_goIcon_observer.disconnect();
+                window._cattymod_goIcon_observer = null;
             }
         } catch (e) {
             // Ignore observer errors.
@@ -225,6 +267,14 @@ const SettingsMenu = ({
         }
 
         function replaceAll() {
+            /*
+             * Check again here because the MutationObserver could fire
+             * after the browser goes offline.
+             */
+            if (!navigator.onLine) {
+                return;
+            }
+
             try {
                 document.querySelectorAll('img').forEach(e => {
                     try {
@@ -280,8 +330,24 @@ const SettingsMenu = ({
 
         replaceAll();
 
+        /*
+         * Do not create a MutationObserver while offline.
+         */
+        if (!navigator.onLine) {
+            return;
+        }
+
         try {
-            const mo = new MutationObserver(replaceAll);
+            const mo = new MutationObserver(() => {
+                // Don't process mutations while offline.
+                if (!navigator.onLine) {
+                    mo.disconnect();
+                    window._cattymod_goIcon_observer = null;
+                    return;
+                }
+
+                replaceAll();
+            });
 
             mo.observe(document.body, {
                 childList: true,
@@ -293,7 +359,6 @@ const SettingsMenu = ({
             // Ignore MutationObserver errors.
         }
     }
-
 
     function onChangeGoIcon(mode) {
         if (
@@ -313,11 +378,9 @@ const SettingsMenu = ({
         onRequestClose();
     }
 
-
     function onOpenGoIconMenu() {
         setGoIconMenuOpen(true);
     }
-
 
     return (
         <MenuLabel
@@ -330,6 +393,7 @@ const SettingsMenu = ({
                 draggable={false}
                 width={20}
                 height={20}
+                alt=""
             />
 
             <span className={styles.dropdownLabel}>
@@ -345,6 +409,7 @@ const SettingsMenu = ({
                 draggable={false}
                 width={8}
                 height={5}
+                alt=""
             />
 
             <MenuBarMenu
@@ -389,7 +454,6 @@ const SettingsMenu = ({
         </MenuLabel>
     );
 };
-
 
 SettingsMenu.propTypes = {
     canChangeLanguage: PropTypes.bool,
