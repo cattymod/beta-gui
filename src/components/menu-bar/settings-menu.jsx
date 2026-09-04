@@ -31,7 +31,7 @@ const CATTY_GREEN_FLAG =
     'https://cattymod.app/assets/green-flag.svg';
 
 const FULL_BASE64_GREEN_FLAG =
-    'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDYuNDQsMCwwLDAtNy42OSwwIi8+PGxpbmUgY2xhc3M9ImNscy0yIiB4MT0iMC43NSIgeTE9IjE2Ljc1IiB4Mj0iMC43NSIgeTI9IjAuNzUiLz48L3N2Zz4=';
+    'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDAsMCwwLTcuNjksMCIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjAuNzUiIHkxPSIxNi43NSIgeDI9IjAuNzUiIHkyPSIwLjc1Ii8+PC9zdmc+';
 
 /*
  * Go Icon preview.
@@ -104,6 +104,8 @@ GoIconMenuItem.propTypes = {
 
 /*
  * Go Icon submenu.
+ *
+ * Styled and structured like the Accent submenu.
  */
 const GoIconMenu = ({
     goIcon,
@@ -137,23 +139,21 @@ const GoIconMenu = ({
             />
         </div>
 
-        {isOpen && (
-            <Submenu place={isRtl ? 'left' : 'right'}>
-                <GoIconMenuItem
-                    icon={CATTY_GREEN_FLAG}
-                    label="Play Button (default)"
-                    isSelected={goIcon === GO_ICON_PLAY}
-                    onClick={() => onChangeGoIcon(GO_ICON_PLAY)}
-                />
+        <Submenu place={isRtl ? 'left' : 'right'}>
+            <GoIconMenuItem
+                icon={CATTY_GREEN_FLAG}
+                label="Play Button (default)"
+                isSelected={goIcon === GO_ICON_PLAY}
+                onClick={() => onChangeGoIcon(GO_ICON_PLAY)}
+            />
 
-                <GoIconMenuItem
-                    icon={FULL_BASE64_GREEN_FLAG}
-                    label="Green Flag"
-                    isSelected={goIcon === GO_ICON_GREEN_FLAG}
-                    onClick={() => onChangeGoIcon(GO_ICON_GREEN_FLAG)}
-                />
-            </Submenu>
-        )}
+            <GoIconMenuItem
+                icon={FULL_BASE64_GREEN_FLAG}
+                label="Green Flag"
+                isSelected={goIcon === GO_ICON_GREEN_FLAG}
+                onClick={() => onChangeGoIcon(GO_ICON_GREEN_FLAG)}
+            />
+        </Submenu>
     </MenuItem>
 );
 
@@ -178,15 +178,7 @@ const SettingsMenu = ({
     const [goIcon, setGoIcon] = useState(() => {
         try {
             const stored = localStorage.getItem(GO_ICON_KEY);
-
-            if (
-                stored === GO_ICON_PLAY ||
-                stored === GO_ICON_GREEN_FLAG
-            ) {
-                return stored;
-            }
-
-            return GO_ICON_PLAY;
+            return stored || GO_ICON_PLAY;
         } catch (e) {
             return GO_ICON_PLAY;
         }
@@ -194,35 +186,12 @@ const SettingsMenu = ({
 
     /*
      * Track the browser's online/offline state.
+     *
+     * This controls whether the Go Icon option is shown.
      */
     const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
-    /*
-     * Local state for the Go Icon submenu.
-     *
-     * This is intentionally NOT stored in localStorage.
-     * The submenu should always start closed whenever Settings
-     * is opened again.
-     */
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
-
-    /*
-     * Keep the Go Icon submenu synchronized with the main
-     * Settings menu.
-     *
-     * Any Settings option that dispatches closeSettingsMenu()
-     * will eventually make settingsMenuOpen false. This closes
-     * the Go Icon submenu as well.
-     *
-     * This also prevents the submenu from remaining open behind
-     * Settings after switching Accent, GUI theme, Block Colors,
-     * Language, etc.
-     */
-    useEffect(() => {
-        if (!settingsMenuOpen) {
-            setGoIconMenuOpen(false);
-        }
-    }, [settingsMenuOpen]);
 
     useEffect(() => {
         const handleOnline = () => {
@@ -235,12 +204,10 @@ const SettingsMenu = ({
         const handleOffline = () => {
             setIsOnline(false);
 
-            // Always close the Go Icon submenu while offline.
+            // Close the Go Icon submenu immediately.
             setGoIconMenuOpen(false);
 
-            /*
-             * Stop the Go Icon observer while offline.
-             */
+            // Stop the Go Icon observer while offline.
             try {
                 if (window._cattymod_goIcon_observer) {
                     window._cattymod_goIcon_observer.disconnect();
@@ -261,9 +228,6 @@ const SettingsMenu = ({
             applyGoIcon(goIcon);
         }
 
-        /*
-         * Keep the selected Go Icon persisted.
-         */
         try {
             localStorage.setItem(GO_ICON_KEY, goIcon);
         } catch (e) {
@@ -274,9 +238,7 @@ const SettingsMenu = ({
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
 
-            /*
-             * Disconnect observer when this component unmounts.
-             */
+            // Disconnect observer when this component unmounts.
             try {
                 if (window._cattymod_goIcon_observer) {
                     window._cattymod_goIcon_observer.disconnect();
@@ -298,10 +260,6 @@ const SettingsMenu = ({
             return;
         }
 
-        /*
-         * Disconnect the previous observer before creating
-         * a new one.
-         */
         try {
             if (window._cattymod_goIcon_observer) {
                 window._cattymod_goIcon_observer.disconnect();
@@ -331,9 +289,6 @@ const SettingsMenu = ({
                 return;
             }
 
-            /*
-             * Replace regular img elements.
-             */
             try {
                 document.querySelectorAll('img').forEach(e => {
                     try {
@@ -360,9 +315,6 @@ const SettingsMenu = ({
                 // Ignore query errors.
             }
 
-            /*
-             * Replace SVG image elements.
-             */
             try {
                 document.querySelectorAll('image').forEach(e => {
                     try {
@@ -438,51 +390,30 @@ const SettingsMenu = ({
 
         setGoIcon(mode);
 
-        /*
-         * Close the Go Icon submenu immediately.
-         */
+        // Close the submenu.
         setGoIconMenuOpen(false);
 
-        /*
-         * Close the entire Settings menu.
-         */
+        // Close the entire Settings menu,
+        // just like the other Settings options.
         onRequestClose();
     }
 
     function onOpenGoIconMenu() {
         /*
-         * Don't open the Go Icon submenu while offline
-         * or while the main Settings menu isn't open.
+         * Don't open the Go Icon submenu while offline.
          */
-        if (!navigator.onLine || !settingsMenuOpen) {
+        if (!navigator.onLine) {
             return;
         }
 
-        /*
-         * Toggle rather than always opening.
-         *
-         * This makes clicking Go Icon behave like a normal
-         * submenu: open it if closed, close it if open.
-         */
-        setGoIconMenuOpen(prev => !prev);
-    }
-
-    /*
-     * Use a single close handler for the Settings menu.
-     *
-     * This guarantees that manually closing Settings also
-     * closes the Go Icon submenu immediately.
-     */
-    function closeSettingsMenu() {
-        setGoIconMenuOpen(false);
-        onRequestClose();
+        setGoIconMenuOpen(true);
     }
 
     return (
         <MenuLabel
             open={settingsMenuOpen}
             onOpen={onRequestOpen}
-            onClose={closeSettingsMenu}
+            onClose={onRequestClose}
         >
             <img
                 src={settingsIcon}
@@ -516,7 +447,7 @@ const SettingsMenu = ({
                 <MenuSection>
                     {canChangeLanguage && (
                         <LanguageMenu
-                            onRequestCloseSettings={closeSettingsMenu}
+                            onRequestCloseSettings={onRequestClose}
                         />
                     )}
 
@@ -533,13 +464,12 @@ const SettingsMenu = ({
                     )}
 
                     {/*
-                     * Only show Go Icon while online.
+                     * Only show the Go Icon option while online.
                      *
-                     * The submenu is also explicitly controlled by
-                     * goIconMenuOpen so it cannot remain visible after
-                     * Settings has been closed.
+                     * When offline, this entire component is removed
+                     * from the Settings menu.
                      */}
-                    {isOnline && settingsMenuOpen && (
+                    {isOnline && (
                         <GoIconMenu
                             goIcon={goIcon}
                             isOpen={goIconMenuOpen}
