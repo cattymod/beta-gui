@@ -184,16 +184,29 @@ const SettingsMenu = ({
         }
     });
 
+    /*
+     * Track the browser's online/offline state.
+     *
+     * This controls whether the Go Icon option is shown.
+     */
+    const [isOnline, setIsOnline] = useState(() => navigator.onLine);
+
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleOnline = () => {
-            // Browser is back online.
-            // Apply the selected Go Icon again.
+            setIsOnline(true);
+
+            // Apply the selected Go Icon when coming back online.
             applyGoIcon(goIcon);
         };
 
         const handleOffline = () => {
+            setIsOnline(false);
+
+            // Close the Go Icon submenu immediately.
+            setGoIconMenuOpen(false);
+
             // Stop the Go Icon observer while offline.
             try {
                 if (window._cattymod_goIcon_observer) {
@@ -208,7 +221,9 @@ const SettingsMenu = ({
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        // Only run the Go Icon script when online.
+        /*
+         * Only run the Go Icon script when online.
+         */
         if (navigator.onLine) {
             applyGoIcon(goIcon);
         }
@@ -239,7 +254,6 @@ const SettingsMenu = ({
 
     function applyGoIcon(mode) {
         /*
-         * IMPORTANT:
          * Never run the Go Icon replacement script while offline.
          */
         if (!navigator.onLine) {
@@ -268,7 +282,7 @@ const SettingsMenu = ({
 
         function replaceAll() {
             /*
-             * Check again here because the MutationObserver could fire
+             * Check again because the MutationObserver could fire
              * after the browser goes offline.
              */
             if (!navigator.onLine) {
@@ -339,7 +353,6 @@ const SettingsMenu = ({
 
         try {
             const mo = new MutationObserver(() => {
-                // Don't process mutations while offline.
                 if (!navigator.onLine) {
                     mo.disconnect();
                     window._cattymod_goIcon_observer = null;
@@ -361,6 +374,13 @@ const SettingsMenu = ({
     }
 
     function onChangeGoIcon(mode) {
+        /*
+         * Don't allow Go Icon changes while offline.
+         */
+        if (!navigator.onLine) {
+            return;
+        }
+
         if (
             mode !== GO_ICON_PLAY &&
             mode !== GO_ICON_GREEN_FLAG
@@ -379,6 +399,13 @@ const SettingsMenu = ({
     }
 
     function onOpenGoIconMenu() {
+        /*
+         * Don't open the Go Icon submenu while offline.
+         */
+        if (!navigator.onLine) {
+            return;
+        }
+
         setGoIconMenuOpen(true);
     }
 
@@ -436,13 +463,21 @@ const SettingsMenu = ({
                         </React.Fragment>
                     )}
 
-                    <GoIconMenu
-                        goIcon={goIcon}
-                        isOpen={goIconMenuOpen}
-                        isRtl={isRtl}
-                        onChangeGoIcon={onChangeGoIcon}
-                        onOpen={onOpenGoIconMenu}
-                    />
+                    {/*
+                     * Only show the Go Icon option while online.
+                     *
+                     * When offline, this entire component is removed
+                     * from the Settings menu.
+                     */}
+                    {isOnline && (
+                        <GoIconMenu
+                            goIcon={goIcon}
+                            isOpen={goIconMenuOpen}
+                            isRtl={isRtl}
+                            onChangeGoIcon={onChangeGoIcon}
+                            onOpen={onOpenGoIconMenu}
+                        />
+                    )}
 
                     {onClickDesktopSettings && (
                         <TWDesktopSettings
