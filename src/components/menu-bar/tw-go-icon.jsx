@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {FormattedMessage} from 'react-intl';
+import {connect} from 'react-redux';
 
 import check from './check.svg';
 import dropdownCaret from './dropdown-caret.svg';
@@ -13,8 +14,6 @@ import {
     goIconMenuOpen,
     closeSettingsMenu
 } from '../../reducers/menus.js';
-
-import {connect} from 'react-redux';
 
 import styles from './settings-menu.css';
 
@@ -64,12 +63,16 @@ GoIcon.propTypes = {
     id: PropTypes.string
 };
 
-const GoIconMenuItem = props => (
-    <MenuItem onClick={props.onClick}>
+const GoIconMenuItem = ({
+    id,
+    isSelected,
+    onClick
+}) => (
+    <MenuItem onClick={onClick}>
         <div className={styles.option}>
             <img
                 className={classNames(styles.check, {
-                    [styles.selected]: props.isSelected
+                    [styles.selected]: isSelected
                 })}
                 width={15}
                 height={12}
@@ -78,9 +81,9 @@ const GoIconMenuItem = props => (
                 alt=""
             />
 
-            <GoIcon id={props.id} />
+            <GoIcon id={id} />
 
-            <FormattedMessage {...GO_ICON_LABELS[props.id]} />
+            <FormattedMessage {...GO_ICON_LABELS[id]} />
         </div>
     </MenuItem>
 );
@@ -95,6 +98,7 @@ const applyGoIcon = mode => {
     try {
         if (window._cattymod_goIcon_observer) {
             window._cattymod_goIcon_observer.disconnect();
+            window._cattymod_goIcon_observer = null;
         }
     } catch (e) {
         // Ignore
@@ -184,7 +188,8 @@ const applyGoIcon = mode => {
 const GoIconMenu = ({
     isOpen,
     isRtl,
-    onOpen
+    onOpen,
+    onChangeGoIcon
 }) => {
     const [goIcon, setGoIcon] = useState(() => {
         try {
@@ -204,8 +209,9 @@ const GoIconMenu = ({
         }
     }, [goIcon]);
 
-    const onChangeGoIcon = mode => {
+    const changeGoIcon = mode => {
         setGoIcon(mode);
+        onChangeGoIcon();
     };
 
     return (
@@ -236,17 +242,13 @@ const GoIconMenu = ({
                 <GoIconMenuItem
                     id={GO_ICON_PLAY}
                     isSelected={goIcon === GO_ICON_PLAY}
-                    onClick={() =>
-                        onChangeGoIcon(GO_ICON_PLAY)
-                    }
+                    onClick={() => changeGoIcon(GO_ICON_PLAY)}
                 />
 
                 <GoIconMenuItem
                     id={GO_ICON_GREEN_FLAG}
                     isSelected={goIcon === GO_ICON_GREEN_FLAG}
-                    onClick={() =>
-                        onChangeGoIcon(GO_ICON_GREEN_FLAG)
-                    }
+                    onClick={() => changeGoIcon(GO_ICON_GREEN_FLAG)}
                 />
             </Submenu>
         </MenuItem>
@@ -256,7 +258,8 @@ const GoIconMenu = ({
 GoIconMenu.propTypes = {
     isOpen: PropTypes.bool,
     isRtl: PropTypes.bool,
-    onOpen: PropTypes.func
+    onOpen: PropTypes.func,
+    onChangeGoIcon: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -265,7 +268,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onOpen: () => dispatch(openGoIconMenu())
+    onOpen: () => dispatch(openGoIconMenu()),
+    onChangeGoIcon: () => dispatch(closeSettingsMenu())
 });
 
 export default connect(
