@@ -130,11 +130,7 @@ const SettingsMenu = ({
                         className={styles.option}
                         // eslint-disable-next-line react/jsx-no-bind
                         onClick={() => {
-                            window.open(
-                                'https://studio.cattymod.app/settings',
-                                '_blank',
-                                'noopener,noreferrer'
-                            );
+                            window.location.href = 'https://studio.cattymod.app/settings';
                             onRequestClose();
                         }}
                     >
