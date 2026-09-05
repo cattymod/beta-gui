@@ -156,9 +156,17 @@
 
     .sidebar-bottom {
       margin-top: auto;
-      padding: 10px;
+      padding: 10px 0 0;
       color: var(--muted);
       font-size: 12px;
+    }
+
+    .back-button {
+      margin-bottom: 8px;
+    }
+
+    .sidebar-footer-text {
+      padding: 0 10px;
     }
 
     /* Main */
@@ -383,7 +391,7 @@
 
       .brand-text,
       .nav-text,
-      .sidebar-bottom {
+      .sidebar-bottom .sidebar-footer-text {
         display: none;
       }
 
@@ -403,6 +411,14 @@
       .page-header h1 {
         font-size: 26px;
       }
+
+      .sidebar-bottom {
+        padding-top: 10px;
+      }
+
+      .back-button {
+        margin-bottom: 0;
+      }
     }
   </style>
 </head>
@@ -411,12 +427,13 @@
   <div class="app">
 
     <aside class="sidebar">
+
       <div class="brand">
         <img
-                class="brand-icon"
-                src="https://studio.cattymod.app/images/apple-touch-icon.png"
-                alt="CattyMod"
-              >
+          class="brand-icon"
+          src="https://studio.cattymod.app/images/apple-touch-icon.png"
+          alt="CattyMod"
+        >
 
         <div class="brand-text">
           <div class="brand-name">CattyMod</div>
@@ -445,12 +462,23 @@
       </nav>
 
       <div class="sidebar-bottom">
-        CattyMod Settings
+
+        <button class="nav-button back-button" id="back-to-cattymod">
+          <i data-lucide="door-open"></i>
+          <span class="nav-text">Back to CattyMod</span>
+        </button>
+
+        <div class="sidebar-footer-text">
+          CattyMod Settings
+        </div>
+
       </div>
+
     </aside>
 
 
     <main class="main">
+
       <div class="content">
 
         <!-- GENERAL -->
@@ -464,51 +492,78 @@
 
 
           <div class="section">
-            <div class="section-title">Appearance</div>
+
+            <div class="section-title">
+              Appearance
+            </div>
 
             <div class="card">
 
               <div class="setting-row">
+
                 <div class="setting-info">
-                  <div class="setting-title">Dark Mode</div>
+
+                  <div class="setting-title">
+                    Dark Mode
+                  </div>
+
                   <div class="setting-description">
                     Use a darker interface that's easier on the eyes.
                   </div>
+
                 </div>
 
                 <label class="switch">
                   <input type="checkbox" id="dark-mode-toggle">
                   <span class="slider"></span>
                 </label>
+
               </div>
 
             </div>
+
           </div>
 
 
           <div class="section">
-            <div class="section-title">Projects</div>
+
+            <div class="section-title">
+              Projects
+            </div>
 
             <div class="card">
 
               <div class="setting-row">
+
                 <div class="setting-info">
-                  <div class="setting-title">Custom Default Project</div>
+
+                  <div class="setting-title">
+                    Custom Default Project
+                  </div>
+
                   <div class="setting-description">
                     Use a Scratch project as the default project when starting CattyMod.
                   </div>
+
                 </div>
 
                 <label class="switch">
                   <input type="checkbox" id="custom-project-toggle">
                   <span class="slider"></span>
                 </label>
+
               </div>
 
 
-              <div id="custom-project-options" class="setting-options collapsed">
+              <div
+                id="custom-project-options"
+                class="setting-options collapsed"
+              >
 
-                <label class="input-label" for="custom-project-id">
+                <label
+                  class="input-label"
+                  for="custom-project-id"
+                >
                   Scratch Project ID
                 </label>
 
@@ -524,6 +579,7 @@
               </div>
 
             </div>
+
           </div>
 
         </section>
@@ -531,12 +587,24 @@
 
         <!-- ABOUT -->
 
-        <section id="page-about" class="page" style="display: none;">
+        <section
+          id="page-about"
+          class="page"
+          style="display: none;"
+        >
 
           <div class="page-header">
-            <h1>About</h1>
-            <p>Information about CattyMod.</p>
+
+            <h1>
+              About
+            </h1>
+
+            <p>
+              Information about CattyMod.
+            </p>
+
           </div>
+
 
           <div class="card about-card">
 
@@ -549,8 +617,15 @@
               >
 
               <div>
-                <div class="about-name">CattyMod</div>
-                <div class="about-version">Latest</div>
+
+                <div class="about-name">
+                  CattyMod
+                </div>
+
+                <div class="about-version">
+                  Latest
+                </div>
+
               </div>
 
             </div>
@@ -564,6 +639,7 @@
         </section>
 
       </div>
+
     </main>
 
   </div>
@@ -618,7 +694,10 @@
     function getCurrentGuiTheme() {
       const theme = readTheme();
 
-      if (theme && (theme.gui === "dark" || theme.gui === "light")) {
+      if (
+        theme &&
+        (theme.gui === "dark" || theme.gui === "light")
+      ) {
         return theme.gui;
       }
 
@@ -634,8 +713,9 @@
         theme === "dark"
       );
 
-      document.getElementById("dark-mode-toggle").checked =
-        theme === "dark";
+      document.getElementById(
+        "dark-mode-toggle"
+      ).checked = theme === "dark";
     }
 
 
@@ -666,26 +746,37 @@
     const darkModeToggle =
       document.getElementById("dark-mode-toggle");
 
+
     darkModeToggle.addEventListener("change", () => {
+
       setGuiTheme(
-        darkModeToggle.checked ? "dark" : "light"
+        darkModeToggle.checked
+          ? "dark"
+          : "light"
       );
+
     });
 
 
     // If no tw:theme exists, follow the system theme.
     const mediaQuery =
-      window.matchMedia("(prefers-color-scheme: dark)");
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      );
+
 
     mediaQuery.addEventListener("change", () => {
+
       if (!localStorage.getItem(THEME_KEY)) {
         applyTheme();
       }
+
     });
 
 
-    // Update if another tab changes tw:theme.
+    // Update if another tab changes settings.
     window.addEventListener("storage", (event) => {
+
       if (event.key === THEME_KEY) {
         applyTheme();
       }
@@ -693,6 +784,7 @@
       if (event.key === CUSTOM_PROJECT_KEY) {
         loadCustomProject();
       }
+
     });
 
 
@@ -701,65 +793,88 @@
     ------------------------- */
 
     const customProjectToggle =
-      document.getElementById("custom-project-toggle");
+      document.getElementById(
+        "custom-project-toggle"
+      );
 
     const customProjectOptions =
-      document.getElementById("custom-project-options");
+      document.getElementById(
+        "custom-project-options"
+      );
 
     const customProjectId =
-      document.getElementById("custom-project-id");
+      document.getElementById(
+        "custom-project-id"
+      );
 
 
     function updateCustomProjectVisibility() {
+
       customProjectOptions.classList.toggle(
         "collapsed",
         !customProjectToggle.checked
       );
+
     }
 
 
     function loadCustomProject() {
+
       const saved =
-        localStorage.getItem(CUSTOM_PROJECT_KEY);
+        localStorage.getItem(
+          CUSTOM_PROJECT_KEY
+        );
 
       if (saved) {
+
         customProjectToggle.checked = true;
         customProjectId.value = saved;
+
       } else {
+
         customProjectToggle.checked = false;
         customProjectId.value = "";
+
       }
 
       updateCustomProjectVisibility();
     }
 
 
-    customProjectToggle.addEventListener("change", () => {
-      if (customProjectToggle.checked) {
+    customProjectToggle.addEventListener(
+      "change",
+      () => {
 
-        if (customProjectId.value.trim()) {
-          localStorage.setItem(
-            CUSTOM_PROJECT_KEY,
-            customProjectId.value
+        if (customProjectToggle.checked) {
+
+          if (customProjectId.value.trim()) {
+
+            localStorage.setItem(
+              CUSTOM_PROJECT_KEY,
+              customProjectId.value
+            );
+
+          }
+
+        } else {
+
+          localStorage.removeItem(
+            CUSTOM_PROJECT_KEY
           );
+
         }
 
-      } else {
-
-        localStorage.removeItem(
-          CUSTOM_PROJECT_KEY
-        );
+        updateCustomProjectVisibility();
 
       }
-
-      updateCustomProjectVisibility();
-    });
+    );
 
 
     /*
       Only allow numbers.
 
       This means pasting:
+
       https://scratch.mit.edu/projects/123456789/
 
       becomes:
@@ -767,25 +882,40 @@
       123456789
     */
 
-    customProjectId.addEventListener("input", () => {
-      const numbersOnly =
-        customProjectId.value.replace(/\D/g, "");
+    customProjectId.addEventListener(
+      "input",
+      () => {
 
-      customProjectId.value = numbersOnly;
+        const numbersOnly =
+          customProjectId.value.replace(
+            /\D/g,
+            ""
+          );
 
-      if (customProjectToggle.checked) {
-        if (numbersOnly) {
-          localStorage.setItem(
-            CUSTOM_PROJECT_KEY,
-            numbersOnly
-          );
-        } else {
-          localStorage.removeItem(
-            CUSTOM_PROJECT_KEY
-          );
+        customProjectId.value =
+          numbersOnly;
+
+        if (customProjectToggle.checked) {
+
+          if (numbersOnly) {
+
+            localStorage.setItem(
+              CUSTOM_PROJECT_KEY,
+              numbersOnly
+            );
+
+          } else {
+
+            localStorage.removeItem(
+              CUSTOM_PROJECT_KEY
+            );
+
+          }
+
         }
+
       }
-    });
+    );
 
 
     /* -------------------------
@@ -793,39 +923,58 @@
     ------------------------- */
 
     const navButtons =
-      document.querySelectorAll(".nav-button[data-page]");
+      document.querySelectorAll(
+        ".nav-button[data-page]"
+      );
 
     const pages =
-      document.querySelectorAll(".page");
+      document.querySelectorAll(
+        ".page"
+      );
 
 
     navButtons.forEach(button => {
 
-      button.addEventListener("click", () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-        const pageName =
-          button.dataset.page;
+          const pageName =
+            button.dataset.page;
 
-        navButtons.forEach(item => {
-          item.classList.remove("active");
-        });
+          navButtons.forEach(item => {
 
-        button.classList.add("active");
+            item.classList.remove(
+              "active"
+            );
 
-        pages.forEach(page => {
-          page.style.display = "none";
-        });
+          });
 
-        const selectedPage =
-          document.getElementById(
-            "page-" + pageName
+          button.classList.add(
+            "active"
           );
 
-        if (selectedPage) {
-          selectedPage.style.display = "";
-        }
+          pages.forEach(page => {
 
-      });
+            page.style.display =
+              "none";
+
+          });
+
+          const selectedPage =
+            document.getElementById(
+              "page-" + pageName
+            );
+
+          if (selectedPage) {
+
+            selectedPage.style.display =
+              "";
+
+          }
+
+        }
+      );
 
     });
 
@@ -843,6 +992,20 @@
           "_blank",
           "noopener,noreferrer"
         );
+
+      });
+
+
+    /* -------------------------
+       Back to CattyMod
+    ------------------------- */
+
+    document
+      .getElementById("back-to-cattymod")
+      .addEventListener("click", () => {
+
+        window.location.href =
+          "https://studio.cattymod.app";
 
       });
 
