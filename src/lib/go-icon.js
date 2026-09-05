@@ -145,16 +145,27 @@ export const replaceGreenFlags = mode => {
         });
 
         /*
-         * Replace SVG <image> green flags.
+         * Replace the flag inside "when green flag clicked"
+         * Blockly blocks.
          *
-         * Scratch/TurboWarp can have BOTH:
-         * href="..."
-         * xlink:href="..."
+         * The workspace block does not have a reliable
+         * event_whenflagclicked data-id, so detect it by
+         * finding a flag image inside the block.
          *
-         * Update both so the block icon always changes.
+         * Both green-flag.svg and blue-flag.svg are accepted.
          */
-        document.querySelectorAll('image').forEach(e => {
+        document.querySelectorAll(
+            '.blocklyDraggable image'
+        ).forEach(e => {
             try {
+                const block = e.closest(
+                    '.blocklyDraggable'
+                );
+
+                if (!block) {
+                    return;
+                }
+
                 const href =
                     e.getAttribute('href') || '';
 
@@ -167,27 +178,37 @@ export const replaceGreenFlags = mode => {
                         'href'
                     ) || '';
 
-                const isGreenFlag =
+                const isFlag =
                     href.includes('green-flag.svg') ||
+                    href.includes('blue-flag.svg') ||
                     xlinkHref.includes('green-flag.svg') ||
+                    xlinkHref.includes('blue-flag.svg') ||
                     namespacedXlinkHref.includes(
                         'green-flag.svg'
+                    ) ||
+                    namespacedXlinkHref.includes(
+                        'blue-flag.svg'
                     );
 
-                if (isGreenFlag) {
-                    e.setAttribute('href', icon);
-
-                    e.setAttribute(
-                        'xlink:href',
-                        icon
-                    );
-
-                    e.setAttributeNS(
-                        'http://www.w3.org/1999/xlink',
-                        'href',
-                        icon
-                    );
+                if (!isFlag) {
+                    return;
                 }
+
+                e.setAttribute(
+                    'href',
+                    icon
+                );
+
+                e.setAttribute(
+                    'xlink:href',
+                    icon
+                );
+
+                e.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'href',
+                    icon
+                );
             } catch (err) {
                 // Ignore individual elements.
             }
