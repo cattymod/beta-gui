@@ -94,25 +94,3 @@
     background-color: $ui-disabled;
     margin: 0.5rem 0;
 }
-
-.moreSettingsButton {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: inherit;
-    color: inherit;
-    text-align: left;
-}
-
-.moreSettingsButton:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.moreSettingsButton span {
-    flex: 1;
-}
