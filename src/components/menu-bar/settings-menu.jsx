@@ -122,6 +122,33 @@ const SettingsMenu = ({
                         onClick={onClickDesktopSettings}
                     />
                 )}
+
+                <div className={styles.settingsSeparator} />
+
+                <button
+                    type="button"
+                    className={styles.moreSettingsButton}
+                    onClick={() => {
+                        window.open(
+                            'https://studio.cattymod.app/settings',
+                            '_blank',
+                            'noopener,noreferrer'
+                        );
+                        onRequestClose();
+                    }}
+                >
+                    <img
+                        src={settingsIcon}
+                        draggable={false}
+                        width={20}
+                        height={20}
+                        alt=""
+                    />
+
+                    <span>
+                        More Settings
+                    </span>
+                </button>
             </MenuSection>
         </MenuBarMenu>
     </MenuLabel>
