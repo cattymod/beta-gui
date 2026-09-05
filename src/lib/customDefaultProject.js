@@ -7,10 +7,6 @@ const TRAMPOLINE_API =
 const SCRATCH_PROJECTS_API =
     'https://projects.scratch.mit.edu/';
 
-const isFileProtocol = () =>
-    typeof window !== 'undefined' &&
-    window.location.protocol === 'file:';
-
 /*
  * Get the custom default project ID from localStorage.
  *
@@ -27,10 +23,6 @@ const isFileProtocol = () =>
  * when no valid project ID is configured.
  */
 export const getCustomDefaultProject = () => {
-    if (isFileProtocol()) {
-        return null;
-    }
-
     try {
         const value =
             window.localStorage.getItem(
@@ -65,10 +57,6 @@ export const getCustomDefaultProject = () => {
  * to remove the setting.
  */
 export const setCustomDefaultProject = projectId => {
-    if (isFileProtocol()) {
-        return;
-    }
-
     try {
         const value =
             String(projectId ?? '').trim();
@@ -97,10 +85,6 @@ export const setCustomDefaultProject = projectId => {
  * Remove the custom default project setting.
  */
 export const clearCustomDefaultProject = () => {
-    if (isFileProtocol()) {
-        return;
-    }
-
     try {
         window.localStorage.removeItem(
             CUSTOM_DEFAULT_PROJECT_KEY
@@ -113,8 +97,8 @@ export const clearCustomDefaultProject = () => {
 /*
  * Fetch project information from TurboWarp Trampoline.
  *
- * The response contains the project_token that is
- * required to download the project from Scratch.
+ * The response contains the project_token needed
+ * to download the project from Scratch.
  */
 export const getCustomDefaultProjectData =
     async projectId => {
@@ -169,7 +153,7 @@ export const getCustomDefaultProjectToken =
 /*
  * Build the Scratch project URL.
  *
- * Example result:
+ * Example:
  *
  * https://projects.scratch.mit.edu/404?token=...
  */
@@ -193,10 +177,10 @@ export const getCustomDefaultProjectURL =
 /*
  * Fetch the custom default Scratch project.
  *
- * Returns an ArrayBuffer that can be passed directly
- * to vm.loadProject().
+ * Returns an ArrayBuffer suitable for
+ * vm.loadProject().
  *
- * Returns null if no custom default project is configured.
+ * Returns null if no custom project is configured.
  */
 export const fetchCustomDefaultProject =
     async () => {
@@ -204,12 +188,10 @@ export const fetchCustomDefaultProject =
             getCustomDefaultProject();
 
         /*
-         * No localStorage value:
+         * No localStorage value.
          *
-         * Do absolutely nothing.
-         *
-         * The normal built-in default project will
-         * continue loading normally.
+         * Do nothing so the normal built-in
+         * default project can load normally.
          */
         if (!projectId) {
             return null;
@@ -233,19 +215,16 @@ export const fetchCustomDefaultProject =
     };
 
 /*
- * Load the custom default project into a Scratch VM.
+ * Load the custom default project into a
+ * Scratch VM.
  *
  * Returns:
  *
  *     true
- *         A custom project was loaded.
+ *         Custom project was loaded.
  *
  *     false
- *         No custom project was configured.
- *
- * If fetching the configured project fails, this
- * function throws an error. The caller can catch it
- * and leave the normal default project alone.
+ *         No custom project is configured.
  */
 export const loadCustomDefaultProject =
     async vm => {
@@ -255,7 +234,7 @@ export const loadCustomDefaultProject =
         /*
          * No custom project configured.
          *
-         * Return immediately and do not touch the VM.
+         * Do not touch the VM.
          */
         if (!projectId) {
             return false;
@@ -291,27 +270,17 @@ export const loadCustomDefaultProject =
  * if one is configured.
  *
  * If there is no localStorage value, nothing happens.
- *
- * This is useful if you want the library to handle
- * the startup override without having to manually
- * check localStorage elsewhere.
  */
 export const initializeCustomDefaultProject =
     async vm => {
-        if (
-            typeof window === 'undefined' ||
-            isFileProtocol()
-        ) {
-            return false;
-        }
-
         const projectId =
             getCustomDefaultProject();
 
         /*
-         * No custom project:
+         * No custom project.
          *
-         * Do nothing.
+         * Leave the normal built-in default project
+         * completely alone.
          */
         if (!projectId) {
             return false;
@@ -321,11 +290,8 @@ export const initializeCustomDefaultProject =
             return await loadCustomDefaultProject(vm);
         } catch (e) {
             /*
-             * Do not break CattyMod's normal startup
-             * if the custom project cannot be loaded.
-             *
-             * The built-in default project can remain
-             * in place.
+             * If the custom project cannot be fetched,
+             * leave the normal project alone.
              */
             console.error(
                 '❌ Failed to load custom default project:',
