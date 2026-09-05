@@ -33,6 +33,7 @@ import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
 import TWSaveStatus from './tw-save-status.jsx';
 import TWNews from './tw-news.jsx';
+import {loadCustomDefaultProject} from '../../lib/customDefaultProject.js';
 
 import {openTipsLibrary, openSettingsModal, openRestorePointModal} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
@@ -238,20 +239,39 @@ class MenuBar extends React.Component {
         document.removeEventListener('keydown', this.handleKeyPress);
     }
     handleClickNew () {
-        // if the project is dirty, and user owns the project, we will autosave.
-        // but if they are not logged in and can't save, user should consider
-        // downloading or logging in first.
-        // Note that if user is logged in and editing someone else's project,
-        // they'll lose their work.
-        const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
-            this.props.intl.formatMessage(sharedMessages.replaceProjectWarning)
-        );
+    const customDefaultProject = localStorage.getItem(
+        'cattymod:customDefaultProject'
+    );
+
+    if (customDefaultProject) {
+        loadCustomDefaultProject(this.props.vm)
+            .catch(e => {
+                console.error(
+                    '❌ Failed to load custom default project:',
+                    e
+                );
+            });
+
         this.props.onRequestCloseFile();
-        if (readyToReplaceProject) {
-            this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
-        }
-        this.props.onRequestCloseFile();
+        return;
     }
+
+    // if the project is dirty, and user owns the project, we will autosave.
+    // but if they are not logged in and can't save, user should consider
+    // downloading or logging in first.
+    // Note that if user is logged in and editing someone else's project,
+    // they'll lose their work.
+    const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
+        this.props.intl.formatMessage(sharedMessages.replaceProjectWarning)
+    );
+
+    this.props.onRequestCloseFile();
+    if (readyToReplaceProject) {
+        this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
+    }
+
+    this.props.onRequestCloseFile();
+}
     handleClickNewWindow () {
         this.props.onClickNewWindow();
         this.props.onRequestCloseFile();
