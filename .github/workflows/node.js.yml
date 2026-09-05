@@ -39,7 +39,7 @@ jobs:
 
       - name: Replace green flag assets (post-build patch)
         run: |
-          curl -L https://cattymod.app/assets/green-flag.svg -o /tmp/green-flag.svg
+          curl -L https://cattymod.app/assets/go-icon/play/flag.svg -o /tmp/green-flag.svg
           find ./build -type f -name "green-flag*.svg" -exec cp /tmp/green-flag.svg {} \;
           rm /tmp/green-flag.svg
 
