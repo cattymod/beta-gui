@@ -91,7 +91,7 @@ const Credits = () => (
                     The Dango Artwork that have a server are based on <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>'s images.
                 </p>
                 <p>
-                    The Blue Flag icon is from <a href="https://penguinmod.com/">PenguinMod</a> and the Purple Flag is from <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>.
+                    The Blue Flag icon is from <a href="https://penguinmod.com/">PenguinMod</a> and the Purple Flag icon is from <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>.
                 </p>
             </section>
         )}
