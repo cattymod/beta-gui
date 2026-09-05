@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CattyMod Tabs</title>
+  <style>
+  :root{
+    --bg:#f5f6f7;
+    --panel:#fff;
+    --border:#d9dde3;
+    --tab-border:#cfd5de;
+    --text:#1f2328;
+    --muted:#6b7280;
+    --blue:#1a73e8;
+    --blue-2:#1769d2;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+    --radius:14px;
+  }
+
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .topbar{
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
+    padding:0 12px 8px 12px;
+    flex:0 0 auto;
+  }
+
+  .window-spacer{
+    height:4px;
+    margin:0 0 4px 0;
+  }
+
+  .tabs{
+    display:flex;
+    align-items:flex-end;
+    gap:6px;
+    overflow:auto;
+    padding-bottom:8px;
+  }
+
+  .tab, .home-link, .new-tab-btn{
+    border:1px solid var(--tab-border);
+    border-bottom:none;
+    background:#eef1f6;
+    color:var(--muted);
+    padding:10px 12px;
+    border-top-left-radius:12px;
+    border-top-right-radius:12px;
+    cursor:pointer;
+    user-select:none;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    height:42px;
+    white-space:nowrap;
+    max-width:320px;
+    position:relative;
+  }
+
+  .tab{
+    padding-right:10px;
+    min-width:120px;
+  }
+
+  .tab .title{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:13px;
+    font-weight:600;
+    flex:1 1 auto;
+  }
+
+  .active{
+    background:#fff;
+    color:var(--text);
+    box-shadow:var(--shadow);
+  }
+
+  .active::after{
+    content:"";
+    position:absolute;
+    left:10px;
+    right:10px;
+    bottom:-1px;
+    height:2px;
+    border-radius:2px;
+    background:linear-gradient(90deg,var(--blue),var(--blue-2));
+  }
+
+  .home-link{
+    width:42px;
+    padding:0;
+    justify-content:center;
+    flex:0 0 42px;
+  }
+
+  .new-tab-btn{
+    width:42px;
+    padding:0;
+    justify-content:center;
+    flex:0 0 42px;
+  }
+
+  .tab-x{
+    flex:0 0 auto;
+    width:22px;
+    height:22px;
+    border-radius:6px;
+    border:1px solid transparent;
+    background:transparent;
+    color:inherit;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    line-height:1;
+    opacity:.75;
+  }
+
+  .tab-x:hover{
+    border-color:var(--tab-border);
+    background:rgba(0,0,0,.04);
+    opacity:1;
+  }
+
+  .content{
+    flex:1;
+    background:#fff;
+    margin:0;
+    border:0;
+    border-radius:0;
+    overflow:hidden;
+    box-shadow:none;
+    min-height:0;
+    position:relative;
+  }
+
+  .frames{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+  }
+
+  iframe{
+    width:100%;
+    height:100%;
+    border:0;
+    background:#fff;
+    display:none;
+  }
+
+  iframe.active{
+    display:block;
+  }
+
+  .frames iframe{
+    position:absolute;
+    inset:0;
+  }
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.35);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    padding:16px;
+  }
+
+  .modal-overlay.open{
+    display:flex;
+  }
+
+  .modal{
+    width:min(520px,100%);
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.22);
+    overflow:hidden;
+  }
+
+  .modal-header{
+    padding:14px 16px;
+    font-weight:700;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .modal-close{
+    border:1px solid var(--tab-border);
+    background:#fff;
+    border-radius:10px;
+    width:34px;
+    height:34px;
+    cursor:pointer;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    line-height:1;
+  }
+
+  .modal-body{
+    padding:14px 16px 6px 16px;
+    color:var(--text);
+    line-height:1.4;
+  }
+
+  .modal-actions{
+    padding:12px 16px 16px 16px;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  }
+
+  .btn{
+    border:1px solid var(--tab-border);
+    background:#f3f5f8;
+    color:var(--text);
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+  }
+
+  .btn.primary{
+    border-color:rgba(26,115,232,.35);
+    background:linear-gradient(180deg,#1a73e8,#1769d2);
+    color:#fff;
+  }
+
+  .btn:focus{
+    outline:2px solid rgba(26,115,232,.35);
+    outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="window-spacer" aria-hidden="true"></div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <div class="content">
+    <div class="frames" id="frames"></div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal-header">
+        <div id="confirmTitle">Close tab?</div>
+        <button class="modal-close" id="confirmX" aria-label="Close dialog">×</button>
+      </div>
+      <div class="modal-body" id="confirmMessage">
+        Are you sure? You might lose your work if it's unsaved.
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="confirmCancel" type="button">Cancel</button>
+        <button class="btn primary" id="confirmOk" type="button">Close tab</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*
+     * Build the editor URL from the current page.
+     *
+     * Examples:
+     * studio.cattymod.app/tabs
+     * -> studio.cattymod.app/editor?showprojectpage
+     *
+     * cattymod.github.io/editor/tabs
+     * -> cattymod.github.io/editor/editor?showprojectpage
+     */
+    function getEditorURL() {
+      const url = new URL(window.location.href);
+
+      const tabsIndex = url.pathname.indexOf("/tabs");
+
+      if (tabsIndex !== -1) {
+        url.pathname = url.pathname.slice(0, tabsIndex) + "/editor";
+      } else {
+        // Fallback if this page somehow isn't under /tabs
+        url.pathname = url.pathname.replace(/\/?$/, "/editor");
+      }
+
+      url.search = "?showprojectpage";
+      url.hash = "";
+
+      return url.href;
+    }
+
+    const HOME_URL = new URL(
+      window.location.pathname.replace(/\/tabs(?:\/.*)?$/, "/"),
+      window.location.origin
+    ).href;
+
+    const EDITOR_URL = getEditorURL();
+
+    const tabsEl = document.getElementById("tabs");
+    const framesEl = document.getElementById("frames");
+
+    const tabs = new Map();
+    let activeTabId = null;
+
+    let homeBtnEl = null;
+    let newTabBtnEl = null;
+
+    const confirmOverlay = document.getElementById("confirmOverlay");
+    const confirmX = document.getElementById("confirmX");
+    const confirmCancel = document.getElementById("confirmCancel");
+    const confirmOk = document.getElementById("confirmOk");
+
+    let pendingConfirm = null;
+
+    function openConfirmModal() {
+      confirmOverlay.classList.add("open");
+      confirmOverlay.setAttribute("aria-hidden", "false");
+      return new Promise((resolve) => {
+        pendingConfirm = resolve;
+      });
+    }
+
+    function closeConfirmModal() {
+      confirmOverlay.classList.remove("open");
+      confirmOverlay.setAttribute("aria-hidden", "true");
+      pendingConfirm = null;
+    }
+
+    confirmOk.addEventListener("click", () => {
+      if (pendingConfirm) pendingConfirm(true);
+      closeConfirmModal();
+    });
+
+    confirmCancel.addEventListener("click", () => {
+      if (pendingConfirm) pendingConfirm(false);
+      closeConfirmModal();
+    });
+
+    confirmX.addEventListener("click", () => {
+      if (pendingConfirm) pendingConfirm(false);
+      closeConfirmModal();
+    });
+
+    confirmOverlay.addEventListener("click", (e) => {
+      if (e.target === confirmOverlay) {
+        if (pendingConfirm) pendingConfirm(false);
+        closeConfirmModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!confirmOverlay.classList.contains("open")) return;
+      if (e.key === "Escape") {
+        if (pendingConfirm) pendingConfirm(false);
+        closeConfirmModal();
+      }
+    });
+
+    function setActive(tabId){
+      if (activeTabId === tabId) return;
+
+      for (const [id, info] of tabs.entries()){
+        if (id === tabId){
+          info.tabEl.classList.add("active");
+          info.iframe.classList.add("active");
+        } else {
+          info.tabEl.classList.remove("active");
+          info.iframe.classList.remove("active");
+        }
+      }
+
+      activeTabId = tabId;
+    }
+
+    function makeHomeTab(){
+      const home = document.createElement("button");
+      home.type = "button";
+      home.className = "home-link";
+      home.title = "Home";
+      home.setAttribute("aria-label","Home");
+      home.setAttribute("aria-current","page");
+
+      home.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M12 3 2 12h2v9h6v-6h4v6h6v-9h2z"/>
+        </svg>
+      `;
+
+      home.addEventListener("click", () => {
+        window.location.href = HOME_URL;
+      });
+
+      return home;
+    }
+
+    function makeNewTabButton(){
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "new-tab-btn";
+      btn.title = "New tab";
+      btn.setAttribute("aria-label","New tab");
+
+      btn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14"/>
+          <path d="M5 12h14"/>
+        </svg>
+      `;
+
+      btn.addEventListener("click", () => createProjectTab());
+
+      return btn;
+    }
+
+    async function handleCloseClick(tabId){
+      const ok = await openConfirmModal();
+      if (!ok) return;
+      closeTab(tabId);
+    }
+
+    function processTitle(rawTitle) {
+      if (!rawTitle) return "Project";
+
+      const trimmed = rawTitle.trim();
+
+      if (trimmed === "CattyMod - Run Scratch projects faster") {
+        return "Project";
+      }
+
+      if (trimmed.length > 11) {
+        return trimmed.slice(0, -11).trim();
+      }
+
+      return trimmed;
+    }
+
+    function createProjectTab(){
+      const tabId = `tab-${crypto.randomUUID?.() ?? Math.random().toString(16).slice(2)}`;
+
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "tab";
+      tab.setAttribute("role","tab");
+      tab.setAttribute("aria-label", "Project");
+
+      const title = document.createElement("div");
+      title.className = "title";
+      title.textContent = "Project";
+
+      const x = document.createElement("button");
+      x.type = "button";
+      x.className = "tab-x";
+      x.title = "Close tab";
+      x.setAttribute("aria-label","Close tab");
+      x.textContent = "×";
+
+      tab.appendChild(title);
+      tab.appendChild(x);
+
+      const iframe = document.createElement("iframe");
+      iframe.title = "Project";
+      iframe.src = EDITOR_URL;
+
+      function updateTabTitle() {
+        try {
+          const rawTitle = iframe.contentDocument?.title;
+          const finalTitle = processTitle(rawTitle);
+
+          if (finalTitle) {
+            title.textContent = finalTitle;
+            iframe.title = finalTitle;
+          }
+        } catch {}
+      }
+
+      iframe.addEventListener("load", () => {
+        updateTabTitle();
+
+        try {
+          const observer = new MutationObserver(updateTabTitle);
+
+          observer.observe(
+            iframe.contentDocument.querySelector("title"),
+            {
+              childList: true,
+              subtree: true,
+              characterData: true
+            }
+          );
+        } catch {}
+
+        setInterval(updateTabTitle, 500);
+      });
+
+      tab.addEventListener("click", () => {
+        setActive(tabId);
+
+        setTimeout(() => {
+          try{
+            const t = iframe.contentWindow?.document?.title;
+            const finalTitle = processTitle(t);
+
+            if (finalTitle) {
+              title.textContent = finalTitle;
+            }
+          }catch{}
+        }, 200);
+      });
+
+      x.addEventListener("click", (e) => {
+        e.stopPropagation();
+        handleCloseClick(tabId);
+      });
+
+      framesEl.appendChild(iframe);
+      tabsEl.insertBefore(tab, newTabBtnEl);
+
+      tabs.set(tabId, {
+        tabEl: tab,
+        iframe,
+        titleEl: title
+      });
+
+      setActive(tabId);
+
+      const poll = setInterval(() => {
+        const info = tabs.get(tabId);
+
+        if (!info) {
+          clearInterval(poll);
+          return;
+        }
+
+        try{
+          const t = iframe.contentWindow?.document?.title;
+          const finalTitle = processTitle(t);
+
+          if (finalTitle && info.titleEl.textContent !== finalTitle){
+            info.titleEl.textContent = finalTitle;
+          }
+        }catch{}
+      }, 1000);
+    }
+
+    function closeTab(tabId){
+      const info = tabs.get(tabId);
+      if (!info) return;
+
+      info.tabEl.remove();
+      info.iframe.remove();
+      tabs.delete(tabId);
+
+      const remaining = Array.from(tabs.keys());
+
+      if (activeTabId === tabId){
+        if (remaining.length){
+          setActive(remaining[0]);
+        } else {
+          activeTabId = null;
+          window.location.href = HOME_URL;
+        }
+      } else {
+        if (remaining.length === 0) {
+          window.location.href = HOME_URL;
+        }
+      }
+    }
+
+    function init(){
+      homeBtnEl = makeHomeTab();
+      newTabBtnEl = makeNewTabButton();
+
+      tabsEl.appendChild(homeBtnEl);
+      tabsEl.appendChild(newTabBtnEl);
+
+      createProjectTab();
+    }
+
+    init();
+  </script>
+</body>
+</html>

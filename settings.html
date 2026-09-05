@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CattyMod Settings</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --accent: #009ccc;
+      --accent-hover: #008db8;
+      --accent-gradient: #009ccc;
+
+      --bg: #f5f7f9;
+      --sidebar: #ffffff;
+      --card: #ffffff;
+      --text: #172027;
+      --muted: #69757d;
+      --border: #dfe5e8;
+      --hover: #eef8fb;
+      --input: #ffffff;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body.dark {
+      --bg: #111619;
+      --sidebar: #171c20;
+      --card: #1b2226;
+      --text: #f1f5f7;
+      --muted: #9ba8af;
+      --border: #2b3439;
+      --hover: #202c31;
+      --input: #151b1e;
+      --shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.2s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 10px 22px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: white;
+      object-fit: cover;
+      transition: background 0.2s ease;
+    }
+
+    .brand-icon.rainbow-accent {
+      background: var(--accent-gradient) !important;
+      background-size: 200% 100%;
+      animation: rainbow-shift 4s linear infinite;
+    }
+
+    .brand-icon i {
+      width: 21px;
+      height: 21px;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-button {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      transition:
+        background 0.15s ease,
+        color 0.15s ease;
+    }
+
+    .nav-button:hover {
+      background: var(--hover);
+    }
+
+    .nav-button.active {
+      background: color-mix(
+        in srgb,
+        var(--accent) 14%,
+        transparent
+      );
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /*
+      Rainbow active sidebar item.
+
+      Keep the selected-item background,
+      but make it red instead of using
+      the Rainbow gradient.
+    */
+
+    .nav-button.active.rainbow-accent {
+      background: color-mix(
+        in srgb,
+        #e53935 14%,
+        transparent
+      ) !important;
+
+      color: #e53935 !important;
+      font-weight: 600;
+
+      -webkit-text-fill-color: #e53935;
+    }
+
+    .nav-button.active.rainbow-accent svg {
+      color: #e53935 !important;
+      stroke: #e53935 !important;
+    }
+
+    .nav-button i {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+    }
+
+    .nav-button .nav-text {
+      flex: 1;
+    }
+
+    .nav-button .external-icon {
+      width: 15px;
+      height: 15px;
+      opacity: 0.75;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 10px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .back-button {
+      margin-bottom: 8px;
+    }
+
+    .sidebar-footer-text {
+      padding: 0 10px;
+    }
+
+    /* Main */
+
+    .main {
+      flex: 1;
+      min-width: 0;
+      overflow-y: auto;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 42px 34px 70px;
+    }
+
+    .page-header {
+      margin-bottom: 26px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-header p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin: 0 0 9px 4px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .setting-row {
+      min-height: 70px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .setting-row + .setting-row {
+      border-top: 1px solid var(--border);
+    }
+
+    .setting-info {
+      min-width: 0;
+    }
+
+    .setting-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .setting-description {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Select */
+
+    .setting-select {
+      min-width: 170px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 34px 9px 11px;
+      background: var(--input);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .setting-select:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 3px
+        color-mix(
+          in srgb,
+          var(--accent) 15%,
+          transparent
+        );
+    }
+
+    /* Toggle */
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background: #aeb8bd;
+      border-radius: 999px;
+      transition: 0.2s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      transition: 0.2s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--accent);
+    }
+
+    .switch input:checked + .slider.rainbow-accent {
+      background: var(--accent-gradient) !important;
+      background-size: 200% 100%;
+      animation: rainbow-shift 4s linear infinite;
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Rainbow text */
+
+    .rainbow-text {
+      background: var(--accent-gradient);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 100%;
+      animation: rainbow-shift 4s linear infinite;
+    }
+
+    /* Custom project collapsing area */
+
+    .setting-options {
+      padding: 0 18px 18px;
+      overflow: hidden;
+      max-height: 150px;
+      opacity: 1;
+      transition:
+        max-height 0.22s ease,
+        opacity 0.18s ease,
+        padding 0.22s ease;
+    }
+
+    .setting-options.collapsed {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      pointer-events: none;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+
+    .text-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 12px;
+      background: var(--input);
+      color: var(--text);
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .text-input:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 3px
+        color-mix(
+          in srgb,
+          var(--accent) 15%,
+          transparent
+        );
+    }
+
+    /* Rainbow animation */
+
+    @keyframes rainbow-shift {
+      from {
+        background-position: 0% 50%;
+      }
+
+      to {
+        background-position: 200% 50%;
+      }
+    }
+
+    /* About */
+
+    .about-card {
+      padding: 22px;
+    }
+
+    .about-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .about-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      object-fit: cover;
+    }
+
+    .about-name {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .about-version {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .about-description {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 72px;
+        padding: 16px 9px;
+      }
+
+      .brand {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .brand-text,
+      .nav-text,
+      .sidebar-bottom .sidebar-footer-text {
+        display: none;
+      }
+
+      .nav-button {
+        justify-content: center;
+        padding: 12px;
+      }
+
+      .nav-button .external-icon {
+        display: none;
+      }
+
+      .content {
+        padding: 30px 18px 50px;
+      }
+
+      .page-header h1 {
+        font-size: 26px;
+      }
+
+      .sidebar-bottom {
+        padding-top: 10px;
+      }
+
+      .back-button {
+        margin-bottom: 0;
+      }
+
+      .setting-row {
+        align-items: flex-start;
+      }
+
+      .setting-select {
+        min-width: 135px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <aside class="sidebar">
+
+      <div class="brand">
+        <img
+          class="brand-icon"
+          src="https://studio.cattymod.app/images/apple-touch-icon.png"
+          alt="CattyMod"
+        >
+
+        <div class="brand-text">
+          <div class="brand-name">CattyMod</div>
+          <div class="brand-subtitle">Settings</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+
+        <button
+          class="nav-button active"
+          data-page="general"
+        >
+          <i data-lucide="settings"></i>
+          <span class="nav-text">General</span>
+        </button>
+
+        <button
+          class="nav-button"
+          id="addons-button"
+        >
+          <i data-lucide="puzzle"></i>
+          <span class="nav-text">Addons</span>
+          <i
+            class="external-icon"
+            data-lucide="external-link"
+          ></i>
+        </button>
+
+        <button
+          class="nav-button"
+          data-page="about"
+        >
+          <i data-lucide="info"></i>
+          <span class="nav-text">About</span>
+        </button>
+
+      </nav>
+
+      <div class="sidebar-bottom">
+
+        <button
+          class="nav-button back-button"
+          id="back-to-cattymod"
+        >
+          <i data-lucide="door-open"></i>
+          <span class="nav-text">Back to CattyMod</span>
+        </button>
+
+        <div class="sidebar-footer-text">
+          CattyMod Settings
+        </div>
+
+      </div>
+
+    </aside>
+
+    <main class="main">
+
+      <div class="content">
+
+        <!-- GENERAL -->
+
+        <section
+          id="page-general"
+          class="page"
+        >
+
+          <div class="page-header">
+            <h1>General</h1>
+            <p>Change how CattyMod looks and behaves.</p>
+          </div>
+
+          <div class="section">
+
+            <div class="section-title">
+              Appearance
+            </div>
+
+            <div class="card">
+
+              <!-- Dark Mode -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Dark Mode
+                  </div>
+
+                  <div class="setting-description">
+                    Use a darker interface that's easier on the eyes.
+                  </div>
+
+                </div>
+
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="dark-mode-toggle"
+                  >
+                  <span class="slider"></span>
+                </label>
+
+              </div>
+
+              <!-- Block Style -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Block Style
+                  </div>
+
+                  <div class="setting-description">
+                    Choose the appearance of Scratch blocks.
+                  </div>
+
+                </div>
+
+                <select
+                  id="block-style-select"
+                  class="setting-select"
+                  aria-label="Block Style"
+                >
+                  <option value="original">
+                    Original
+                  </option>
+
+                  <option value="high-contrast">
+                    High Contrast
+                  </option>
+
+                  <option value="dark">
+                    Dark
+                  </option>
+                </select>
+
+              </div>
+              
+              <!-- Go Icon -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Go Icon
+                  </div>
+
+                  <div class="setting-description">
+                    Select an icon for CattyMod's Play Button.
+                  </div>
+
+                </div>
+
+                <select
+                  id="go-icon-select"
+                  class="setting-select"
+                  aria-label="Go Icon"
+                >
+                  <option value="play">
+                    Play Button
+                  </option>
+
+                  <option value="greenflag">
+                    Green Flag
+                  </option>
+
+                  <option value="blueflag">
+                    Blue Flag
+                  </option>
+                  
+                  <option value="purpleflag">
+                    Purple Flag
+                  </option>
+                </select>
+
+              </div>
+
+              <!-- Accent -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Accent
+                  </div>
+
+                  <div class="setting-description">
+                    Choose the accent color for CattyMod to use.
+                  </div>
+
+                </div>
+
+                <select
+                  id="accent-select"
+                  class="setting-select"
+                  aria-label="Accent"
+                >
+                  <option value="red">Red</option>
+                  <option value="orange">Orange</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="green">Green</option>
+                  <option value="blue">Blue</option>
+                  <option value="indigo">Indigo</option>
+                  <option value="violet">Violet</option>
+                  <option value="purple">Purple</option>
+                  <option value="rainbow">Rainbow</option>
+                </select>
+
+              </div>
+                
+            </div>
+            
+            
+
+          </div>
+
+          <div class="section">
+
+            <div class="section-title">
+              Projects
+            </div>
+
+            <div class="card">
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Custom Default Project
+                  </div>
+
+                  <div class="setting-description">
+                    Use a Scratch project as the default project when starting CattyMod.
+                  </div>
+
+                </div>
+
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="custom-project-toggle"
+                  >
+                  <span class="slider"></span>
+                </label>
+
+              </div>
+
+              <div
+                id="custom-project-options"
+                class="setting-options collapsed"
+              >
+
+                <label
+                  class="input-label"
+                  for="custom-project-id"
+                >
+                  Scratch Project ID
+                </label>
+
+                <input
+                  id="custom-project-id"
+                  class="text-input"
+                  type="text"
+                  placeholder="e.g. 123456789"
+                  inputmode="numeric"
+                  autocomplete="off"
+                >
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ABOUT -->
+
+        <section
+          id="page-about"
+          class="page"
+          style="display: none;"
+        >
+
+          <div class="page-header">
+
+            <h1>About</h1>
+
+            <p>
+              Information about CattyMod.
+            </p>
+
+          </div>
+
+          <div class="card about-card">
+
+            <div class="about-header">
+
+              <img
+                class="about-logo"
+                src="https://studio.cattymod.app/images/apple-touch-icon.png"
+                alt="CattyMod"
+              >
+
+              <div>
+
+                <div class="about-name">
+                  CattyMod
+                </div>
+
+                <div class="about-version">
+                  By Noahscratch493
+                </div>
+
+              </div>
+
+            </div>
+
+            <p class="about-description">
+              Block-based coding with tons of capabilities.
+            </p>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+  const THEME_KEY = "tw:theme";
+  const CUSTOM_PROJECT_KEY =
+    "cattymod:customDefaultProject";
+
+  const GO_ICON_KEY =
+    "cattymod:goIcon";
+
+
+  /* -------------------------
+     Theme
+  ------------------------- */
+
+  function readTheme() {
+    const raw =
+      localStorage.getItem(THEME_KEY);
+
+    if (!raw) {
+      return null;
+    }
+
+    try {
+      const parsed =
+        JSON.parse(raw);
+
+      if (
+        parsed &&
+        typeof parsed === "object"
+      ) {
+        return parsed;
+      }
+
+      if (
+        typeof parsed === "string"
+      ) {
+        return {
+          gui: parsed
+        };
+      }
+
+    } catch {
+      if (
+        raw === "dark" ||
+        raw === "light"
+      ) {
+        return {
+          gui: raw
+        };
+      }
+    }
+
+    return null;
+  }
+
+
+  function systemIsDark() {
+    return (
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches
+    );
+  }
+
+
+  function getCurrentGuiTheme() {
+    const theme =
+      readTheme();
+
+    if (
+      theme &&
+      (
+        theme.gui === "dark" ||
+        theme.gui === "light"
+      )
+    ) {
+      return theme.gui;
+    }
+
+    return systemIsDark()
+      ? "dark"
+      : "light";
+  }
+
+
+  function applyTheme() {
+    const theme =
+      getCurrentGuiTheme();
+
+    document.body.classList.toggle(
+      "dark",
+      theme === "dark"
+    );
+
+    document.getElementById(
+      "dark-mode-toggle"
+    ).checked =
+      theme === "dark";
+  }
+
+
+  function updateTheme(updater) {
+    const current =
+      readTheme() || {};
+
+    const newTheme = {
+      ...current
+    };
+
+    updater(newTheme);
+
+    localStorage.setItem(
+      THEME_KEY,
+      JSON.stringify(newTheme)
+    );
+
+    applyTheme();
+    applySettingsAccent();
+    loadBlockStyle();
+    loadAccent();
+  }
+
+
+  function setGuiTheme(gui) {
+    updateTheme(theme => {
+      theme.gui = gui;
+    });
+  }
+
+
+  /* -------------------------
+     Accent
+  ------------------------- */
+
+  const accentSelect =
+    document.getElementById(
+      "accent-select"
+    );
+
+
+  const ACCENT_COLORS = {
+    red: "#e53935",
+    orange: "#fb8c00",
+    yellow: "#fbc02d",
+    green: "#43a047",
+    blue: "#009ccc",
+    indigo: "#3949ab",
+    violet: "#8e44ad",
+    purple: "#9c27b0"
+  };
+
+
+  const RAINBOW_GRADIENT =
+    "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
+
+
+  const ACCENT_OPTIONS = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "indigo",
+    "violet",
+    "purple",
+    "rainbow"
+  ];
+
+
+  function getCurrentAccent() {
+    const theme =
+      readTheme();
+
+    if (
+      theme &&
+      typeof theme.accent === "string" &&
+      ACCENT_OPTIONS.includes(
+        theme.accent.toLowerCase()
+      )
+    ) {
+      return theme.accent.toLowerCase();
+    }
+
+    return "blue";
+  }
+
+
+  function applySettingsAccent() {
+    const accent =
+      getCurrentAccent();
+
+    const root =
+      document.documentElement;
+
+
+    /*
+      Remove all Rainbow styling first.
+
+      This prevents old Rainbow classes
+      from remaining after switching
+      to another accent.
+    */
+
+    document
+      .querySelectorAll(
+        ".rainbow-accent"
+      )
+      .forEach(element => {
+        element.classList.remove(
+          "rainbow-accent"
+        );
+      });
+
+
+    document
+      .querySelectorAll(
+        ".rainbow-text"
+      )
+      .forEach(element => {
+        element.classList.remove(
+          "rainbow-text"
+        );
+      });
+
+
+    if (accent === "rainbow") {
+
+      /*
+        Keep --accent as a real color
+        because color-mix() requires
+        a real color.
+
+        Rainbow-capable elements use
+        --accent-gradient.
+      */
+
+      root.style.setProperty(
+        "--accent",
+        "#009ccc"
+      );
+
+      root.style.setProperty(
+        "--accent-hover",
+        "#008db8"
+      );
+
+      root.style.setProperty(
+        "--accent-gradient",
+        RAINBOW_GRADIENT
+      );
+
+
+      /*
+        Selected sidebar item gets
+        the special Rainbow class.
+      */
+
+      document
+        .querySelectorAll(
+          ".nav-button.active"
+        )
+        .forEach(element => {
+          element.classList.add(
+            "rainbow-accent"
+          );
+        });
+
+
+      /*
+        Checked switches remain Rainbow.
+      */
+
+      document
+        .querySelectorAll(
+          ".switch input:checked + .slider"
+        )
+        .forEach(element => {
+          element.classList.add(
+            "rainbow-accent"
+          );
+        });
+
+
+    } else {
+
+      const color =
+        ACCENT_COLORS[accent] ||
+        ACCENT_COLORS.blue;
+
+
+      root.style.setProperty(
+        "--accent",
+        color
+      );
+
+      root.style.setProperty(
+        "--accent-hover",
+        color
+      );
+
+      root.style.setProperty(
+        "--accent-gradient",
+        color
+      );
+    }
+  }
+
+
+  function setAccent(accent) {
+
+    if (
+      !ACCENT_OPTIONS.includes(
+        accent
+      )
+    ) {
+      return;
+    }
+
+    updateTheme(theme => {
+      theme.accent = accent;
+    });
+  }
+
+
+  function loadAccent() {
+
+    accentSelect.value =
+      getCurrentAccent();
+
+    applySettingsAccent();
+  }
+
+
+  accentSelect.addEventListener(
+    "change",
+    () => {
+
+      setAccent(
+        accentSelect.value
+      );
+
+    }
+  );
+
+
+  /* -------------------------
+     Dark Mode
+  ------------------------- */
+
+  const darkModeToggle =
+    document.getElementById(
+      "dark-mode-toggle"
+    );
+
+
+  darkModeToggle.addEventListener(
+    "change",
+    () => {
+
+      setGuiTheme(
+        darkModeToggle.checked
+          ? "dark"
+          : "light"
+      );
+
+    }
+  );
+
+
+  const mediaQuery =
+    window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    );
+
+
+  mediaQuery.addEventListener(
+    "change",
+    () => {
+
+      if (
+        !localStorage.getItem(
+          THEME_KEY
+        )
+      ) {
+        applyTheme();
+        applySettingsAccent();
+      }
+
+    }
+  );
+
+
+  /* -------------------------
+     Block Style
+  ------------------------- */
+
+  const blockStyleSelect =
+    document.getElementById(
+      "block-style-select"
+    );
+
+
+  function getBlockStyle() {
+
+    const theme =
+      readTheme();
+
+    if (
+      !theme ||
+      typeof theme.blocks !== "string"
+    ) {
+      return "original";
+    }
+
+    if (
+      theme.blocks ===
+      "high-contrast"
+    ) {
+      return "high-contrast";
+    }
+
+    if (
+      theme.blocks === "dark"
+    ) {
+      return "dark";
+    }
+
+    return "original";
+  }
+
+
+  function setBlockStyle(style) {
+
+    updateTheme(theme => {
+
+      if (
+        style === "original"
+      ) {
+        delete theme.blocks;
+        return;
+      }
+
+      theme.blocks = style;
+
+    });
+  }
+
+
+  function loadBlockStyle() {
+
+    blockStyleSelect.value =
+      getBlockStyle();
+
+  }
+
+
+  blockStyleSelect.addEventListener(
+    "change",
+    () => {
+
+      setBlockStyle(
+        blockStyleSelect.value
+      );
+
+    }
+  );
+
+
+  /* -------------------------
+     Go Icon
+  ------------------------- */
+
+  const goIconSelect =
+    document.getElementById(
+      "go-icon-select"
+    );
+
+
+  function getCurrentGoIcon() {
+
+    const saved =
+      localStorage.getItem(
+        GO_ICON_KEY
+      );
+
+    /*
+      If a valid value exists in
+      localStorage, use it.
+    */
+
+    if (
+      saved === "play" ||
+      saved === "greenflag" ||
+      saved === "blueflag" ||
+      saved === "purpleflag"
+    ) {
+      return saved;
+    }
+
+    /*
+      If the value does not exist,
+      Play Button is the default.
+    */
+
+    return "play";
+  }
+
+
+  function loadGoIcon() {
+
+    if (!goIconSelect) {
+      return;
+    }
+
+    /*
+      Make the dropdown match
+      the localStorage value.
+    */
+
+    goIconSelect.value =
+      getCurrentGoIcon();
+
+  }
+
+
+  function setGoIcon(icon) {
+
+    if (
+      icon !== "play" &&
+      icon !== "greenflag" &&
+      icon !== "blueflag" &&
+      icon !== "purpleflag"
+    ) {
+      icon = "play";
+    }
+
+    localStorage.setItem(
+      GO_ICON_KEY,
+      icon
+    );
+
+    /*
+      Immediately make the dropdown
+      match the saved value.
+    */
+
+    loadGoIcon();
+
+  }
+
+
+  goIconSelect.addEventListener(
+    "change",
+    () => {
+
+      setGoIcon(
+        goIconSelect.value
+      );
+
+    }
+  );
+
+
+  /* -------------------------
+     Custom Default Project
+  ------------------------- */
+
+  const customProjectToggle =
+    document.getElementById(
+      "custom-project-toggle"
+    );
+
+  const customProjectOptions =
+    document.getElementById(
+      "custom-project-options"
+    );
+
+  const customProjectId =
+    document.getElementById(
+      "custom-project-id"
+    );
+
+
+  function updateCustomProjectVisibility() {
+
+    customProjectOptions.classList.toggle(
+      "collapsed",
+      !customProjectToggle.checked
+    );
+
+  }
+
+
+  function loadCustomProject() {
+
+    const saved =
+      localStorage.getItem(
+        CUSTOM_PROJECT_KEY
+      );
+
+    if (saved) {
+
+      customProjectToggle.checked =
+        true;
+
+      customProjectId.value =
+        saved;
+
+    } else {
+
+      customProjectToggle.checked =
+        false;
+
+      customProjectId.value =
+        "";
+
+    }
+
+    updateCustomProjectVisibility();
+  }
+
+
+  customProjectToggle.addEventListener(
+    "change",
+    () => {
+
+      if (
+        customProjectToggle.checked
+      ) {
+
+        if (
+          customProjectId.value.trim()
+        ) {
+
+          localStorage.setItem(
+            CUSTOM_PROJECT_KEY,
+            customProjectId.value
+          );
+
+        }
+
+      } else {
+
+        localStorage.removeItem(
+          CUSTOM_PROJECT_KEY
+        );
+
+      }
+
+      updateCustomProjectVisibility();
+
+      applySettingsAccent();
+
+    }
+  );
+
+
+  customProjectId.addEventListener(
+    "input",
+    () => {
+
+      const numbersOnly =
+        customProjectId.value.replace(
+          /\D/g,
+          ""
+        );
+
+      customProjectId.value =
+        numbersOnly;
+
+      if (
+        customProjectToggle.checked
+      ) {
+
+        if (numbersOnly) {
+
+          localStorage.setItem(
+            CUSTOM_PROJECT_KEY,
+            numbersOnly
+          );
+
+        } else {
+
+          localStorage.removeItem(
+            CUSTOM_PROJECT_KEY
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+
+  /* -------------------------
+     Navigation
+  ------------------------- */
+
+  const navButtons =
+    document.querySelectorAll(
+      ".nav-button[data-page]"
+    );
+
+  const pages =
+    document.querySelectorAll(
+      ".page"
+    );
+
+
+  navButtons.forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const pageName =
+          button.dataset.page;
+
+
+        navButtons.forEach(item => {
+
+          item.classList.remove(
+            "active"
+          );
+
+        });
+
+
+        button.classList.add(
+          "active"
+        );
+
+
+        pages.forEach(page => {
+
+          page.style.display =
+            "none";
+
+        });
+
+
+        const selectedPage =
+          document.getElementById(
+            "page-" + pageName
+          );
+
+
+        if (selectedPage) {
+
+          selectedPage.style.display =
+            "";
+
+        }
+
+
+        /*
+          Reapply accent so the newly
+          selected sidebar item gets
+          the correct Rainbow styling.
+        */
+
+        applySettingsAccent();
+
+      }
+    );
+
+  });
+
+
+  /* -------------------------
+     Addons
+  ------------------------- */
+
+  document
+    .getElementById(
+      "addons-button"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        window.open(
+          "https://studio.cattymod.app/addons.html",
+          "_blank",
+          "noopener,noreferrer"
+        );
+
+      }
+    );
+
+
+  /* -------------------------
+     Back to CattyMod
+  ------------------------- */
+
+  document
+    .getElementById(
+      "back-to-cattymod"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        window.location.href =
+          "https://studio.cattymod.app";
+
+      }
+    );
+
+
+  /* -------------------------
+     Storage Sync
+  ------------------------- */
+
+  window.addEventListener(
+    "storage",
+    event => {
+
+      if (
+        event.key === THEME_KEY
+      ) {
+
+        applyTheme();
+        applySettingsAccent();
+        loadBlockStyle();
+        loadAccent();
+
+      }
+
+
+      if (
+        event.key ===
+        CUSTOM_PROJECT_KEY
+      ) {
+
+        loadCustomProject();
+
+      }
+
+
+      if (
+        event.key ===
+        GO_ICON_KEY
+      ) {
+
+        loadGoIcon();
+
+      }
+
+    }
+  );
+
+
+  /* -------------------------
+     Start
+  ------------------------- */
+
+  applyTheme();
+  applySettingsAccent();
+  loadBlockStyle();
+  loadAccent();
+  loadCustomProject();
+  loadGoIcon();
+
+  lucide.createIcons();
+</script>
+</body>
+</html>
