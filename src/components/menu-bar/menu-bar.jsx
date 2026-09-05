@@ -243,22 +243,7 @@ class MenuBar extends React.Component {
     }
     
 handleClickNew () {
-    const customDefaultProject =
-        getCustomDefaultProject();
-
-    if (customDefaultProject) {
-        onNewClick()
-            .catch(e => {
-                console.error(
-                    '❌ Failed to load custom default project:',
-                    e
-                );
-            });
-
-        this.props.onRequestCloseFile();
-        return;
-    }
-
+    // Original New-project behavior for compatibility.
     // if the project is dirty, and user owns the project, we will autosave.
     // but if they are not logged in and can't save, user should consider
     // downloading or logging in first.
@@ -281,6 +266,17 @@ handleClickNew () {
     }
 
     this.props.onRequestCloseFile();
+
+    // Then load the custom default project if one is configured.
+    if (getCustomDefaultProject()) {
+        onNewClick()
+            .catch(e => {
+                console.error(
+                    '❌ Failed to load custom default project:',
+                    e
+                );
+            });
+    }
 }
 
     handleClickNewWindow () {
