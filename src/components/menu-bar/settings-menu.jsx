@@ -26,6 +26,8 @@ import {
 import {
     GO_ICON_PLAY,
     GO_ICON_GREEN_FLAG,
+    GO_ICON_BLUE_FLAG,
+    GO_ICON_PURPLE_FLAG,
     getGoIcon,
     getGoIconImage,
     setGoIcon,
@@ -136,6 +138,20 @@ const GoIconMenu = ({
                 isSelected={goIcon === GO_ICON_GREEN_FLAG}
                 onClick={() => onChangeGoIcon(GO_ICON_GREEN_FLAG)}
             />
+
+            <GoIconMenuItem
+                icon={getGoIconImage(GO_ICON_BLUE_FLAG)}
+                label="Blue Flag"
+                isSelected={goIcon === GO_ICON_BLUE_FLAG}
+                onClick={() => onChangeGoIcon(GO_ICON_BLUE_FLAG)}
+            />
+
+            <GoIconMenuItem
+                icon={getGoIconImage(GO_ICON_PURPLE_FLAG)}
+                label="Purple Flag"
+                isSelected={goIcon === GO_ICON_PURPLE_FLAG}
+                onClick={() => onChangeGoIcon(GO_ICON_PURPLE_FLAG)}
+            />
         </Submenu>
     </MenuItem>
 );
@@ -227,7 +243,9 @@ const SettingsMenu = ({
 
         if (
             mode !== GO_ICON_PLAY &&
-            mode !== GO_ICON_GREEN_FLAG
+            mode !== GO_ICON_GREEN_FLAG &&
+            mode !== GO_ICON_BLUE_FLAG &&
+            mode !== GO_ICON_PURPLE_FLAG
         ) {
             return;
         }
