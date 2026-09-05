@@ -41,6 +41,10 @@ import check from './check.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import settingsIcon from './icon--settings.svg';
 
+const isFileProtocol = () =>
+    typeof window !== 'undefined' &&
+    window.location.protocol === 'file:';
+
 const GoIconPreview = props => (
     <img
         src={props.icon}
@@ -102,59 +106,65 @@ const GoIconMenu = ({
     isRtl,
     onChangeGoIcon,
     onOpen
-}) => (
-    <MenuItem expanded={isOpen}>
-        <div
-            className={styles.option}
-            onClick={onOpen}
-        >
-            <GoIconPreview
-                icon={getGoIconImage(goIcon)}
-            />
+}) => {
+    if (isFileProtocol()) {
+        return null;
+    }
 
-            <span className={styles.submenuLabel}>
-                Go Icon
-            </span>
+    return (
+        <MenuItem expanded={isOpen}>
+            <div
+                className={styles.option}
+                onClick={onOpen}
+            >
+                <GoIconPreview
+                    icon={getGoIconImage(goIcon)}
+                />
 
-            <img
-                className={styles.expandCaret}
-                src={dropdownCaret}
-                draggable={false}
-                alt=""
-            />
-        </div>
+                <span className={styles.submenuLabel}>
+                    Go Icon
+                </span>
 
-        <Submenu place={isRtl ? 'left' : 'right'}>
-            <GoIconMenuItem
-                icon={getGoIconImage(GO_ICON_PLAY)}
-                label="Play Button (default)"
-                isSelected={goIcon === GO_ICON_PLAY}
-                onClick={() => onChangeGoIcon(GO_ICON_PLAY)}
-            />
+                <img
+                    className={styles.expandCaret}
+                    src={dropdownCaret}
+                    draggable={false}
+                    alt=""
+                />
+            </div>
 
-            <GoIconMenuItem
-                icon={getGoIconImage(GO_ICON_GREEN_FLAG)}
-                label="Green Flag"
-                isSelected={goIcon === GO_ICON_GREEN_FLAG}
-                onClick={() => onChangeGoIcon(GO_ICON_GREEN_FLAG)}
-            />
+            <Submenu place={isRtl ? 'left' : 'right'}>
+                <GoIconMenuItem
+                    icon={getGoIconImage(GO_ICON_PLAY)}
+                    label="Play Button (default)"
+                    isSelected={goIcon === GO_ICON_PLAY}
+                    onClick={() => onChangeGoIcon(GO_ICON_PLAY)}
+                />
 
-            <GoIconMenuItem
-                icon={getGoIconImage(GO_ICON_BLUE_FLAG)}
-                label="Blue Flag"
-                isSelected={goIcon === GO_ICON_BLUE_FLAG}
-                onClick={() => onChangeGoIcon(GO_ICON_BLUE_FLAG)}
-            />
+                <GoIconMenuItem
+                    icon={getGoIconImage(GO_ICON_GREEN_FLAG)}
+                    label="Green Flag"
+                    isSelected={goIcon === GO_ICON_GREEN_FLAG}
+                    onClick={() => onChangeGoIcon(GO_ICON_GREEN_FLAG)}
+                />
 
-            <GoIconMenuItem
-                icon={getGoIconImage(GO_ICON_PURPLE_FLAG)}
-                label="Purple Flag"
-                isSelected={goIcon === GO_ICON_PURPLE_FLAG}
-                onClick={() => onChangeGoIcon(GO_ICON_PURPLE_FLAG)}
-            />
-        </Submenu>
-    </MenuItem>
-);
+                <GoIconMenuItem
+                    icon={getGoIconImage(GO_ICON_BLUE_FLAG)}
+                    label="Blue Flag"
+                    isSelected={goIcon === GO_ICON_BLUE_FLAG}
+                    onClick={() => onChangeGoIcon(GO_ICON_BLUE_FLAG)}
+                />
+
+                <GoIconMenuItem
+                    icon={getGoIconImage(GO_ICON_PURPLE_FLAG)}
+                    label="Purple Flag"
+                    isSelected={goIcon === GO_ICON_PURPLE_FLAG}
+                    onClick={() => onChangeGoIcon(GO_ICON_PURPLE_FLAG)}
+                />
+            </Submenu>
+        </MenuItem>
+    );
+};
 
 GoIconMenu.propTypes = {
     goIcon: PropTypes.string,
@@ -180,19 +190,12 @@ const SettingsMenu = ({
     closeBlocksThemeMenu,
     closeLanguageMenu
 }) => {
-    const [goIcon, setGoIconState] = useState(getGoIcon);
-
-    const [isOnline, setIsOnline] = useState(() =>
-        navigator.onLine
+    const [goIcon, setGoIconState] = useState(() =>
+        isFileProtocol() ? GO_ICON_PLAY : getGoIcon()
     );
 
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
 
-    /*
-     * If another Settings submenu opens, close Go Icon.
-     *
-     * Also close Go Icon when the entire Settings menu closes.
-     */
     useEffect(() => {
         if (
             accentIsOpen ||
@@ -209,35 +212,19 @@ const SettingsMenu = ({
         settingsMenuOpen
     ]);
 
-    /*
-     * Apply the selected Go Icon while online.
-     */
     useEffect(() => {
-        const handleOnline = () => {
-            setIsOnline(true);
-            applyGoIcon(goIcon);
-        };
-
-        const handleOffline = () => {
-            setIsOnline(false);
+        if (isFileProtocol()) {
             setGoIconMenuOpen(false);
-        };
-
-        window.addEventListener('online', handleOnline);
-        window.addEventListener('offline', handleOffline);
-
-        if (navigator.onLine) {
-            applyGoIcon(goIcon);
+            return undefined;
         }
 
-        return () => {
-            window.removeEventListener('online', handleOnline);
-            window.removeEventListener('offline', handleOffline);
-        };
+        applyGoIcon(goIcon);
+
+        return undefined;
     }, [goIcon]);
 
     function onChangeGoIcon(mode) {
-        if (!navigator.onLine) {
+        if (isFileProtocol()) {
             return;
         }
 
@@ -259,14 +246,10 @@ const SettingsMenu = ({
     }
 
     function onOpenGoIconMenu() {
-        if (!navigator.onLine) {
+        if (isFileProtocol()) {
             return;
         }
 
-        /*
-         * Go Icon is local state, so explicitly close the Redux
-         * Settings submenus before opening it.
-         */
         if (accentIsOpen) {
             closeAccentMenu();
         }
@@ -336,7 +319,7 @@ const SettingsMenu = ({
                         </React.Fragment>
                     )}
 
-                    {isOnline && (
+                    {!isFileProtocol() && (
                         <GoIconMenu
                             goIcon={goIcon}
                             isOpen={goIconMenuOpen}
