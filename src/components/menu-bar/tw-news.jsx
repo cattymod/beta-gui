@@ -15,10 +15,10 @@ const NEWS_ITEMS = {
         )
     },
     release: {
-        id: 'new-extensions',
+        id: 'go-icon-intro',
         body: (
             <>
-                New extensions are here! Explore the latest additions to CattyMod.
+                New Go Icons are here! Explore the latest additions to CattyMod.
             </>
         )
     }
