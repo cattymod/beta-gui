@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {FormattedMessage} from 'react-intl';
 
 import LanguageMenu from './language-menu.jsx';
@@ -16,7 +17,10 @@ import TWDesktopSettings from './tw-desktop-settings.jsx';
 import {
     accentMenuOpen,
     blocksThemeMenuOpen,
-    languageMenuOpen
+    languageMenuOpen,
+    closeAccentMenu,
+    closeBlocksThemeMenu,
+    closeLanguageMenu
 } from '../../reducers/menus';
 
 import menuBarStyles from './menu-bar.css';
@@ -39,14 +43,6 @@ const CATTY_GREEN_FLAG =
 
 const FULL_BASE64_GREEN_FLAG =
      'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDAsMCwwLTcuNjksMCIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjAuNzUiIHkxPSIxNi43NSIgeDI9IjAuNzUiIHkyPSIwLjc1Ii8+PC9zdmc+';
-/*
- * Go Icon preview.
- *
- * Unlike Accent icons, Go Icons do not use accentIconOuter because
- * that class is intended for circular color swatches.
- *
- * The filter makes the complete SVG white in the menu.
- */
 const GoIconPreview = props => (
     <img
         src={props.icon}
@@ -69,12 +65,6 @@ GoIconPreview.propTypes = {
     icon: PropTypes.string
 };
 
-/*
- * Individual Go Icon option.
- *
- * This follows the same structure as AccentMenuItem:
- * checkmark + icon + label.
- */
 const GoIconMenuItem = ({
     icon,
     isSelected,
@@ -108,11 +98,6 @@ GoIconMenuItem.propTypes = {
     onClick: PropTypes.func
 };
 
-/*
- * Go Icon submenu.
- *
- * Styled and structured like the Accent submenu.
- */
 const GoIconMenu = ({
     goIcon,
     isOpen,
@@ -182,7 +167,10 @@ const SettingsMenu = ({
     settingsMenuOpen,
     accentIsOpen,
     blocksThemeIsOpen,
-    languageIsOpen
+    languageIsOpen,
+    closeAccentMenu,
+    closeBlocksThemeMenu,
+    closeLanguageMenu
 }) => {
     const [goIcon, setGoIcon] = useState(() => {
         try {
@@ -193,24 +181,12 @@ const SettingsMenu = ({
         }
     });
 
-    /*
-     * Track the browser's online/offline state.
-     *
-     * This controls whether the Go Icon option is shown.
-     */
     const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
-    /*
-     * Go Icon uses local state because it is custom and is not part
-     * of the existing Redux menu reducer.
-     */
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
 
     /*
-     * Keep Go Icon mutually exclusive with the existing Settings
-     * submenus.
-     *
-     * If Accent, Blocks Colors, or Language opens, Go Icon closes.
+     * If another Settings submenu opens, close Go Icon.
      *
      * Also close Go Icon when the entire Settings menu closes.
      */
@@ -234,17 +210,14 @@ const SettingsMenu = ({
         const handleOnline = () => {
             setIsOnline(true);
 
-            // Apply the selected Go Icon when coming back online.
             applyGoIcon(goIcon);
         };
 
         const handleOffline = () => {
             setIsOnline(false);
 
-            // Close the Go Icon submenu immediately.
             setGoIconMenuOpen(false);
 
-            // Stop the Go Icon observer while offline.
             try {
                 if (window._cattymod_goIcon_observer) {
                     window._cattymod_goIcon_observer.disconnect();
@@ -258,9 +231,6 @@ const SettingsMenu = ({
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        /*
-         * Only run the Go Icon script when online.
-         */
         if (navigator.onLine) {
             applyGoIcon(goIcon);
         }
@@ -275,7 +245,6 @@ const SettingsMenu = ({
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
 
-            // Disconnect observer when this component unmounts.
             try {
                 if (window._cattymod_goIcon_observer) {
                     window._cattymod_goIcon_observer.disconnect();
@@ -290,9 +259,6 @@ const SettingsMenu = ({
     }, [goIcon]);
 
     function applyGoIcon(mode) {
-        /*
-         * Never run the Go Icon replacement script while offline.
-         */
         if (!navigator.onLine) {
             return;
         }
@@ -318,10 +284,6 @@ const SettingsMenu = ({
         }
 
         function replaceAll() {
-            /*
-             * Check again because the MutationObserver could fire
-             * after the browser goes offline.
-             */
             if (!navigator.onLine) {
                 return;
             }
@@ -381,9 +343,6 @@ const SettingsMenu = ({
 
         replaceAll();
 
-        /*
-         * Do not create a MutationObserver while offline.
-         */
         if (!navigator.onLine) {
             return;
         }
@@ -411,9 +370,6 @@ const SettingsMenu = ({
     }
 
     function onChangeGoIcon(mode) {
-        /*
-         * Don't allow Go Icon changes while offline.
-         */
         if (!navigator.onLine) {
             return;
         }
@@ -427,27 +383,32 @@ const SettingsMenu = ({
 
         setGoIcon(mode);
 
-        // Close the submenu.
         setGoIconMenuOpen(false);
 
-        // Close the entire Settings menu,
-        // just like the other Settings options.
         onRequestClose();
     }
 
     function onOpenGoIconMenu() {
-        /*
-         * Don't open the Go Icon submenu while offline.
-         */
         if (!navigator.onLine) {
             return;
         }
 
         /*
-         * The existing Redux submenus are automatically collapsed
-         * by their own menu system. This local state then controls
-         * the Go Icon submenu.
+         * Go Icon is local state, so explicitly close the Redux
+         * Settings submenus before opening it.
          */
+        if (accentIsOpen) {
+            closeAccentMenu();
+        }
+
+        if (blocksThemeIsOpen) {
+            closeBlocksThemeMenu();
+        }
+
+        if (languageIsOpen) {
+            closeLanguageMenu();
+        }
+
         setGoIconMenuOpen(true);
     }
 
@@ -505,12 +466,6 @@ const SettingsMenu = ({
                         </React.Fragment>
                     )}
 
-                    {/*
-                     * Only show the Go Icon option while online.
-                     *
-                     * When offline, this entire component is removed
-                     * from the Settings menu.
-                     */}
                     {isOnline && (
                         <GoIconMenu
                             goIcon={goIcon}
@@ -543,7 +498,10 @@ SettingsMenu.propTypes = {
     settingsMenuOpen: PropTypes.bool,
     accentIsOpen: PropTypes.bool,
     blocksThemeIsOpen: PropTypes.bool,
-    languageIsOpen: PropTypes.bool
+    languageIsOpen: PropTypes.bool,
+    closeAccentMenu: PropTypes.func,
+    closeBlocksThemeMenu: PropTypes.func,
+    closeLanguageMenu: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -552,4 +510,13 @@ const mapStateToProps = state => ({
     languageIsOpen: languageMenuOpen(state)
 });
 
-export default connect(mapStateToProps)(SettingsMenu);
+const mapDispatchToProps = dispatch => bindActionCreators({
+    closeAccentMenu,
+    closeBlocksThemeMenu,
+    closeLanguageMenu
+}, dispatch);
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SettingsMenu);
