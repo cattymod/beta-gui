@@ -74,7 +74,12 @@ class TWNews extends React.Component {
     }
 
     render() {
-        if (this.state.closed || isScratchDesktop()) {
+        // Only show news on the beta site
+        if (
+            this.state.closed ||
+            isScratchDesktop() ||
+            window.location.hostname !== 'beta.cattymod.app'
+        ) {
             return null;
         }
 
