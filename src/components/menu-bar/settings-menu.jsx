@@ -6,7 +6,7 @@ import {FormattedMessage} from 'react-intl';
 
 import LanguageMenu from './language-menu.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
-import {MenuSection} from '../menu/menu.jsx';
+import {MenuSection, MenuItem} from '../menu/menu.jsx';
 import MenuLabel from './tw-menu-label.jsx';
 import TWAccentThemeMenu from './tw-theme-accent.jsx';
 import TWGuiThemeMenu from './tw-theme-gui.jsx';
@@ -125,9 +125,7 @@ const SettingsMenu = ({
 
                 <div className={styles.settingsSeparator} />
 
-                <button
-                    type="button"
-                    className={styles.moreSettingsButton}
+                <MenuItem
                     onClick={() => {
                         window.open(
                             'https://studio.cattymod.app/settings',
@@ -137,18 +135,19 @@ const SettingsMenu = ({
                         onRequestClose();
                     }}
                 >
-                    <img
-                        src={settingsIcon}
-                        draggable={false}
-                        width={20}
-                        height={20}
-                        alt=""
-                    />
-
-                    <span>
-                        More Settings
-                    </span>
-                </button>
+                    <div className={styles.option}>
+                        <img
+                            src={settingsIcon}
+                            draggable={false}
+                            width={24}
+                            height={24}
+                            alt=""
+                        />
+                        <span className={styles.submenuLabel}>
+                            More Settings
+                        </span>
+                    </div>
+                </MenuItem>
             </MenuSection>
         </MenuBarMenu>
     </MenuLabel>
