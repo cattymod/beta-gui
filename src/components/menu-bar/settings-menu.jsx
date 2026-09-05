@@ -32,7 +32,6 @@ const CATTY_GREEN_FLAG =
 
 const FULL_BASE64_GREEN_FLAG =
     'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDAsMCwwLTcuNjksMCIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjAuNzUiIHkxPSIxNi43NSIgeDI9IjAuNzUiIHkyPSIwLjc1Ii8+PC9zdmc+';
-
 /*
  * Go Icon preview.
  *
@@ -192,6 +191,19 @@ const SettingsMenu = ({
     const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
+
+    /*
+     * If the entire Settings menu closes, always close
+     * the Go Icon submenu as well.
+     *
+     * This prevents the Go Icon submenu from remaining open
+     * or appearing over another menu after Settings closes.
+     */
+    useEffect(() => {
+        if (!settingsMenuOpen) {
+            setGoIconMenuOpen(false);
+        }
+    }, [settingsMenuOpen]);
 
     useEffect(() => {
         const handleOnline = () => {
@@ -406,14 +418,44 @@ const SettingsMenu = ({
             return;
         }
 
-        setGoIconMenuOpen(true);
+        /*
+         * Make sure the parent Settings menu is open before
+         * allowing the Go Icon submenu to open.
+         *
+         * This prevents Go Icon from appearing by itself over
+         * another menu after Settings has been closed.
+         */
+        if (!settingsMenuOpen) {
+            return;
+        }
+
+        /*
+         * Close and reopen the submenu state cleanly.
+         *
+         * This prevents stale submenu state from surviving
+         * a Settings menu transition.
+         */
+        setGoIconMenuOpen(false);
+
+        setTimeout(() => {
+            if (settingsMenuOpen && navigator.onLine) {
+                setGoIconMenuOpen(true);
+            }
+        }, 0);
     }
 
     return (
         <MenuLabel
             open={settingsMenuOpen}
             onOpen={onRequestOpen}
-            onClose={onRequestClose}
+            onClose={() => {
+                /*
+                 * Always close the Go Icon submenu before
+                 * closing the entire Settings menu.
+                 */
+                setGoIconMenuOpen(false);
+                onRequestClose();
+            }}
         >
             <img
                 src={settingsIcon}
@@ -469,7 +511,7 @@ const SettingsMenu = ({
                      * When offline, this entire component is removed
                      * from the Settings menu.
                      */}
-                    {isOnline && (
+                    {isOnline && settingsMenuOpen && (
                         <GoIconMenu
                             goIcon={goIcon}
                             isOpen={goIconMenuOpen}
