@@ -187,9 +187,11 @@ export const replaceGreenFlags = mode => {
 
                 const isFlag =
                     href.includes('green-flag.svg') ||
-                    href.includes('blue-flag.svg') ||
+                    href.includes('flag.svg') ||
+                    href.includes('blocks.svg') ||
                     xlinkHref.includes('green-flag.svg') ||
-                    xlinkHref.includes('blue-flag.svg') ||
+                    xlinkHref.includes('flag.svg') ||
+                    xlinkHref.includes('blocks.svg') ||
                     namespacedXlinkHref.includes(
                         'green-flag.svg'
                     ) ||
