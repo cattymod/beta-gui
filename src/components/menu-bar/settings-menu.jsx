@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
-import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
+import {FormattedMessage} from 'react-intl';
 
 import LanguageMenu from './language-menu.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
@@ -13,16 +13,18 @@ import TWGuiThemeMenu from './tw-theme-gui.jsx';
 import TWBlocksThemeMenu from './tw-theme-blocks.jsx';
 import TWDesktopSettings from './tw-desktop-settings.jsx';
 
+import {
+    accentMenuOpen,
+    blocksThemeMenuOpen,
+    languageMenuOpen
+} from '../../reducers/menus';
+
 import menuBarStyles from './menu-bar.css';
 import styles from './settings-menu.css';
 
 import check from './check.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import settingsIcon from './icon--settings.svg';
-
-import {
-    closeSettingsMenu
-} from '../../reducers/menus.js';
 
 const GO_ICON_KEY = 'cattymod:goIcon';
 
@@ -36,7 +38,7 @@ const CATTY_GREEN_FLAG =
     'https://cattymod.app/assets/green-flag.svg';
 
 const FULL_BASE64_GREEN_FLAG =
-    'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDAsMCwwLTcuNjksMCIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjAuNzUiIHkxPSIxNi43NSIgeDI9IjAuNzUiIHkyPSIwLjc1Ii8+PC9zdmc+';
+     'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNi42MyAxNy41Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsOiM0Y2JmNTY7c3Ryb2tlOiM0NTk5M2Q7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uY2xzLTJ7c3Ryb2tlLXdpZHRoOjEuNXB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+aWNvbi0tZ3JlZW4tZmxhZzwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNLjc1LDJBNi40NCw2LjQ0LDAsMCwxLDguNDQsMmgwYTYuNDQsNi40NCwwLDAsMCw3LjY5LDBWMTIuNGE2LjQ0LDYuNDQsMCwwLDEtNy42OSwwaDBhNi40NCw2LjQ0LDAsMCwwLTcuNjksMCIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjAuNzUiIHkxPSIxNi43NSIgeDI9IjAuNzUiIHkyPSIwLjc1Ii8+PC9zdmc+';
 /*
  * Go Icon preview.
  *
@@ -172,13 +174,15 @@ GoIconMenu.propTypes = {
 const SettingsMenu = ({
     canChangeLanguage,
     canChangeTheme,
-    closeSettings,
     isRtl,
     onClickDesktopSettings,
     onOpenCustomSettings,
     onRequestClose,
     onRequestOpen,
-    settingsMenuOpen
+    settingsMenuOpen,
+    accentIsOpen,
+    blocksThemeIsOpen,
+    languageIsOpen
 }) => {
     const [goIcon, setGoIcon] = useState(() => {
         try {
@@ -196,16 +200,35 @@ const SettingsMenu = ({
      */
     const [isOnline, setIsOnline] = useState(() => navigator.onLine);
 
+    /*
+     * Go Icon uses local state because it is custom and is not part
+     * of the existing Redux menu reducer.
+     */
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
 
     /*
-     * If the entire Settings menu closes, also close Go Icon.
+     * Keep Go Icon mutually exclusive with the existing Settings
+     * submenus.
+     *
+     * If Accent, Blocks Colors, or Language opens, Go Icon closes.
+     *
+     * Also close Go Icon when the entire Settings menu closes.
      */
     useEffect(() => {
-        if (!settingsMenuOpen) {
+        if (
+            accentIsOpen ||
+            blocksThemeIsOpen ||
+            languageIsOpen ||
+            !settingsMenuOpen
+        ) {
             setGoIconMenuOpen(false);
         }
-    }, [settingsMenuOpen]);
+    }, [
+        accentIsOpen,
+        blocksThemeIsOpen,
+        languageIsOpen,
+        settingsMenuOpen
+    ]);
 
     useEffect(() => {
         const handleOnline = () => {
@@ -421,48 +444,18 @@ const SettingsMenu = ({
         }
 
         /*
-         * Do not allow Go Icon to sit on top of another
-         * Settings submenu.
-         *
-         * The other Settings menus use closeSettingsMenu()
-         * to clear their open submenu state. Do the same here.
-         *
-         * We then reopen Settings and enable Go Icon after
-         * the old submenu state has been cleared.
+         * The existing Redux submenus are automatically collapsed
+         * by their own menu system. This local state then controls
+         * the Go Icon submenu.
          */
-        closeSettings();
-
-        setGoIconMenuOpen(false);
-
-        setTimeout(() => {
-            if (!navigator.onLine) {
-                return;
-            }
-
-            onRequestOpen();
-
-            setTimeout(() => {
-                if (!navigator.onLine) {
-                    return;
-                }
-
-                setGoIconMenuOpen(true);
-            }, 0);
-        }, 0);
+        setGoIconMenuOpen(true);
     }
 
     return (
         <MenuLabel
             open={settingsMenuOpen}
             onOpen={onRequestOpen}
-            onClose={() => {
-                /*
-                 * Always close the Go Icon submenu before
-                 * closing the entire Settings menu.
-                 */
-                setGoIconMenuOpen(false);
-                onRequestClose();
-            }}
+            onClose={onRequestClose}
         >
             <img
                 src={settingsIcon}
@@ -518,7 +511,7 @@ const SettingsMenu = ({
                      * When offline, this entire component is removed
                      * from the Settings menu.
                      */}
-                    {isOnline && settingsMenuOpen && (
+                    {isOnline && (
                         <GoIconMenu
                             goIcon={goIcon}
                             isOpen={goIconMenuOpen}
@@ -542,20 +535,21 @@ const SettingsMenu = ({
 SettingsMenu.propTypes = {
     canChangeLanguage: PropTypes.bool,
     canChangeTheme: PropTypes.bool,
-    closeSettings: PropTypes.func,
     isRtl: PropTypes.bool,
     onClickDesktopSettings: PropTypes.func,
     onOpenCustomSettings: PropTypes.func,
     onRequestClose: PropTypes.func,
     onRequestOpen: PropTypes.func,
-    settingsMenuOpen: PropTypes.bool
+    settingsMenuOpen: PropTypes.bool,
+    accentIsOpen: PropTypes.bool,
+    blocksThemeIsOpen: PropTypes.bool,
+    languageIsOpen: PropTypes.bool
 };
 
-const mapDispatchToProps = dispatch => ({
-    closeSettings: () => dispatch(closeSettingsMenu())
+const mapStateToProps = state => ({
+    accentIsOpen: accentMenuOpen(state),
+    blocksThemeIsOpen: blocksThemeMenuOpen(state),
+    languageIsOpen: languageMenuOpen(state)
 });
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(SettingsMenu);
+export default connect(mapStateToProps)(SettingsMenu);
