@@ -5,14 +5,14 @@ export const GO_ICON_GREEN_FLAG = 'greenflag';
 export const GO_ICON_BLUE_FLAG = 'blueflag';
 export const GO_ICON_PURPLE_FLAG = 'purpleflag';
 
-const CATTY_GREEN_FLAG =
+const CATTY_PLAY =
     'https://cattymod.app/assets/go-icon/play/flag.svg';
 
-const TURBO_GREEN_FLAG =
-    'https://cattymod.app/assets/go-icon/green/flag.svg';
-
-const FULL_BASE64_GREEN_FLAG =
+const GREEN_FLAG_BLOCKS =
     'https://cattymod.app/assets/go-icon/green/blocks.svg';
+
+const GREEN_FLAG =
+    'https://cattymod.app/assets/go-icon/green/flag.svg';
     
 const BLUE_FLAG =
     'https://cattymod.app/assets/go-icon/blue/flag.svg';
@@ -74,7 +74,7 @@ export const setGoIcon = mode => {
 export const getGoIconImage = mode => {
     switch (mode) {
     case GO_ICON_GREEN_FLAG:
-        return FULL_BASE64_GREEN_FLAG;
+        return GREEN_FLAG;
 
     case GO_ICON_BLUE_FLAG:
         return BLUE_FLAG;
@@ -84,14 +84,14 @@ export const getGoIconImage = mode => {
 
     case GO_ICON_PLAY:
     default:
-        return CATTY_GREEN_FLAG;
+        return CATTY_PLAY;
     }
 };
 
 export const getGoIconSvg = mode => {
     switch (mode) {
     case GO_ICON_GREEN_FLAG:
-        return TURBO_GREEN_FLAG;
+        return GREEN_FLAG_BLOCKS;
 
     case GO_ICON_BLUE_FLAG:
         return BLUE_FLAG;
@@ -101,7 +101,7 @@ export const getGoIconSvg = mode => {
 
     case GO_ICON_PLAY:
     default:
-        return CATTY_GREEN_FLAG;
+        return CATTY_PLAY;
     }
 };
 
@@ -120,7 +120,7 @@ export const replaceGreenFlags = mode => {
      *
      * Blockly block <image> elements use getGoIconSvg().
      *
-     * This keeps TURBO_GREEN_FLAG exclusively for blocks.
+     * This keeps GREEN_FLAG_BLOCKS exclusively for blocks.
      */
     const normalIcon = getGoIconImage(mode);
     const blockIcon = getGoIconSvg(mode);
@@ -205,7 +205,7 @@ export const replaceGreenFlags = mode => {
                  * BLOCKS ONLY use blockIcon.
                  *
                  * greenflag:
-                 *     TURBO_GREEN_FLAG
+                 *     GREEN_FLAG_BLOCKS
                  *
                  * blueflag:
                  *     BLUE_FLAG
