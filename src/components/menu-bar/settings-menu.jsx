@@ -125,17 +125,19 @@ const SettingsMenu = ({
 
                 <div className={styles.settingsSeparator} />
 
-                <MenuItem
-                    onClick={() => {
-                        window.open(
-                            'https://studio.cattymod.app/settings',
-                            '_blank',
-                            'noopener,noreferrer'
-                        );
-                        onRequestClose();
-                    }}
-                >
-                    <div className={styles.option}>
+                <MenuItem>
+                    <div
+                        className={styles.option}
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onClick={() => {
+                            window.open(
+                                'https://studio.cattymod.app/settings',
+                                '_blank',
+                                'noopener,noreferrer'
+                            );
+                            onRequestClose();
+                        }}
+                    >
                         <img
                             src={settingsIcon}
                             draggable={false}
@@ -143,8 +145,13 @@ const SettingsMenu = ({
                             height={24}
                             alt=""
                         />
+
                         <span className={styles.submenuLabel}>
-                            More Settings
+                            <FormattedMessage
+                                defaultMessage="More Settings"
+                                description="Menu item to open more settings"
+                                id="tw.moreSettings"
+                            />
                         </span>
                     </div>
                 </MenuItem>
