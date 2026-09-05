@@ -21,7 +21,7 @@ import React, {useEffect} from 'react';
 import Interface from './render-interface.jsx';
 import render from './app-target';
 
-import {initializeGoIcon} from '../../lib/go-icon'
+import {initializeGoIcon} from '../lib/go-icon'
 
 const PlayerOnlyInterface = props => {
     useEffect(() => {
