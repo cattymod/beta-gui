@@ -11,6 +11,8 @@
     :root {
       --accent: #009ccc;
       --accent-hover: #008db8;
+      --accent-gradient: #009ccc;
+
       --bg: #f5f7f9;
       --sidebar: #ffffff;
       --card: #ffffff;
@@ -49,7 +51,8 @@
     }
 
     button,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
@@ -89,6 +92,14 @@
       justify-content: center;
       background: var(--accent);
       color: white;
+      object-fit: cover;
+      transition: background 0.2s ease;
+    }
+
+    .brand-icon.rainbow-accent {
+      background: var(--accent-gradient) !important;
+      background-size: 200% 100%;
+      animation: rainbow-shift 4s linear infinite;
     }
 
     .brand-icon i {
@@ -125,7 +136,9 @@
       align-items: center;
       gap: 12px;
       text-align: left;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition:
+        background 0.15s ease,
+        color 0.15s ease;
     }
 
     .nav-button:hover {
@@ -133,9 +146,39 @@
     }
 
     .nav-button.active {
-      background: color-mix(in srgb, var(--accent) 14%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--accent) 14%,
+        transparent
+      );
       color: var(--accent);
       font-weight: 600;
+    }
+
+    /*
+      Rainbow active sidebar item.
+
+      Keep the selected-item background,
+      but make it red instead of using
+      the Rainbow gradient.
+    */
+
+    .nav-button.active.rainbow-accent {
+      background: color-mix(
+        in srgb,
+        #e53935 14%,
+        transparent
+      ) !important;
+
+      color: #e53935 !important;
+      font-weight: 600;
+
+      -webkit-text-fill-color: #e53935;
+    }
+
+    .nav-button.active.rainbow-accent svg {
+      color: #e53935 !important;
+      stroke: #e53935 !important;
     }
 
     .nav-button i {
@@ -249,6 +292,34 @@
       line-height: 1.4;
     }
 
+    /* Select */
+
+    .setting-select {
+      min-width: 170px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 34px 9px 11px;
+      background: var(--input);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .setting-select:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 3px
+        color-mix(
+          in srgb,
+          var(--accent) 15%,
+          transparent
+        );
+    }
+
     /* Toggle */
 
     .switch {
@@ -290,8 +361,25 @@
       background: var(--accent);
     }
 
+    .switch input:checked + .slider.rainbow-accent {
+      background: var(--accent-gradient) !important;
+      background-size: 200% 100%;
+      animation: rainbow-shift 4s linear infinite;
+    }
+
     .switch input:checked + .slider::before {
       transform: translateX(20px);
+    }
+
+    /* Rainbow text */
+
+    .rainbow-text {
+      background: var(--accent-gradient);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 100%;
+      animation: rainbow-shift 4s linear infinite;
     }
 
     /* Custom project collapsing area */
@@ -330,12 +418,32 @@
       background: var(--input);
       color: var(--text);
       outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
     }
 
     .text-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+      box-shadow:
+        0 0 0 3px
+        color-mix(
+          in srgb,
+          var(--accent) 15%,
+          transparent
+        );
+    }
+
+    /* Rainbow animation */
+
+    @keyframes rainbow-shift {
+      from {
+        background-position: 0% 50%;
+      }
+
+      to {
+        background-position: 200% 50%;
+      }
     }
 
     /* About */
@@ -419,6 +527,14 @@
       .back-button {
         margin-bottom: 0;
       }
+
+      .setting-row {
+        align-items: flex-start;
+      }
+
+      .setting-select {
+        min-width: 135px;
+      }
     }
   </style>
 </head>
@@ -443,18 +559,30 @@
 
       <nav class="nav">
 
-        <button class="nav-button active" data-page="general">
+        <button
+          class="nav-button active"
+          data-page="general"
+        >
           <i data-lucide="settings"></i>
           <span class="nav-text">General</span>
         </button>
 
-        <button class="nav-button" id="addons-button">
+        <button
+          class="nav-button"
+          id="addons-button"
+        >
           <i data-lucide="puzzle"></i>
           <span class="nav-text">Addons</span>
-          <i class="external-icon" data-lucide="external-link"></i>
+          <i
+            class="external-icon"
+            data-lucide="external-link"
+          ></i>
         </button>
 
-        <button class="nav-button" data-page="about">
+        <button
+          class="nav-button"
+          data-page="about"
+        >
           <i data-lucide="info"></i>
           <span class="nav-text">About</span>
         </button>
@@ -463,7 +591,10 @@
 
       <div class="sidebar-bottom">
 
-        <button class="nav-button back-button" id="back-to-cattymod">
+        <button
+          class="nav-button back-button"
+          id="back-to-cattymod"
+        >
           <i data-lucide="door-open"></i>
           <span class="nav-text">Back to CattyMod</span>
         </button>
@@ -476,20 +607,21 @@
 
     </aside>
 
-
     <main class="main">
 
       <div class="content">
 
         <!-- GENERAL -->
 
-        <section id="page-general" class="page">
+        <section
+          id="page-general"
+          class="page"
+        >
 
           <div class="page-header">
             <h1>General</h1>
             <p>Change how CattyMod looks and behaves.</p>
           </div>
-
 
           <div class="section">
 
@@ -498,6 +630,8 @@
             </div>
 
             <div class="card">
+
+              <!-- Dark Mode -->
 
               <div class="setting-row">
 
@@ -514,16 +648,130 @@
                 </div>
 
                 <label class="switch">
-                  <input type="checkbox" id="dark-mode-toggle">
+                  <input
+                    type="checkbox"
+                    id="dark-mode-toggle"
+                  >
                   <span class="slider"></span>
                 </label>
 
               </div>
 
+              <!-- Block Style -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Block Style
+                  </div>
+
+                  <div class="setting-description">
+                    Choose the appearance of Scratch blocks.
+                  </div>
+
+                </div>
+
+                <select
+                  id="block-style-select"
+                  class="setting-select"
+                  aria-label="Block Style"
+                >
+                  <option value="original">
+                    Original
+                  </option>
+
+                  <option value="high-contrast">
+                    High Contrast
+                  </option>
+
+                  <option value="dark">
+                    Dark
+                  </option>
+                </select>
+
+              </div>
+              
+              <!-- Go Icon -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Go Icon
+                  </div>
+
+                  <div class="setting-description">
+                    Select an icon for CattyMod's Play Button.
+                  </div>
+
+                </div>
+
+                <select
+                  id="go-icon-select"
+                  class="setting-select"
+                  aria-label="Go Icon"
+                >
+                  <option value="play">
+                    Play Button
+                  </option>
+
+                  <option value="greenFlag">
+                    Green Flag
+                  </option>
+
+                  <option value="blueFlag">
+                    Blue Flag
+                  </option>
+                  
+                  <option value="purpleFlag">
+                    Purple Flag
+                  </option>
+                </select>
+
+              </div>
+
+              <!-- Accent -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Accent
+                  </div>
+
+                  <div class="setting-description">
+                    Choose the accent color used by the theme.
+                  </div>
+
+                </div>
+
+                <select
+                  id="accent-select"
+                  class="setting-select"
+                  aria-label="Accent"
+                >
+                  <option value="red">Red</option>
+                  <option value="orange">Orange</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="green">Green</option>
+                  <option value="blue">Blue</option>
+                  <option value="indigo">Indigo</option>
+                  <option value="violet">Violet</option>
+                  <option value="purple">Purple</option>
+                  <option value="rainbow">Rainbow</option>
+                </select>
+
+              </div>
+                
             </div>
+            
+            
 
           </div>
-
 
           <div class="section">
 
@@ -548,12 +796,14 @@
                 </div>
 
                 <label class="switch">
-                  <input type="checkbox" id="custom-project-toggle">
+                  <input
+                    type="checkbox"
+                    id="custom-project-toggle"
+                  >
                   <span class="slider"></span>
                 </label>
 
               </div>
-
 
               <div
                 id="custom-project-options"
@@ -584,7 +834,6 @@
 
         </section>
 
-
         <!-- ABOUT -->
 
         <section
@@ -595,16 +844,13 @@
 
           <div class="page-header">
 
-            <h1>
-              About
-            </h1>
+            <h1>About</h1>
 
             <p>
               Information about CattyMod.
             </p>
 
           </div>
-
 
           <div class="card about-card">
 
@@ -644,110 +890,364 @@
 
   </div>
 
-
   <script>
-    const THEME_KEY = "tw:theme";
-    const CUSTOM_PROJECT_KEY = "cattymod:customDefaultProject";
+  const THEME_KEY = "tw:theme";
+  const CUSTOM_PROJECT_KEY =
+    "cattymod:customDefaultProject";
+
+  const GO_ICON_KEY =
+    "cattymod:goIcon";
 
 
-    /* -------------------------
-       Theme
-    ------------------------- */
+  /* -------------------------
+     Theme
+  ------------------------- */
 
-    function readTheme() {
-      const raw = localStorage.getItem(THEME_KEY);
+  function readTheme() {
+    const raw =
+      localStorage.getItem(THEME_KEY);
 
-      if (!raw) {
-        return null;
-      }
-
-      try {
-        const parsed = JSON.parse(raw);
-
-        if (parsed && typeof parsed === "object") {
-          return parsed;
-        }
-
-        if (typeof parsed === "string") {
-          return {
-            gui: parsed
-          };
-        }
-      } catch {
-        if (raw === "dark" || raw === "light") {
-          return {
-            gui: raw
-          };
-        }
-      }
-
+    if (!raw) {
       return null;
     }
 
-
-    function systemIsDark() {
-      return window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-
-
-    function getCurrentGuiTheme() {
-      const theme = readTheme();
+    try {
+      const parsed =
+        JSON.parse(raw);
 
       if (
-        theme &&
-        (theme.gui === "dark" || theme.gui === "light")
+        parsed &&
+        typeof parsed === "object"
       ) {
-        return theme.gui;
+        return parsed;
       }
 
-      return systemIsDark() ? "dark" : "light";
-    }
-
-
-    function applyTheme() {
-      const theme = getCurrentGuiTheme();
-
-      document.body.classList.toggle(
-        "dark",
-        theme === "dark"
-      );
-
-      document.getElementById(
-        "dark-mode-toggle"
-      ).checked = theme === "dark";
-    }
-
-
-    function setGuiTheme(gui) {
-      const current = readTheme() || {};
-
-      const newTheme = {};
-
-      // Keep the accent if one already exists.
       if (
-        typeof current.accent === "string" &&
-        current.accent.trim() !== ""
+        typeof parsed === "string"
       ) {
-        newTheme.accent = current.accent;
+        return {
+          gui: parsed
+        };
       }
 
-      newTheme.gui = gui;
-
-      localStorage.setItem(
-        THEME_KEY,
-        JSON.stringify(newTheme)
-      );
-
-      applyTheme();
+    } catch {
+      if (
+        raw === "dark" ||
+        raw === "light"
+      ) {
+        return {
+          gui: raw
+        };
+      }
     }
 
+    return null;
+  }
 
-    const darkModeToggle =
-      document.getElementById("dark-mode-toggle");
+
+  function systemIsDark() {
+    return (
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches
+    );
+  }
 
 
-    darkModeToggle.addEventListener("change", () => {
+  function getCurrentGuiTheme() {
+    const theme =
+      readTheme();
+
+    if (
+      theme &&
+      (
+        theme.gui === "dark" ||
+        theme.gui === "light"
+      )
+    ) {
+      return theme.gui;
+    }
+
+    return systemIsDark()
+      ? "dark"
+      : "light";
+  }
+
+
+  function applyTheme() {
+    const theme =
+      getCurrentGuiTheme();
+
+    document.body.classList.toggle(
+      "dark",
+      theme === "dark"
+    );
+
+    document.getElementById(
+      "dark-mode-toggle"
+    ).checked =
+      theme === "dark";
+  }
+
+
+  function updateTheme(updater) {
+    const current =
+      readTheme() || {};
+
+    const newTheme = {
+      ...current
+    };
+
+    updater(newTheme);
+
+    localStorage.setItem(
+      THEME_KEY,
+      JSON.stringify(newTheme)
+    );
+
+    applyTheme();
+    applySettingsAccent();
+    loadBlockStyle();
+    loadAccent();
+  }
+
+
+  function setGuiTheme(gui) {
+    updateTheme(theme => {
+      theme.gui = gui;
+    });
+  }
+
+
+  /* -------------------------
+     Accent
+  ------------------------- */
+
+  const accentSelect =
+    document.getElementById(
+      "accent-select"
+    );
+
+
+  const ACCENT_COLORS = {
+    red: "#e53935",
+    orange: "#fb8c00",
+    yellow: "#fbc02d",
+    green: "#43a047",
+    blue: "#009ccc",
+    indigo: "#3949ab",
+    violet: "#8e44ad",
+    purple: "#9c27b0"
+  };
+
+
+  const RAINBOW_GRADIENT =
+    "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
+
+
+  const ACCENT_OPTIONS = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "indigo",
+    "violet",
+    "purple",
+    "rainbow"
+  ];
+
+
+  function getCurrentAccent() {
+    const theme =
+      readTheme();
+
+    if (
+      theme &&
+      typeof theme.accent === "string" &&
+      ACCENT_OPTIONS.includes(
+        theme.accent.toLowerCase()
+      )
+    ) {
+      return theme.accent.toLowerCase();
+    }
+
+    return "blue";
+  }
+
+
+  function applySettingsAccent() {
+    const accent =
+      getCurrentAccent();
+
+    const root =
+      document.documentElement;
+
+
+    /*
+      Remove all Rainbow styling first.
+
+      This prevents old Rainbow classes
+      from remaining after switching
+      to another accent.
+    */
+
+    document
+      .querySelectorAll(
+        ".rainbow-accent"
+      )
+      .forEach(element => {
+        element.classList.remove(
+          "rainbow-accent"
+        );
+      });
+
+
+    document
+      .querySelectorAll(
+        ".rainbow-text"
+      )
+      .forEach(element => {
+        element.classList.remove(
+          "rainbow-text"
+        );
+      });
+
+
+    if (accent === "rainbow") {
+
+      /*
+        Keep --accent as a real color
+        because color-mix() requires
+        a real color.
+
+        Rainbow-capable elements use
+        --accent-gradient.
+      */
+
+      root.style.setProperty(
+        "--accent",
+        "#009ccc"
+      );
+
+      root.style.setProperty(
+        "--accent-hover",
+        "#008db8"
+      );
+
+      root.style.setProperty(
+        "--accent-gradient",
+        RAINBOW_GRADIENT
+      );
+
+
+      /*
+        Selected sidebar item gets
+        the special Rainbow class.
+      */
+
+      document
+        .querySelectorAll(
+          ".nav-button.active"
+        )
+        .forEach(element => {
+          element.classList.add(
+            "rainbow-accent"
+          );
+        });
+
+
+      /*
+        Checked switches remain Rainbow.
+      */
+
+      document
+        .querySelectorAll(
+          ".switch input:checked + .slider"
+        )
+        .forEach(element => {
+          element.classList.add(
+            "rainbow-accent"
+          );
+        });
+
+
+    } else {
+
+      const color =
+        ACCENT_COLORS[accent] ||
+        ACCENT_COLORS.blue;
+
+
+      root.style.setProperty(
+        "--accent",
+        color
+      );
+
+      root.style.setProperty(
+        "--accent-hover",
+        color
+      );
+
+      root.style.setProperty(
+        "--accent-gradient",
+        color
+      );
+    }
+  }
+
+
+  function setAccent(accent) {
+
+    if (
+      !ACCENT_OPTIONS.includes(
+        accent
+      )
+    ) {
+      return;
+    }
+
+    updateTheme(theme => {
+      theme.accent = accent;
+    });
+  }
+
+
+  function loadAccent() {
+
+    accentSelect.value =
+      getCurrentAccent();
+
+    applySettingsAccent();
+  }
+
+
+  accentSelect.addEventListener(
+    "change",
+    () => {
+
+      setAccent(
+        accentSelect.value
+      );
+
+    }
+  );
+
+
+  /* -------------------------
+     Dark Mode
+  ------------------------- */
+
+  const darkModeToggle =
+    document.getElementById(
+      "dark-mode-toggle"
+    );
+
+
+  darkModeToggle.addEventListener(
+    "change",
+    () => {
 
       setGuiTheme(
         darkModeToggle.checked
@@ -755,106 +1255,321 @@
           : "light"
       );
 
-    });
+    }
+  );
 
 
-    // If no tw:theme exists, follow the system theme.
-    const mediaQuery =
-      window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      );
+  const mediaQuery =
+    window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    );
 
 
-    mediaQuery.addEventListener("change", () => {
+  mediaQuery.addEventListener(
+    "change",
+    () => {
 
-      if (!localStorage.getItem(THEME_KEY)) {
+      if (
+        !localStorage.getItem(
+          THEME_KEY
+        )
+      ) {
         applyTheme();
+        applySettingsAccent();
       }
+
+    }
+  );
+
+
+  /* -------------------------
+     Block Style
+  ------------------------- */
+
+  const blockStyleSelect =
+    document.getElementById(
+      "block-style-select"
+    );
+
+
+  function getBlockStyle() {
+
+    const theme =
+      readTheme();
+
+    if (
+      !theme ||
+      typeof theme.blocks !== "string"
+    ) {
+      return "original";
+    }
+
+    if (
+      theme.blocks ===
+      "high-contrast"
+    ) {
+      return "high-contrast";
+    }
+
+    if (
+      theme.blocks === "dark"
+    ) {
+      return "dark";
+    }
+
+    return "original";
+  }
+
+
+  function setBlockStyle(style) {
+
+    updateTheme(theme => {
+
+      if (
+        style === "original"
+      ) {
+        delete theme.blocks;
+        return;
+      }
+
+      theme.blocks = style;
 
     });
+  }
 
 
-    // Update if another tab changes settings.
-    window.addEventListener("storage", (event) => {
+  function loadBlockStyle() {
 
-      if (event.key === THEME_KEY) {
-        applyTheme();
-      }
+    blockStyleSelect.value =
+      getBlockStyle();
 
-      if (event.key === CUSTOM_PROJECT_KEY) {
-        loadCustomProject();
-      }
-
-    });
+  }
 
 
-    /* -------------------------
-       Custom Default Project
-    ------------------------- */
+  blockStyleSelect.addEventListener(
+    "change",
+    () => {
 
-    const customProjectToggle =
-      document.getElementById(
-        "custom-project-toggle"
-      );
-
-    const customProjectOptions =
-      document.getElementById(
-        "custom-project-options"
-      );
-
-    const customProjectId =
-      document.getElementById(
-        "custom-project-id"
-      );
-
-
-    function updateCustomProjectVisibility() {
-
-      customProjectOptions.classList.toggle(
-        "collapsed",
-        !customProjectToggle.checked
+      setBlockStyle(
+        blockStyleSelect.value
       );
 
     }
+  );
 
 
-    function loadCustomProject() {
+  /* -------------------------
+     Go Icon
+  ------------------------- */
 
-      const saved =
-        localStorage.getItem(
-          CUSTOM_PROJECT_KEY
-        );
+  const goIconSelect =
+    document.getElementById(
+      "go-icon-select"
+    );
 
-      if (saved) {
 
-        customProjectToggle.checked = true;
-        customProjectId.value = saved;
+  function getCurrentGoIcon() {
+
+    const saved =
+      localStorage.getItem(
+        GO_ICON_KEY
+      );
+
+    /*
+      If a valid value exists in
+      localStorage, use it.
+    */
+
+    if (
+      saved === "play" ||
+      saved === "greenFlag" ||
+      saved === "blueFlag" ||
+      saved === "purpleFlag"
+    ) {
+      return saved;
+    }
+
+    /*
+      If the value does not exist,
+      Play Button is the default.
+    */
+
+    return "play";
+  }
+
+
+  function loadGoIcon() {
+
+    if (!goIconSelect) {
+      return;
+    }
+
+    /*
+      Make the dropdown match
+      the localStorage value.
+    */
+
+    goIconSelect.value =
+      getCurrentGoIcon();
+
+  }
+
+
+  function setGoIcon(icon) {
+
+    if (
+      icon !== "play" &&
+      icon !== "greenFlag" &&
+      icon !== "blueFlag" &&
+      icon !== "purpleFlag"
+    ) {
+      icon = "play";
+    }
+
+    localStorage.setItem(
+      GO_ICON_KEY,
+      icon
+    );
+
+    /*
+      Immediately make the dropdown
+      match the saved value.
+    */
+
+    loadGoIcon();
+
+  }
+
+
+  goIconSelect.addEventListener(
+    "change",
+    () => {
+
+      setGoIcon(
+        goIconSelect.value
+      );
+
+    }
+  );
+
+
+  /* -------------------------
+     Custom Default Project
+  ------------------------- */
+
+  const customProjectToggle =
+    document.getElementById(
+      "custom-project-toggle"
+    );
+
+  const customProjectOptions =
+    document.getElementById(
+      "custom-project-options"
+    );
+
+  const customProjectId =
+    document.getElementById(
+      "custom-project-id"
+    );
+
+
+  function updateCustomProjectVisibility() {
+
+    customProjectOptions.classList.toggle(
+      "collapsed",
+      !customProjectToggle.checked
+    );
+
+  }
+
+
+  function loadCustomProject() {
+
+    const saved =
+      localStorage.getItem(
+        CUSTOM_PROJECT_KEY
+      );
+
+    if (saved) {
+
+      customProjectToggle.checked =
+        true;
+
+      customProjectId.value =
+        saved;
+
+    } else {
+
+      customProjectToggle.checked =
+        false;
+
+      customProjectId.value =
+        "";
+
+    }
+
+    updateCustomProjectVisibility();
+  }
+
+
+  customProjectToggle.addEventListener(
+    "change",
+    () => {
+
+      if (
+        customProjectToggle.checked
+      ) {
+
+        if (
+          customProjectId.value.trim()
+        ) {
+
+          localStorage.setItem(
+            CUSTOM_PROJECT_KEY,
+            customProjectId.value
+          );
+
+        }
 
       } else {
 
-        customProjectToggle.checked = false;
-        customProjectId.value = "";
+        localStorage.removeItem(
+          CUSTOM_PROJECT_KEY
+        );
 
       }
 
       updateCustomProjectVisibility();
+
+      applySettingsAccent();
+
     }
+  );
 
 
-    customProjectToggle.addEventListener(
-      "change",
-      () => {
+  customProjectId.addEventListener(
+    "input",
+    () => {
 
-        if (customProjectToggle.checked) {
+      const numbersOnly =
+        customProjectId.value.replace(
+          /\D/g,
+          ""
+        );
 
-          if (customProjectId.value.trim()) {
+      customProjectId.value =
+        numbersOnly;
 
-            localStorage.setItem(
-              CUSTOM_PROJECT_KEY,
-              customProjectId.value
-            );
+      if (
+        customProjectToggle.checked
+      ) {
 
-          }
+        if (numbersOnly) {
+
+          localStorage.setItem(
+            CUSTOM_PROJECT_KEY,
+            numbersOnly
+          );
 
         } else {
 
@@ -864,128 +1579,98 @@
 
         }
 
-        updateCustomProjectVisibility();
-
       }
+
+    }
+  );
+
+
+  /* -------------------------
+     Navigation
+  ------------------------- */
+
+  const navButtons =
+    document.querySelectorAll(
+      ".nav-button[data-page]"
+    );
+
+  const pages =
+    document.querySelectorAll(
+      ".page"
     );
 
 
-    /*
-      Only allow numbers.
+  navButtons.forEach(button => {
 
-      This means pasting:
-
-      https://scratch.mit.edu/projects/123456789/
-
-      becomes:
-
-      123456789
-    */
-
-    customProjectId.addEventListener(
-      "input",
+    button.addEventListener(
+      "click",
       () => {
 
-        const numbersOnly =
-          customProjectId.value.replace(
-            /\D/g,
-            ""
-          );
-
-        customProjectId.value =
-          numbersOnly;
-
-        if (customProjectToggle.checked) {
-
-          if (numbersOnly) {
-
-            localStorage.setItem(
-              CUSTOM_PROJECT_KEY,
-              numbersOnly
-            );
-
-          } else {
-
-            localStorage.removeItem(
-              CUSTOM_PROJECT_KEY
-            );
-
-          }
-
-        }
-
-      }
-    );
+        const pageName =
+          button.dataset.page;
 
 
-    /* -------------------------
-       Navigation
-    ------------------------- */
+        navButtons.forEach(item => {
 
-    const navButtons =
-      document.querySelectorAll(
-        ".nav-button[data-page]"
-      );
-
-    const pages =
-      document.querySelectorAll(
-        ".page"
-      );
-
-
-    navButtons.forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const pageName =
-            button.dataset.page;
-
-          navButtons.forEach(item => {
-
-            item.classList.remove(
-              "active"
-            );
-
-          });
-
-          button.classList.add(
+          item.classList.remove(
             "active"
           );
 
-          pages.forEach(page => {
+        });
 
-            page.style.display =
-              "none";
 
-          });
+        button.classList.add(
+          "active"
+        );
 
-          const selectedPage =
-            document.getElementById(
-              "page-" + pageName
-            );
 
-          if (selectedPage) {
+        pages.forEach(page => {
 
-            selectedPage.style.display =
-              "";
+          page.style.display =
+            "none";
 
-          }
+        });
+
+
+        const selectedPage =
+          document.getElementById(
+            "page-" + pageName
+          );
+
+
+        if (selectedPage) {
+
+          selectedPage.style.display =
+            "";
 
         }
-      );
-
-    });
 
 
-    /* -------------------------
-       Addons
-    ------------------------- */
+        /*
+          Reapply accent so the newly
+          selected sidebar item gets
+          the correct Rainbow styling.
+        */
 
-    document
-      .getElementById("addons-button")
-      .addEventListener("click", () => {
+        applySettingsAccent();
+
+      }
+    );
+
+  });
+
+
+  /* -------------------------
+     Addons
+  ------------------------- */
+
+  document
+    .getElementById(
+      "addons-button"
+    )
+    .addEventListener(
+      "click",
+      () => {
 
         window.open(
           "https://studio.cattymod.app/addons.html",
@@ -993,32 +1678,84 @@
           "noopener,noreferrer"
         );
 
-      });
+      }
+    );
 
 
-    /* -------------------------
-       Back to CattyMod
-    ------------------------- */
+  /* -------------------------
+     Back to CattyMod
+  ------------------------- */
 
-    document
-      .getElementById("back-to-cattymod")
-      .addEventListener("click", () => {
+  document
+    .getElementById(
+      "back-to-cattymod"
+    )
+    .addEventListener(
+      "click",
+      () => {
 
         window.location.href =
           "https://studio.cattymod.app";
 
-      });
+      }
+    );
 
 
-    /* -------------------------
-       Start
-    ------------------------- */
+  /* -------------------------
+     Storage Sync
+  ------------------------- */
 
-    applyTheme();
-    loadCustomProject();
+  window.addEventListener(
+    "storage",
+    event => {
 
-    lucide.createIcons();
-  </script>
+      if (
+        event.key === THEME_KEY
+      ) {
 
+        applyTheme();
+        applySettingsAccent();
+        loadBlockStyle();
+        loadAccent();
+
+      }
+
+
+      if (
+        event.key ===
+        CUSTOM_PROJECT_KEY
+      ) {
+
+        loadCustomProject();
+
+      }
+
+
+      if (
+        event.key ===
+        GO_ICON_KEY
+      ) {
+
+        loadGoIcon();
+
+      }
+
+    }
+  );
+
+
+  /* -------------------------
+     Start
+  ------------------------- */
+
+  applyTheme();
+  applySettingsAccent();
+  loadBlockStyle();
+  loadAccent();
+  loadCustomProject();
+  loadGoIcon();
+
+  lucide.createIcons();
+</script>
 </body>
 </html>
