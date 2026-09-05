@@ -115,7 +115,15 @@ export const replaceGreenFlags = mode => {
         return;
     }
 
-    const icon = getGoIconSvg(mode);
+    /*
+     * Normal <img> elements use getGoIconImage().
+     *
+     * Blockly block <image> elements use getGoIconSvg().
+     *
+     * This keeps TURBO_GREEN_FLAG exclusively for blocks.
+     */
+    const normalIcon = getGoIconImage(mode);
+    const blockIcon = getGoIconSvg(mode);
 
     try {
         /*
@@ -137,7 +145,7 @@ export const replaceGreenFlags = mode => {
                     );
 
                 if (isGreenFlag) {
-                    e.src = icon;
+                    e.src = normalIcon;
                 }
             } catch (err) {
                 // Ignore individual elements.
@@ -150,9 +158,8 @@ export const replaceGreenFlags = mode => {
          *
          * The workspace block does not have a reliable
          * event_whenflagclicked data-id, so detect it by
-         * finding a flag image inside the block.
-         *
-         * Both green-flag.svg and blue-flag.svg are accepted.
+         * finding a green-flag.svg or blue-flag.svg image
+         * inside a .blocklyDraggable block.
          */
         document.querySelectorAll(
             '.blocklyDraggable image'
@@ -194,20 +201,32 @@ export const replaceGreenFlags = mode => {
                     return;
                 }
 
+                /*
+                 * BLOCKS ONLY use blockIcon.
+                 *
+                 * greenflag:
+                 *     TURBO_GREEN_FLAG
+                 *
+                 * blueflag:
+                 *     BLUE_FLAG
+                 *
+                 * purpleflag:
+                 *     PURPLE_FLAG_BLOCKS
+                 */
                 e.setAttribute(
                     'href',
-                    icon
+                    blockIcon
                 );
 
                 e.setAttribute(
                     'xlink:href',
-                    icon
+                    blockIcon
                 );
 
                 e.setAttributeNS(
                     'http://www.w3.org/1999/xlink',
                     'href',
-                    icon
+                    blockIcon
                 );
             } catch (err) {
                 // Ignore individual elements.
