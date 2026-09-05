@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {FormattedMessage} from 'react-intl';
+import {connect} from 'react-redux';
 
 import LanguageMenu from './language-menu.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
@@ -18,6 +19,10 @@ import styles from './settings-menu.css';
 import check from './check.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import settingsIcon from './icon--settings.svg';
+
+import {
+    closeSettingsMenu
+} from '../../reducers/menus.js';
 
 const GO_ICON_KEY = 'cattymod:goIcon';
 
@@ -167,6 +172,7 @@ GoIconMenu.propTypes = {
 const SettingsMenu = ({
     canChangeLanguage,
     canChangeTheme,
+    closeSettings,
     isRtl,
     onClickDesktopSettings,
     onOpenCustomSettings,
@@ -193,11 +199,7 @@ const SettingsMenu = ({
     const [goIconMenuOpen, setGoIconMenuOpen] = useState(false);
 
     /*
-     * If the entire Settings menu closes, always close
-     * the Go Icon submenu as well.
-     *
-     * This prevents the Go Icon submenu from remaining open
-     * or appearing over another menu after Settings closes.
+     * If the entire Settings menu closes, also close Go Icon.
      */
     useEffect(() => {
         if (!settingsMenuOpen) {
@@ -419,28 +421,33 @@ const SettingsMenu = ({
         }
 
         /*
-         * Make sure the parent Settings menu is open before
-         * allowing the Go Icon submenu to open.
+         * Do not allow Go Icon to sit on top of another
+         * Settings submenu.
          *
-         * This prevents Go Icon from appearing by itself over
-         * another menu after Settings has been closed.
+         * The other Settings menus use closeSettingsMenu()
+         * to clear their open submenu state. Do the same here.
+         *
+         * We then reopen Settings and enable Go Icon after
+         * the old submenu state has been cleared.
          */
-        if (!settingsMenuOpen) {
-            return;
-        }
+        closeSettings();
 
-        /*
-         * Close and reopen the submenu state cleanly.
-         *
-         * This prevents stale submenu state from surviving
-         * a Settings menu transition.
-         */
         setGoIconMenuOpen(false);
 
         setTimeout(() => {
-            if (settingsMenuOpen && navigator.onLine) {
-                setGoIconMenuOpen(true);
+            if (!navigator.onLine) {
+                return;
             }
+
+            onRequestOpen();
+
+            setTimeout(() => {
+                if (!navigator.onLine) {
+                    return;
+                }
+
+                setGoIconMenuOpen(true);
+            }, 0);
         }, 0);
     }
 
@@ -535,6 +542,7 @@ const SettingsMenu = ({
 SettingsMenu.propTypes = {
     canChangeLanguage: PropTypes.bool,
     canChangeTheme: PropTypes.bool,
+    closeSettings: PropTypes.func,
     isRtl: PropTypes.bool,
     onClickDesktopSettings: PropTypes.func,
     onOpenCustomSettings: PropTypes.func,
@@ -543,4 +551,11 @@ SettingsMenu.propTypes = {
     settingsMenuOpen: PropTypes.bool
 };
 
-export default SettingsMenu;
+const mapDispatchToProps = dispatch => ({
+    closeSettings: () => dispatch(closeSettingsMenu())
+});
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(SettingsMenu);
