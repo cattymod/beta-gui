@@ -288,9 +288,11 @@ export const loadCustomDefaultProject =
     };
 
 /*
- * Automatically load the custom default project.
+ * Run when the New button is clicked.
+ *
+ * This contains the original initialization logic.
  */
-export const initializeCustomDefaultProject =
+export const onNewClick =
     async () => {
         const projectId =
             getCustomDefaultProject();
@@ -320,4 +322,20 @@ export const initializeCustomDefaultProject =
 
             return false;
         }
+    };
+
+/*
+ * Automatically load the custom default project.
+ *
+ * Do not automatically load it when a # is present
+ * in the URL, since that indicates a project/editor
+ * URL where the normal project should be preserved.
+ */
+export const initializeCustomDefaultProject =
+    async () => {
+        if (window.location.href.includes('#')) {
+            return false;
+        }
+
+        return await onNewClick();
     };
