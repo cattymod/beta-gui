@@ -6,7 +6,7 @@ import {FormattedMessage} from 'react-intl';
 
 import LanguageMenu from './language-menu.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
-import {MenuSection} from '../menu/menu.jsx';
+import {MenuSection, MenuItem} from '../menu/menu.jsx';
 import MenuLabel from './tw-menu-label.jsx';
 import TWAccentThemeMenu from './tw-theme-accent.jsx';
 import TWGuiThemeMenu from './tw-theme-gui.jsx';
@@ -122,6 +122,35 @@ const SettingsMenu = ({
                         onClick={onClickDesktopSettings}
                     />
                 )}
+
+                <div className={styles.settingsSeparator} />
+
+                <MenuItem>
+                    <div
+                        className={styles.option}
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onClick={() => {
+                            window.location.href = 'https://studio.cattymod.app/settings';
+                            onRequestClose();
+                        }}
+                    >
+                        <img
+                            src={settingsIcon}
+                            draggable={false}
+                            width={24}
+                            height={24}
+                            alt=""
+                        />
+
+                        <span className={styles.submenuLabel}>
+                            <FormattedMessage
+                                defaultMessage="More Settings"
+                                description="Menu item to open more settings"
+                                id="tw.moreSettings"
+                            />
+                        </span>
+                    </div>
+                </MenuItem>
             </MenuSection>
         </MenuBarMenu>
     </MenuLabel>
