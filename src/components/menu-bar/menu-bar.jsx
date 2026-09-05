@@ -33,7 +33,10 @@ import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
 import TWSaveStatus from './tw-save-status.jsx';
 import TWNews from './tw-news.jsx';
-import {loadCustomDefaultProject} from '../../lib/customDefaultProject.js';
+import {
+    getCustomDefaultProject,
+    onNewClick
+} from '../../lib/customDefaultProject.js';
 
 import {openTipsLibrary, openSettingsModal, openRestorePointModal} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
@@ -238,13 +241,13 @@ class MenuBar extends React.Component {
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
     }
-    handleClickNew () {
-    const customDefaultProject = localStorage.getItem(
-        'cattymod:customDefaultProject'
-    );
+    
+handleClickNew () {
+    const customDefaultProject =
+        getCustomDefaultProject();
 
     if (customDefaultProject) {
-        loadCustomDefaultProject(this.props.vm)
+        onNewClick()
             .catch(e => {
                 console.error(
                     '❌ Failed to load custom default project:',
@@ -261,17 +264,25 @@ class MenuBar extends React.Component {
     // downloading or logging in first.
     // Note that if user is logged in and editing someone else's project,
     // they'll lose their work.
-    const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
-        this.props.intl.formatMessage(sharedMessages.replaceProjectWarning)
-    );
+    const readyToReplaceProject =
+        this.props.confirmReadyToReplaceProject(
+            this.props.intl.formatMessage(
+                sharedMessages.replaceProjectWarning
+            )
+        );
 
     this.props.onRequestCloseFile();
+
     if (readyToReplaceProject) {
-        this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
+        this.props.onClickNew(
+            this.props.canSave &&
+            this.props.canCreateNew
+        );
     }
 
     this.props.onRequestCloseFile();
 }
+
     handleClickNewWindow () {
         this.props.onClickNewWindow();
         this.props.onRequestCloseFile();
