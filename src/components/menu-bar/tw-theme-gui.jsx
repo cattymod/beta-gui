@@ -1,195 +1,70 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import React from 'react';
 import {FormattedMessage} from 'react-intl';
+import {connect} from 'react-redux';
 
-import LanguageMenu from './language-menu.jsx';
-import MenuBarMenu from './menu-bar-menu.jsx';
-import {MenuSection, MenuItem} from '../menu/menu.jsx';
-import MenuLabel from './tw-menu-label.jsx';
-import TWAccentThemeMenu from './tw-theme-accent.jsx';
-import TWGuiThemeMenu from './tw-theme-gui.jsx';
-import TWBlocksThemeMenu from './tw-theme-blocks.jsx';
-import TWDesktopSettings from './tw-desktop-settings.jsx';
-import TWGoIcon from './tw-go-icon.jsx';
-
-import {
-    accentMenuOpen,
-    blocksThemeMenuOpen,
-    languageMenuOpen,
-    closeAccentMenu,
-    closeBlocksThemeMenu,
-    closeLanguageMenu
-} from '../../reducers/menus';
-
-import menuBarStyles from './menu-bar.css';
+import {MenuItem} from '../menu/menu.jsx';
+import {GUI_DARK, GUI_LIGHT, Theme} from '../../lib/themes/index.js';
+import {closeSettingsMenu} from '../../reducers/menus.js';
+import {setTheme} from '../../reducers/theme.js';
+import {persistTheme} from '../../lib/themes/themePersistance.js';
+import lightModeIcon from './tw-sun.svg';
+import darkModeIcon from './tw-moon.svg';
 import styles from './settings-menu.css';
 
-import dropdownCaret from './dropdown-caret.svg';
-import settingsIcon from './icon--settings.svg';
-
-const SettingsMenu = ({
-    canChangeLanguage,
-    canChangeTheme,
-    isRtl,
-    onClickDesktopSettings,
-    onOpenCustomSettings,
-    onRequestClose,
-    onRequestOpen,
-    settingsMenuOpen,
-    accentIsOpen,
-    blocksThemeIsOpen,
-    languageIsOpen,
-    closeAccentMenu,
-    closeBlocksThemeMenu,
-    closeLanguageMenu
+const GuiThemeMenu = ({
+    onChangeTheme,
+    theme
 }) => (
-    <MenuLabel
-        open={settingsMenuOpen}
-        onOpen={onRequestOpen}
-        onClose={onRequestClose}
-    >
-        <img
-            src={settingsIcon}
-            draggable={false}
-            width={20}
-            height={20}
-            alt=""
-        />
-
-        <span className={styles.dropdownLabel}>
-            <FormattedMessage
-                defaultMessage="Settings"
-                description="Settings menu"
-                id="gui.menuBar.settings"
-            />
-        </span>
-
-        <img
-            src={dropdownCaret}
-            draggable={false}
-            width={8}
-            height={5}
-            alt=""
-        />
-
-        <MenuBarMenu
-            className={menuBarStyles.menuBarMenu}
-            open={settingsMenuOpen}
-            place={isRtl ? 'left' : 'right'}
+    <MenuItem>
+        <div
+            className={styles.option}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={() => onChangeTheme(theme.set('gui', theme.gui === GUI_DARK ? GUI_LIGHT : GUI_DARK))}
         >
-            <MenuSection>
-                {canChangeLanguage && (
-                    <LanguageMenu
-                        onRequestCloseSettings={onRequestClose}
+            <img
+                src={theme.gui === GUI_DARK ? lightModeIcon : darkModeIcon}
+                draggable={false}
+                width={24}
+                height={24}
+            />
+            <span className={styles.submenuLabel}>
+                {theme.gui === GUI_DARK ? (
+                    <FormattedMessage
+                        defaultMessage="Switch To Light Mode"
+                        description="Menu item to change color scheme to light (it is currently dark)"
+                        id="tw.darkMode"
+                    />
+                ) : (
+                    <FormattedMessage
+                        defaultMessage="Switch To Dark Mode"
+                        description="Menu item to change color scheme to dark (it is currently light)"
+                        id="tw.lightMode"
                     />
                 )}
-
-                {canChangeTheme && (
-                    <React.Fragment>
-                        <TWGuiThemeMenu />
-
-                        <TWBlocksThemeMenu
-                            onOpenCustomSettings={onOpenCustomSettings}
-                        />
-
-                        <TWAccentThemeMenu />
-                    </React.Fragment>
-                )}
-
-                <TWGoIcon
-                    isOpen={settingsMenuOpen}
-                    isRtl={isRtl}
-                    onRequestClose={onRequestClose}
-                    onCloseOtherMenus={() => {
-                        if (accentIsOpen) {
-                            closeAccentMenu();
-                        }
-
-                        if (blocksThemeIsOpen) {
-                            closeBlocksThemeMenu();
-                        }
-
-                        if (languageIsOpen) {
-                            closeLanguageMenu();
-                        }
-                    }}
-                />
-
-                {onClickDesktopSettings && (
-                    <TWDesktopSettings
-                        onClick={onClickDesktopSettings}
-                    />
-                )}
-
-                <div className={styles.settingsSeparator} />
-
-                <MenuItem>
-                    <div
-                        className={styles.option}
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onClick={() => {
-                            window.open(
-                                'https://studio.cattymod.app/settings',
-                                '_blank',
-                                'noopener,noreferrer'
-                            );
-                            onRequestClose();
-                        }}
-                    >
-                        <img
-                            src={settingsIcon}
-                            draggable={false}
-                            width={24}
-                            height={24}
-                            alt=""
-                        />
-
-                        <span className={styles.submenuLabel}>
-                            <FormattedMessage
-                                defaultMessage="More Settings"
-                                description="Menu item to open more settings"
-                                id="tw.moreSettings"
-                            />
-                        </span>
-                    </div>
-                </MenuItem>
-            </MenuSection>
-        </MenuBarMenu>
-    </MenuLabel>
+            </span>
+        </div>
+    </MenuItem>
 );
 
-SettingsMenu.propTypes = {
-    canChangeLanguage: PropTypes.bool,
-    canChangeTheme: PropTypes.bool,
-    isRtl: PropTypes.bool,
-    onClickDesktopSettings: PropTypes.func,
-    onOpenCustomSettings: PropTypes.func,
-    onRequestClose: PropTypes.func,
-    onRequestOpen: PropTypes.func,
-    settingsMenuOpen: PropTypes.bool,
-    accentIsOpen: PropTypes.bool,
-    blocksThemeIsOpen: PropTypes.bool,
-    languageIsOpen: PropTypes.bool,
-    closeAccentMenu: PropTypes.func,
-    closeBlocksThemeMenu: PropTypes.func,
-    closeLanguageMenu: PropTypes.func
+GuiThemeMenu.propTypes = {
+    onChangeTheme: PropTypes.func,
+    theme: PropTypes.instanceOf(Theme)
 };
 
 const mapStateToProps = state => ({
-    accentIsOpen: accentMenuOpen(state),
-    blocksThemeIsOpen: blocksThemeMenuOpen(state),
-    languageIsOpen: languageMenuOpen(state)
+    theme: state.scratchGui.theme.theme
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-    closeAccentMenu,
-    closeBlocksThemeMenu,
-    closeLanguageMenu
-}, dispatch);
+const mapDispatchToProps = dispatch => ({
+    onChangeTheme: theme => {
+        dispatch(setTheme(theme));
+        dispatch(closeSettingsMenu());
+        persistTheme(theme);
+    }
+});
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SettingsMenu);
+)(GuiThemeMenu);
