@@ -22,10 +22,15 @@ import Interface from './render-interface.jsx';
 import render from './app-target';
 
 import {initializeGoIcon} from '../lib/go-icon';
+import {
+    initializeCustomDefaultProject
+} from '../lib/customDefaultProject';
 
 const GoIconInterface = props => {
     useEffect(() => {
         const cleanupGoIcon = initializeGoIcon();
+
+        initializeCustomDefaultProject();
 
         return cleanupGoIcon;
     }, []);
@@ -34,4 +39,3 @@ const GoIconInterface = props => {
 };
 
 render(<GoIconInterface />);
-
