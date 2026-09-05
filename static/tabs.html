@@ -259,7 +259,6 @@
 <body>
   <div class="topbar">
     <div class="window-spacer" aria-hidden="true"></div>
-
     <div class="tabs" id="tabs"></div>
   </div>
 
@@ -285,8 +284,40 @@
   </div>
 
   <script>
-    const HOME_URL = "https://studio.cattymod.app/";
-    const EDITOR_URL = "https://studio.cattymod.app/editor?showprojectpage";
+    /*
+     * Build the editor URL from the current page.
+     *
+     * Examples:
+     * studio.cattymod.app/tabs
+     * -> studio.cattymod.app/editor?showprojectpage
+     *
+     * cattymod.github.io/editor/tabs
+     * -> cattymod.github.io/editor/editor?showprojectpage
+     */
+    function getEditorURL() {
+      const url = new URL(window.location.href);
+
+      const tabsIndex = url.pathname.indexOf("/tabs");
+
+      if (tabsIndex !== -1) {
+        url.pathname = url.pathname.slice(0, tabsIndex) + "/editor";
+      } else {
+        // Fallback if this page somehow isn't under /tabs
+        url.pathname = url.pathname.replace(/\/?$/, "/editor");
+      }
+
+      url.search = "?showprojectpage";
+      url.hash = "";
+
+      return url.href;
+    }
+
+    const HOME_URL = new URL(
+      window.location.pathname.replace(/\/tabs(?:\/.*)?$/, "/"),
+      window.location.origin
+    ).href;
+
+    const EDITOR_URL = getEditorURL();
 
     const tabsEl = document.getElementById("tabs");
     const framesEl = document.getElementById("frames");
@@ -360,6 +391,7 @@
           info.iframe.classList.remove("active");
         }
       }
+
       activeTabId = tabId;
     }
 
@@ -370,15 +402,18 @@
       home.title = "Home";
       home.setAttribute("aria-label","Home");
       home.setAttribute("aria-current","page");
+
       home.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24"
              xmlns="http://www.w3.org/2000/svg">
           <path fill="currentColor" d="M12 3 2 12h2v9h6v-6h4v6h6v-9h2z"/>
         </svg>
       `;
+
       home.addEventListener("click", () => {
         window.location.href = HOME_URL;
       });
+
       return home;
     }
 
@@ -388,6 +423,7 @@
       btn.className = "new-tab-btn";
       btn.title = "New tab";
       btn.setAttribute("aria-label","New tab");
+
       btn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24"
              xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
@@ -396,7 +432,9 @@
           <path d="M5 12h14"/>
         </svg>
       `;
+
       btn.addEventListener("click", () => createProjectTab());
+
       return btn;
     }
 
@@ -408,13 +446,17 @@
 
     function processTitle(rawTitle) {
       if (!rawTitle) return "Project";
+
       const trimmed = rawTitle.trim();
+
       if (trimmed === "CattyMod - Run Scratch projects faster") {
         return "Project";
       }
+
       if (trimmed.length > 11) {
         return trimmed.slice(0, -11).trim();
       }
+
       return trimmed;
     }
 
@@ -449,6 +491,7 @@
         try {
           const rawTitle = iframe.contentDocument?.title;
           const finalTitle = processTitle(rawTitle);
+
           if (finalTitle) {
             title.textContent = finalTitle;
             iframe.title = finalTitle;
@@ -477,10 +520,12 @@
 
       tab.addEventListener("click", () => {
         setActive(tabId);
+
         setTimeout(() => {
           try{
             const t = iframe.contentWindow?.document?.title;
             const finalTitle = processTitle(t);
+
             if (finalTitle) {
               title.textContent = finalTitle;
             }
@@ -496,16 +541,26 @@
       framesEl.appendChild(iframe);
       tabsEl.insertBefore(tab, newTabBtnEl);
 
-      tabs.set(tabId, { tabEl: tab, iframe, titleEl: title });
+      tabs.set(tabId, {
+        tabEl: tab,
+        iframe,
+        titleEl: title
+      });
 
       setActive(tabId);
 
       const poll = setInterval(() => {
         const info = tabs.get(tabId);
-        if (!info) { clearInterval(poll); return; }
+
+        if (!info) {
+          clearInterval(poll);
+          return;
+        }
+
         try{
           const t = iframe.contentWindow?.document?.title;
           const finalTitle = processTitle(t);
+
           if (finalTitle && info.titleEl.textContent !== finalTitle){
             info.titleEl.textContent = finalTitle;
           }
@@ -531,7 +586,9 @@
           window.location.href = HOME_URL;
         }
       } else {
-        if (remaining.length === 0) window.location.href = HOME_URL;
+        if (remaining.length === 0) {
+          window.location.href = HOME_URL;
+        }
       }
     }
 
