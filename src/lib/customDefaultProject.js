@@ -8,7 +8,7 @@ const SCRATCH_PROJECTS_API =
     'https://projects.scratch.mit.edu/';
 
 /*
- * Get the custom default project ID from localStorage.
+ * Get the custom default project ID.
  */
 export const getCustomDefaultProject = () => {
     try {
@@ -62,7 +62,7 @@ export const setCustomDefaultProject = projectId => {
 };
 
 /*
- * Remove the custom default project setting.
+ * Remove the custom default project.
  */
 export const clearCustomDefaultProject = () => {
     try {
@@ -75,7 +75,7 @@ export const clearCustomDefaultProject = () => {
 };
 
 /*
- * Fetch project metadata from TurboWarp Trampoline.
+ * Get project metadata from TurboWarp Trampoline.
  */
 export const getCustomDefaultProjectData =
     async projectId => {
@@ -148,15 +148,11 @@ export const getCustomDefaultProjectURL =
     };
 
 /*
- * Fetch the SB3 project.
+ * Download the SB3 project as an ArrayBuffer.
  *
- * This is equivalent to the FileReader result
- * in your working console code:
+ * This is equivalent to the result produced by:
  *
- *     reader.result
- *
- * except the data comes from Scratch instead
- * of a file selected by the user.
+ *     FileReader.readAsArrayBuffer(file)
  */
 export const fetchCustomDefaultProject =
     async () => {
@@ -181,18 +177,71 @@ export const fetchCustomDefaultProject =
             );
         }
 
-        /*
-         * This produces the same kind of data
-         * that FileReader.readAsArrayBuffer()
-         * gives your working code.
-         */
         return response.arrayBuffer();
     };
 
 /*
- * Load the project into the actual Scratch VM.
+ * Get the actual Scratch VM.
  *
- * This uses the exact same operation as:
+ * CattyMod exposes the VM as window.vm.
+ */
+const getVM = () => {
+    if (
+        window.vm &&
+        typeof window.vm.loadProject === 'function'
+    ) {
+        return window.vm;
+    }
+
+    return null;
+};
+
+/*
+ * Wait for window.vm to exist.
+ */
+const waitForVM = () => {
+    return new Promise((resolve, reject) => {
+        const existingVM = getVM();
+
+        if (existingVM) {
+            resolve(existingVM);
+            return;
+        }
+
+        let attempts = 0;
+
+        const interval = setInterval(() => {
+            const vm = getVM();
+
+            if (vm) {
+                clearInterval(interval);
+                resolve(vm);
+                return;
+            }
+
+            attempts++;
+
+            /*
+             * Stop waiting after 10 seconds so a broken
+             * startup cannot leave an interval running forever.
+             */
+            if (attempts >= 100) {
+                clearInterval(interval);
+                reject(
+                    new Error(
+                        'Scratch VM was not available'
+                    )
+                );
+            }
+        }, 100);
+    });
+};
+
+/*
+ * Load the custom default project.
+ *
+ * This uses the exact same VM operation as your
+ * working DevTools test:
  *
  *     vm.loadProject(reader.result)
  */
@@ -221,11 +270,6 @@ export const loadCustomDefaultProject =
             return false;
         }
 
-        /*
-         * Equivalent to:
-         *
-         * vm.loadProject(reader.result)
-         */
         await vm.loadProject(projectData);
 
         console.log(
@@ -236,27 +280,30 @@ export const loadCustomDefaultProject =
     };
 
 /*
- * Initialize the custom default project.
- *
- * Pass the actual Scratch VM here.
+ * Automatically load the custom default project.
  */
 export const initializeCustomDefaultProject =
-    async vm => {
+    async () => {
         const projectId =
             getCustomDefaultProject();
 
         /*
-         * No custom default project configured.
+         * No custom project configured.
          *
-         * Let CattyMod's normal default project
-         * continue loading normally.
+         * Do absolutely nothing and allow the
+         * normal CattyMod default project to load.
          */
         if (!projectId) {
             return false;
         }
 
         try {
-            return await loadCustomDefaultProject(vm);
+            const vm =
+                await waitForVM();
+
+            return await loadCustomDefaultProject(
+                vm
+            );
         } catch (e) {
             console.error(
                 '❌ Failed to load custom default project:',
