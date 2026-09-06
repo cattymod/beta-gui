@@ -271,11 +271,11 @@ export const loadCustomDefaultProject =
         }
 
         /*
-         * Immediately load the project
-         * into the Scratch VM.
+         * Wait a short time immediately before loading
+         * the project into the Scratch VM.
          */
         await new Promise(resolve => {
-            setTimeout(resolve, 0);
+            setTimeout(resolve, 50);
         });
 
         await vm.loadProject(projectData);
