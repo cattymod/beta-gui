@@ -44,117 +44,126 @@ const SettingsMenu = ({
     closeAccentMenu,
     closeBlocksThemeMenu,
     closeLanguageMenu
-}) => (
-    <MenuLabel
-        open={settingsMenuOpen}
-        onOpen={onRequestOpen}
-        onClose={onRequestClose}
-    >
-        <img
-            src={settingsIcon}
-            draggable={false}
-            width={20}
-            height={20}
-            alt=""
-        />
+}) => {
+    const isEmbedded = window.self !== window.top;
 
-        <span className={styles.dropdownLabel}>
-            <FormattedMessage
-                defaultMessage="Settings"
-                description="Settings menu"
-                id="gui.menuBar.settings"
-            />
-        </span>
-
-        <img
-            src={dropdownCaret}
-            draggable={false}
-            width={8}
-            height={5}
-            alt=""
-        />
-
-        <MenuBarMenu
-            className={menuBarStyles.menuBarMenu}
+    return (
+        <MenuLabel
             open={settingsMenuOpen}
-            place={isRtl ? 'left' : 'right'}
+            onOpen={onRequestOpen}
+            onClose={onRequestClose}
         >
-            <MenuSection>
-                {canChangeLanguage && (
-                    <LanguageMenu
-                        onRequestCloseSettings={onRequestClose}
-                    />
-                )}
+            <img
+                src={settingsIcon}
+                draggable={false}
+                width={20}
+                height={20}
+                alt=""
+            />
 
-                {canChangeTheme && (
-                    <React.Fragment>
-                        <TWGuiThemeMenu />
-
-                        <TWBlocksThemeMenu
-                            onOpenCustomSettings={onOpenCustomSettings}
-                        />
-
-                        <TWAccentThemeMenu />
-                    </React.Fragment>
-                )}
-
-                <TWGoIcon
-                    isOpen={settingsMenuOpen}
-                    isRtl={isRtl}
-                    onRequestClose={onRequestClose}
-                    onCloseOtherMenus={() => {
-                        if (accentIsOpen) {
-                            closeAccentMenu();
-                        }
-
-                        if (blocksThemeIsOpen) {
-                            closeBlocksThemeMenu();
-                        }
-
-                        if (languageIsOpen) {
-                            closeLanguageMenu();
-                        }
-                    }}
+            <span className={styles.dropdownLabel}>
+                <FormattedMessage
+                    defaultMessage="Settings"
+                    description="Settings menu"
+                    id="gui.menuBar.settings"
                 />
+            </span>
 
-                {onClickDesktopSettings && (
-                    <TWDesktopSettings
-                        onClick={onClickDesktopSettings}
-                    />
-                )}
+            <img
+                src={dropdownCaret}
+                draggable={false}
+                width={8}
+                height={5}
+                alt=""
+            />
 
-                <div className={styles.settingsSeparator} />
-
-                <MenuItem>
-                    <div
-                        className={styles.option}
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onClick={() => {
-                            window.location.href = 'https://studio.cattymod.app/settings';
-                            onRequestClose();
-                        }}
-                    >
-                        <img
-                            src={settingsIcon}
-                            draggable={false}
-                            width={24}
-                            height={24}
-                            alt=""
+            <MenuBarMenu
+                className={menuBarStyles.menuBarMenu}
+                open={settingsMenuOpen}
+                place={isRtl ? 'left' : 'right'}
+            >
+                <MenuSection>
+                    {canChangeLanguage && (
+                        <LanguageMenu
+                            onRequestCloseSettings={onRequestClose}
                         />
+                    )}
 
-                        <span className={styles.submenuLabel}>
-                            <FormattedMessage
-                                defaultMessage="More Settings"
-                                description="Menu item to open more settings"
-                                id="tw.moreSettings"
+                    {canChangeTheme && (
+                        <React.Fragment>
+                            <TWGuiThemeMenu />
+
+                            <TWBlocksThemeMenu
+                                onOpenCustomSettings={onOpenCustomSettings}
                             />
-                        </span>
-                    </div>
-                </MenuItem>
-            </MenuSection>
-        </MenuBarMenu>
-    </MenuLabel>
-);
+
+                            <TWAccentThemeMenu />
+                        </React.Fragment>
+                    )}
+
+                    <TWGoIcon
+                        isOpen={settingsMenuOpen}
+                        isRtl={isRtl}
+                        onRequestClose={onRequestClose}
+                        onCloseOtherMenus={() => {
+                            if (accentIsOpen) {
+                                closeAccentMenu();
+                            }
+
+                            if (blocksThemeIsOpen) {
+                                closeBlocksThemeMenu();
+                            }
+
+                            if (languageIsOpen) {
+                                closeLanguageMenu();
+                            }
+                        }}
+                    />
+
+                    {onClickDesktopSettings && (
+                        <TWDesktopSettings
+                            onClick={onClickDesktopSettings}
+                        />
+                    )}
+
+                    {!isEmbedded && (
+                        <React.Fragment>
+                            <div className={styles.settingsSeparator} />
+
+                            <MenuItem>
+                                <div
+                                    className={styles.option}
+                                    // eslint-disable-next-line react/jsx-no-bind
+                                    onClick={() => {
+                                        window.location.href =
+                                            'https://studio.cattymod.app/settings';
+                                        onRequestClose();
+                                    }}
+                                >
+                                    <img
+                                        src={settingsIcon}
+                                        draggable={false}
+                                        width={24}
+                                        height={24}
+                                        alt=""
+                                    />
+
+                                    <span className={styles.submenuLabel}>
+                                        <FormattedMessage
+                                            defaultMessage="More Settings"
+                                            description="Menu item to open more settings"
+                                            id="tw.moreSettings"
+                                        />
+                                    </span>
+                                </div>
+                            </MenuItem>
+                        </React.Fragment>
+                    )}
+                </MenuSection>
+            </MenuBarMenu>
+        </MenuLabel>
+    );
+};
 
 SettingsMenu.propTypes = {
     canChangeLanguage: PropTypes.bool,
