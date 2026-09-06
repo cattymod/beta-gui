@@ -327,13 +327,33 @@ export const onNewClick =
 /*
  * Automatically load the custom default project.
  *
- * Do not automatically load it when a # is present
- * in the URL, since that indicates a project/editor
+ * Do not automatically load it when a real project should
+ * be present since that indicates a project/editor
  * URL where the normal project should be preserved.
  */
 export const initializeCustomDefaultProject =
     async () => {
-        if (window.location.href.includes('#')) {
+        const url =
+            window.location.href;
+
+        /*
+         * If the URL contains either:
+         *
+         *     #
+         *
+         * or:
+         *
+         *     ?project_url
+         *
+         * then preserve the project specified by the URL
+         * and do not load the custom default project.
+         *
+         * If both are present, this condition is also true.
+         */
+        if (
+            url.includes('#') ||
+            url.includes('?project_url')
+        ) {
             return false;
         }
 
