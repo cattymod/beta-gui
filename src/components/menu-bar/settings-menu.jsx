@@ -125,41 +125,39 @@ const SettingsMenu = ({
                             onClick={onClickDesktopSettings}
                         />
                     )}
-
-                    {!isEmbedded && (
-                        <React.Fragment>
-                            <div className={styles.settingsSeparator} />
-
-                            <MenuItem>
-                                <div
-                                    className={styles.option}
-                                    // eslint-disable-next-line react/jsx-no-bind
-                                    onClick={() => {
-                                        window.location.href =
-                                            'https://studio.cattymod.app/settings';
-                                        onRequestClose();
-                                    }}
-                                >
-                                    <img
-                                        src={settingsIcon}
-                                        draggable={false}
-                                        width={24}
-                                        height={24}
-                                        alt=""
-                                    />
-
-                                    <span className={styles.submenuLabel}>
-                                        <FormattedMessage
-                                            defaultMessage="Expand"
-                                            description="Menu item to open more settings"
-                                            id="tw.moreSettings"
-                                        />
-                                    </span>
-                                </div>
-                            </MenuItem>
-                        </React.Fragment>
-                    )}
                 </MenuSection>
+
+                {!isEmbedded && (
+                    <MenuSection>
+                        <MenuItem>
+                            <div
+                                className={styles.option}
+                                // eslint-disable-next-line react/jsx-no-bind
+                                onClick={() => {
+                                    window.location.href =
+                                        'https://studio.cattymod.app/settings';
+                                    onRequestClose();
+                                }}
+                            >
+                                <img
+                                    src={settingsIcon}
+                                    draggable={false}
+                                    width={24}
+                                    height={24}
+                                    alt=""
+                                />
+
+                                <span className={styles.submenuLabel}>
+                                    <FormattedMessage
+                                        defaultMessage="Expand"
+                                        description="Menu item to open more settings"
+                                        id="tw.moreSettings"
+                                    />
+                                </span>
+                            </div>
+                        </MenuItem>
+                    </MenuSection>
+                )}
             </MenuBarMenu>
         </MenuLabel>
     );
