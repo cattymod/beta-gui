@@ -240,7 +240,7 @@ const waitForVM = () => {
 /*
  * Load the custom default project.
  *
- * This uses the exact same VM operation as your
+ * This uses the exact same VM operation as the
  * working DevTools test:
  *
  *     vm.loadProject(reader.result)
