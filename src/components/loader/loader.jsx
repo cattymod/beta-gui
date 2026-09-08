@@ -15,7 +15,7 @@ const tips = [
     'Fact: CattyMod was originally called Automate.',
     'Fact: CattyMod is edited by only 1 Developer!',
     'Tip: Go to the bottom of the page to see cool projects!',
-    'Fact: CattyMod has 125 preset blocks!',
+    'Fact: CattyMod has 100+ preset blocks!',
     'Tip: Use Extensions to add abilities to your project!',
     'Fact: There are exactly 7 Facts and Tips including this one!'
 ];
