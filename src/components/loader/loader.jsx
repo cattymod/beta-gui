@@ -10,6 +10,32 @@ import topBlock from './top-block.svg';
 import middleBlock from './middle-block.svg';
 import bottomBlock from './bottom-block.svg';
 
+const tips = [
+    'Tip: Never Give Up!',
+    'Fact: CattyMod was originally called Automate.',
+    'Fact: CattyMod is edited by only 1 Developer!',
+    'Tip: Go to the bottom of the page to see cool projects!',
+    'Fact: CattyMod has 125 preset blocks!',
+    'Tip: Use Extensions to add abilities to your project!',
+    'Fact: There are exactly 7 Facts and Tips including this one!'
+];
+
+let usedTips = [];
+
+const chooseTip = () => {
+    if (usedTips.length === tips.length) {
+        usedTips = [];
+    }
+
+    const remainingTips = tips.filter(tip => !usedTips.includes(tip));
+    const i = Math.floor(Math.random() * remainingTips.length);
+    const tip = remainingTips[i];
+
+    usedTips.push(tip);
+
+    return tip;
+};
+
 const mainMessages = {
     'gui.loader.headline': (
         <FormattedMessage
@@ -57,22 +83,29 @@ class LoaderComponent extends React.Component {
             'barInnerRef',
             'messageRef'
         ]);
+
         this.barInnerEl = null;
         this.messageEl = null;
         this.ignoreProgress = false;
+
+        this.tip = chooseTip();
     }
+
     componentDidMount () {
         this.handleAssetProgress(
             this.props.vm.runtime.finishedAssetRequests,
             this.props.vm.runtime.totalAssetRequests
         );
+
         this.props.vm.on('ASSET_PROGRESS', this.handleAssetProgress);
         this.props.vm.runtime.on('PROJECT_LOADED', this.handleProjectLoaded);
     }
+
     componentWillUnmount () {
         this.props.vm.off('ASSET_PROGRESS', this.handleAssetProgress);
         this.props.vm.runtime.off('PROJECT_LOADED', this.handleProjectLoaded);
     }
+
     handleAssetProgress (finished, total) {
         if (this.ignoreProgress || !this.barInnerEl || !this.messageEl) {
             return;
@@ -84,13 +117,18 @@ class LoaderComponent extends React.Component {
             this.messageEl.textContent = this.props.intl.formatMessage(messages.projectData);
         } else {
             this.barInnerEl.style.width = `${finished / total * 100}%`;
-            const message = this.props.isRemote ? messages.downloadingAssets : messages.loadingAssets;
+
+            const message = this.props.isRemote ?
+                messages.downloadingAssets :
+                messages.loadingAssets;
+
             this.messageEl.textContent = this.props.intl.formatMessage(message, {
                 complete: finished,
                 total
             });
         }
     }
+
     handleProjectLoaded () {
         if (this.ignoreProgress || !this.barInnerEl || !this.messageEl) {
             return;
@@ -99,13 +137,20 @@ class LoaderComponent extends React.Component {
         this.ignoreProgress = true;
         this.props.vm.runtime.resetProgress();
     }
+
     barInnerRef (barInner) {
         this.barInnerEl = barInner;
     }
+
     messageRef (message) {
         this.messageEl = message;
     }
+
     render () {
+        const tipParts = this.tip.split(':');
+        const tipTitle = tipParts[0];
+        const tipText = tipParts.slice(1).join(':').trim();
+
         return (
             <div
                 className={classNames(styles.background, {
@@ -119,11 +164,13 @@ class LoaderComponent extends React.Component {
                             src={topBlock}
                             draggable={false}
                         />
+
                         <img
                             className={styles.middleBlock}
                             src={middleBlock}
                             draggable={false}
                         />
+
                         <img
                             className={styles.bottomBlock}
                             src={bottomBlock}
@@ -145,6 +192,18 @@ class LoaderComponent extends React.Component {
                             className={styles.barInner}
                             ref={this.barInnerRef}
                         />
+                    </div>
+
+                    <div
+                        style={{
+                            color: 'white',
+                            marginTop: '8px',
+                            textAlign: 'center',
+                            pointerEvents: 'none'
+                        }}
+                    >
+                        {tipTitle}:{' '}
+                        <i>{tipText}</i>
                     </div>
                 </div>
             </div>
@@ -169,6 +228,7 @@ LoaderComponent.propTypes = {
         })
     })
 };
+
 LoaderComponent.defaultProps = {
     isFullScreen: false,
     messageId: 'gui.loader.headline'
