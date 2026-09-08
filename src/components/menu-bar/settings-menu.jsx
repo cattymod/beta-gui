@@ -150,7 +150,7 @@ const SettingsMenu = ({
 
                                     <span className={styles.submenuLabel}>
                                         <FormattedMessage
-                                            defaultMessage="More Settings"
+                                            defaultMessage="Expand"
                                             description="Menu item to open more settings"
                                             id="tw.moreSettings"
                                         />
