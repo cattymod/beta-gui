@@ -38,7 +38,7 @@ const LoadExtensionModal = props => (
                         onChange={props.onChangeUnsandboxed}
                     />
                     <FormattedMessage
-                        defaultMessage="Run without sandbox"
+                        defaultMessage="Run with full access"
                         description="Part of modal asking for permission to automatically load custom extension"
                         id="tw.loadExtension.unsandboxed"
                     />
