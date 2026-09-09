@@ -125,7 +125,7 @@ class CustomExtensionModal extends React.Component {
         try {
             const urls = await this.getExtensionURLs();
 
-            if (this.state.type !== 'url') {
+            if (true) {
                 setPersistedUnsandboxed(this.state.unsandboxed);
                 if (this.state.unsandboxed) {
                     for (const url of urls) {
@@ -191,14 +191,11 @@ class CustomExtensionModal extends React.Component {
     }
 
     isUnsandboxed () {
-        if (this.state.type === 'url') {
-            return isTrustedExtension(this.state.url);
-        }
-        return this.state.unsandboxed;
-    }
+    return this.state.unsandboxed || isTrustedExtension(this.state.url);
+}
 
     canChangeUnsandboxed () {
-        return this.state.type !== 'url';
+        return true;
     }
 
     handleChangeUnsandboxed (e) {
