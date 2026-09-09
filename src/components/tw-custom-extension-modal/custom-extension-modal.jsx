@@ -86,7 +86,7 @@ const CustomExtensionModal = props => (
                         value={props.url}
                         onChange={props.onChangeURL}
                         onKeyDown={props.onKeyDown}
-                        placeholder="https://extensions.turbowarp.org/..."
+                        placeholder="https://cattymod.app/..."
                         autoFocus
                     />
                 </React.Fragment>
