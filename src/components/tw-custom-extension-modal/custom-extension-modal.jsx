@@ -134,7 +134,7 @@ const CustomExtensionModal = props => (
                             onChange={props.onChangeUnsandboxed}
                         />
                         <FormattedMessage
-                            defaultMessage="Run without sandbox"
+                            defaultMessage="Run with Full Access"
                             description="Message that appears in custom extension prompt"
                             id="tw.customExtensionModal.unsandboxed"
                         />
