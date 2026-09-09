@@ -278,10 +278,21 @@ class TWSecurityManagerComponent extends React.Component {
             }
             return allowed;
         }
-        return showModal(SecurityModals.LoadExtension, {
-            url,
-            unsandboxed: false
-        });
+        const allowed = await showModal(SecurityModals.LoadExtension, {
+    url,
+    unsandboxed: getPersistedUnsandboxed(),
+    onChangeUnsandboxed: this.handleChangeUnsandboxed.bind(this)
+});
+
+if (allowed) {
+    setPersistedUnsandboxed(this.state.data.unsandboxed);
+}
+
+if (allowed && this.state.data.unsandboxed) {
+    manuallyTrustExtension(url);
+}
+
+return allowed;
     }
 
     /**
