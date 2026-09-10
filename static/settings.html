@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1819,6 +1818,39 @@
   loadGoIcon();
 
   lucide.createIcons();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get("from");
+  const backButton = document.getElementById("back-to-cattymod");
+
+  if (!backButton || !from) return;
+
+  let destination = "https://cattymod.app/";
+
+  try {
+    const url = new URL(from);
+
+    // Only allow cattymod.app and its subdomains
+    const isCattyMod =
+      url.hostname === "cattymod.app" ||
+      url.hostname.endsWith(".cattymod.app");
+
+    if (isCattyMod && (url.protocol === "https:" || url.protocol === "http:")) {
+      destination = url.href;
+    }
+  } catch {
+    // Invalid URL, so keep the default destination
+  }
+
+  backButton.addEventListener("click", () => {
+    window.location.href = destination;
+  });
+});
+</script>
+
 </script>
 </body>
 </html>
