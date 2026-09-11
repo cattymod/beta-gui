@@ -1,58 +1,131 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {FormattedMessage} from 'react-intl';
+import {connect} from 'react-redux';
+
+import check from './check.svg';
+import dropdownCaret from './dropdown-caret.svg';
+import rainbowIcon from './tw-accent-rainbow.svg';
 
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 
 import {
-    GO_ICON_PLAY,
-    GO_ICON_GREEN_FLAG,
-    GO_ICON_BLUE_FLAG,
-    GO_ICON_PURPLE_FLAG,
-    getGoIcon,
-    getGoIconImage,
-    setGoIcon,
-    applyGoIcon
-} from '../../lib/go-icon';
+    ACCENT_MAP,
+    Theme
+} from '../../lib/themes/index.js';
 
 import {
-    openGoIconMenu,
-    goIconMenuOpen,
+    openAccentMenu,
+    accentMenuOpen,
     closeSettingsMenu
 } from '../../reducers/menus.js';
 
+import {setTheme} from '../../reducers/theme.js';
+import {persistTheme} from '../../lib/themes/themePersistance.js';
+
 import styles from './settings-menu.css';
 
-import check from './check.svg';
-import dropdownCaret from './dropdown-caret.svg';
 
-const isFileProtocol = () =>
-    typeof window !== 'undefined' &&
-    window.location.protocol === 'file:';
+// 🌈 ORDER CONTROL (this is the important part)
+const ACCENT_ORDER = [
+    'red',
+    'orange',
+    'yellow',
+    'green',
+    'blue',
+    'indigo',
+    'violet',
+    'purple',
+    'rainbow'
+];
 
-const GoIconPreview = props => (
-    <img
-        src={props.icon}
-        draggable={false}
-        width={20}
-        height={20}
-        alt=""
-        style={{
-            width: 20,
-            height: 20,
-            objectFit: 'contain',
-            background: 'transparent',
-            borderRadius: 0,
-            filter: 'brightness(0) invert(1)'
-        }}
-    />
-);
 
-GoIconPreview.propTypes = {
-    icon: PropTypes.string
+// 🌈 Labels
+const ACCENT_LABELS = {
+    red: {
+        defaultMessage: 'Red',
+        description: 'Red accent theme',
+        id: 'tw.accent.red'
+    },
+    orange: {
+        defaultMessage: 'Orange',
+        description: 'Orange accent theme',
+        id: 'tw.accent.orange'
+    },
+    yellow: {
+        defaultMessage: 'Yellow',
+        description: 'Yellow accent theme',
+        id: 'tw.accent.yellow'
+    },
+    green: {
+        defaultMessage: 'Green',
+        description: 'Green accent theme',
+        id: 'tw.accent.green'
+    },
+    blue: {
+        defaultMessage: 'Blue',
+        description: 'Blue accent theme',
+        id: 'tw.accent.blue'
+    },
+    indigo: {
+        defaultMessage: 'Indigo',
+        description: 'Indigo accent theme',
+        id: 'tw.accent.indigo'
+    },
+    violet: {
+        defaultMessage: 'Violet',
+        description: 'Violet accent theme',
+        id: 'tw.accent.violet'
+    },
+    purple: {
+        defaultMessage: 'Purple',
+        description: 'Purple accent theme',
+        id: 'tw.accent.purple'
+    },
+    rainbow: {
+        defaultMessage: 'Rainbow',
+        description: 'Rainbow accent theme',
+        id: 'tw.accent.rainbow'
+    }
 };
 
-const GoIconMenuItem = props => (
+
+// Icons
+const icons = {
+    rainbow: rainbowIcon
+};
+
+
+// 🎨 Color icon
+const ColorIcon = props => (
+    icons[props.id] ? (
+        <img
+            className={styles.accentIconOuter}
+            src={icons[props.id]}
+            draggable={false}
+            alt=""
+        />
+    ) : (
+        <div
+            className={styles.accentIconOuter}
+            style={{
+                backgroundColor:
+                    ACCENT_MAP[props.id]?.guiColors?.['looks-secondary'] || '#999',
+                backgroundImage:
+                    ACCENT_MAP[props.id]?.guiColors?.['menu-bar-background-image']
+            }}
+        />
+    )
+);
+
+ColorIcon.propTypes = {
+    id: PropTypes.string
+};
+
+
+// 🧩 Menu item
+const AccentMenuItem = props => (
     <MenuItem onClick={props.onClick}>
         <div className={styles.option}>
             <img
@@ -66,121 +139,86 @@ const GoIconMenuItem = props => (
                 alt=""
             />
 
-            <GoIconPreview icon={props.icon} />
+            <ColorIcon id={props.id} />
 
-            <span>{props.label}</span>
+            <FormattedMessage {...ACCENT_LABELS[props.id]} />
         </div>
     </MenuItem>
 );
 
-GoIconMenuItem.propTypes = {
-    icon: PropTypes.string,
+AccentMenuItem.propTypes = {
+    id: PropTypes.string,
     isSelected: PropTypes.bool,
-    label: PropTypes.string,
     onClick: PropTypes.func
 };
 
-const TWGoIcon = ({
+
+// 📌 Main menu
+const AccentThemeMenu = ({
     isOpen,
     isRtl,
-    onChangeGoIcon,
+    onChangeTheme,
     onOpen,
-    goIcon
-}) => {
-    if (isFileProtocol()) {
-        return null;
-    }
+    theme
+}) => (
+    <MenuItem expanded={isOpen}>
+        <div
+            className={styles.option}
+            onClick={onOpen}
+        >
+            <ColorIcon id={theme.accent} />
 
-    return (
-        <MenuItem expanded={isOpen}>
-            <div
-                className={styles.option}
-                onClick={onOpen}
-            >
-                <GoIconPreview
-                    icon={getGoIconImage(goIcon)}
+            <span className={styles.submenuLabel}>
+                <FormattedMessage
+                    defaultMessage="Accent"
+                    description="Label for accent theme menu"
+                    id="tw.menuBar.accent"
                 />
+            </span>
 
-                <span className={styles.submenuLabel}>
-                    Go Icon
-                </span>
+            <img
+                className={styles.expandCaret}
+                src={dropdownCaret}
+                draggable={false}
+                alt=""
+            />
+        </div>
 
-                <img
-                    className={styles.expandCaret}
-                    src={dropdownCaret}
-                    draggable={false}
-                    alt=""
-                />
-            </div>
+        <Submenu place={isRtl ? 'left' : 'right'}>
+            {ACCENT_ORDER
+                .filter(id => ACCENT_MAP[id])
+                .map(item => (
+                    <AccentMenuItem
+                        key={item}
+                        id={item}
+                        isSelected={theme.accent === item}
+                        onClick={() =>
+                            onChangeTheme(theme.set('accent', item))
+                        }
+                    />
+                ))}
+        </Submenu>
+    </MenuItem>
+);
 
-            <Submenu place={isRtl ? 'left' : 'right'}>
-                <GoIconMenuItem
-                    icon={getGoIconImage(GO_ICON_PLAY)}
-                    label="Play Button (default)"
-                    isSelected={goIcon === GO_ICON_PLAY}
-                    onClick={() => onChangeGoIcon(GO_ICON_PLAY)}
-                />
 
-                <GoIconMenuItem
-                    icon={getGoIconImage(GO_ICON_GREEN_FLAG)}
-                    label="Green Flag"
-                    isSelected={goIcon === GO_ICON_GREEN_FLAG}
-                    onClick={() => onChangeGoIcon(GO_ICON_GREEN_FLAG)}
-                />
-
-                <GoIconMenuItem
-                    icon={getGoIconImage(GO_ICON_BLUE_FLAG)}
-                    label="Blue Flag"
-                    isSelected={goIcon === GO_ICON_BLUE_FLAG}
-                    onClick={() => onChangeGoIcon(GO_ICON_BLUE_FLAG)}
-                />
-
-                <GoIconMenuItem
-                    icon={getGoIconImage(GO_ICON_PURPLE_FLAG)}
-                    label="Purple Flag"
-                    isSelected={goIcon === GO_ICON_PURPLE_FLAG}
-                    onClick={() => onChangeGoIcon(GO_ICON_PURPLE_FLAG)}
-                />
-            </Submenu>
-        </MenuItem>
-    );
-};
-
-TWGoIcon.propTypes = {
-    isOpen: PropTypes.bool,
-    isRtl: PropTypes.bool,
-    onChangeGoIcon: PropTypes.func,
-    onOpen: PropTypes.func,
-    goIcon: PropTypes.string
-};
-
+// Redux
 const mapStateToProps = state => ({
-    isOpen: goIconMenuOpen(state),
+    isOpen: accentMenuOpen(state),
     isRtl: state.locales.isRtl,
-    goIcon: getGoIcon()
+    theme: state.scratchGui.theme.theme
 });
 
 const mapDispatchToProps = dispatch => ({
-    onChangeGoIcon: mode => {
-        if (
-            mode !== GO_ICON_PLAY &&
-            mode !== GO_ICON_GREEN_FLAG &&
-            mode !== GO_ICON_BLUE_FLAG &&
-            mode !== GO_ICON_PURPLE_FLAG
-        ) {
-            return;
-        }
-
-        setGoIcon(mode);
-        applyGoIcon(mode);
-
+    onChangeTheme: theme => {
+        dispatch(setTheme(theme));
         dispatch(closeSettingsMenu());
+        persistTheme(theme);
     },
-
-    onOpen: () => dispatch(openGoIconMenu())
+    onOpen: () => dispatch(openAccentMenu())
 });
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(TWGoIcon);
+)(AccentThemeMenu);
