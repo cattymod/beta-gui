@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
 
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 
