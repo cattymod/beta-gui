@@ -69,19 +69,30 @@ class MobileControls extends React.Component {
             this.tapKey(character);
         }
 
-        // Clear only after the characters have been read.
+        // Read the characters first, then clear the input.
         input.value = '';
     };
 
     handleKeyboardFocus = event => {
         const input = event.currentTarget;
 
-        /*
-         * Prevent mobile browsers from automatically scrolling
-         * the input into view when it receives focus.
-         */
+        input.focus({
+            preventScroll: true
+        });
+    };
+
+    handleKeyboardPointerDown = event => {
+        const input = event.currentTarget;
+
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+
         window.requestAnimationFrame(() => {
-            input.scrollIntoView = () => {};
+            input.focus({
+                preventScroll: true
+            });
+
+            window.scrollTo(scrollX, scrollY);
         });
     };
 
@@ -324,6 +335,7 @@ class MobileControls extends React.Component {
                         inputMode="text"
                         onInput={this.handleKeyboardInput}
                         onFocus={this.handleKeyboardFocus}
+                        onPointerDown={this.handleKeyboardPointerDown}
                         aria-label="Use your Keyboard"
                     />
 
