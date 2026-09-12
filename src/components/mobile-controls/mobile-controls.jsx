@@ -57,6 +57,12 @@ class MobileControls extends React.Component {
         }, 50);
     };
 
+    /*
+     * Every character typed into the mobile keyboard is sent
+     * to the Scratch VM as a keyboard press and release.
+     *
+     * The input is then immediately cleared.
+     */
     handleKeyboardInput = event => {
         const input = event.currentTarget;
         const value = input.value;
@@ -124,6 +130,10 @@ class MobileControls extends React.Component {
         </button>
     );
 
+    /*
+     * Joystick direction
+     */
+
     getJoystickDirection = (x, y) => {
         const deadZone = 12;
 
@@ -142,12 +152,16 @@ class MobileControls extends React.Component {
         switch (direction) {
         case 'up':
             return 'ArrowUp';
+
         case 'right':
             return 'ArrowRight';
+
         case 'down':
             return 'ArrowDown';
+
         case 'left':
             return 'ArrowLeft';
+
         default:
             return null;
         }
@@ -188,6 +202,10 @@ class MobileControls extends React.Component {
             joystickDirection: null
         });
     };
+
+    /*
+     * Joystick movement
+     */
 
     moveJoystick = event => {
         if (!this.joystickAreaRef.current) {
@@ -287,6 +305,7 @@ class MobileControls extends React.Component {
                 }`}
             >
                 <div className={styles.controls}>
+                    {/* Visible keyboard input */}
                     <input
                         ref={this.keyboardInputRef}
                         className={styles.keyboardInput}
@@ -301,7 +320,9 @@ class MobileControls extends React.Component {
                         aria-label="Use your Keyboard"
                     />
 
+                    {/* Main controls */}
                     <div className={styles.gameboyControls}>
+                        {/* D-pad */}
                         <div className={styles.dpad}>
                             <div className={styles.dpadTop}>
                                 {this.renderButton(
@@ -345,6 +366,7 @@ class MobileControls extends React.Component {
                             </div>
                         </div>
 
+                        {/* A / B / C / D */}
                         <div className={styles.abcd}>
                             {this.renderButton(
                                 'A',
