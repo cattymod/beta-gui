@@ -1,5 +1,8 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import {connect} from 'react-redux';
+
+import {GUI_DARK} from '../../lib/themes/index.js';
 import styles from './mobile-controls.css';
 
 class MobileControls extends React.Component {
@@ -7,7 +10,6 @@ class MobileControls extends React.Component {
         super(props);
 
         this.state = {
-            keyboardValue: '',
             joystickDirection: null,
             joystickActive: false
         };
@@ -24,7 +26,9 @@ class MobileControls extends React.Component {
     pressKey = key => {
         const {vm} = this.props;
 
-        if (!vm) return;
+        if (!vm) {
+            return;
+        }
 
         vm.postIOData('keyboard', {
             key,
@@ -35,7 +39,9 @@ class MobileControls extends React.Component {
     releaseKey = key => {
         const {vm} = this.props;
 
-        if (!vm) return;
+        if (!vm) {
+            return;
+        }
 
         vm.postIOData('keyboard', {
             key,
@@ -51,8 +57,15 @@ class MobileControls extends React.Component {
         }, 50);
     };
 
+    /*
+     * Mobile keyboards do not always behave like physical keyboards.
+     * Instead of relying on keydown/keyup, watch the input value.
+     *
+     * Every character that appears in the input is immediately sent
+     * to the Scratch VM and the input is cleared again.
+     */
     handleKeyboardInput = event => {
-        const value = event.target.value;
+        const value = event.currentTarget.value;
 
         if (!value) {
             return;
@@ -62,21 +75,26 @@ class MobileControls extends React.Component {
             this.tapKey(character);
         }
 
-        this.setState({
-            keyboardValue: ''
-        });
-    };
-
-    handleKeyboardChange = event => {
-        this.setState({
-            keyboardValue: event.target.value
-        });
+        event.currentTarget.value = '';
     };
 
     openKeyboard = () => {
-        if (this.keyboardInputRef.current) {
-            this.keyboardInputRef.current.focus();
+        if (!this.keyboardInputRef.current) {
+            return;
         }
+
+        this.keyboardInputRef.current.focus();
+
+        /*
+         * Some mobile browsers need the focus to happen after the
+         * current click/touch event has finished before they show
+         * the virtual keyboard.
+         */
+        window.setTimeout(() => {
+            if (this.keyboardInputRef.current) {
+                this.keyboardInputRef.current.focus();
+            }
+        }, 0);
     };
 
     handleButtonPointerDown = (key, event) => {
@@ -104,6 +122,12 @@ class MobileControls extends React.Component {
         this.releaseKey(key);
     };
 
+    handleButtonLostPointerCapture = (key, event) => {
+        event.currentTarget.classList.remove(styles.pressed);
+
+        this.releaseKey(key);
+    };
+
     renderButton = (label, key, sublabel = null, extraClass = '') => (
         <button
             type="button"
@@ -111,14 +135,7 @@ class MobileControls extends React.Component {
             onPointerDown={event => this.handleButtonPointerDown(key, event)}
             onPointerUp={event => this.handleButtonPointerUp(key, event)}
             onPointerCancel={event => this.handleButtonPointerCancel(key, event)}
-            onPointerLeave={event => {
-                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-                    return;
-                }
-
-                event.currentTarget.classList.remove(styles.pressed);
-                this.releaseKey(key);
-            }}
+            onLostPointerCapture={event => this.handleButtonLostPointerCapture(key, event)}
         >
             <span className={styles.buttonLabel}>
                 {label}
@@ -290,7 +307,7 @@ class MobileControls extends React.Component {
             theme
         } = this.props;
 
-        const isDark = theme && theme.gui === 'GUI_DARK';
+        const isDark = theme.gui === GUI_DARK;
 
         return (
             <div
@@ -298,19 +315,23 @@ class MobileControls extends React.Component {
                     isDark ? styles.dark : styles.light
                 }`}
             >
+                {/*
+                 * Real text input.
+                 *
+                 * It is visually hidden, but remains focusable so the
+                 * phone's virtual keyboard can be opened.
+                 */}
                 <input
                     ref={this.keyboardInputRef}
                     className={styles.keyboardInput}
                     type="text"
-                    value={this.state.keyboardValue}
-                    onChange={this.handleKeyboardChange}
-                    onInput={this.handleKeyboardInput}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
-                    spellCheck="false"
+                    spellCheck={false}
                     inputMode="text"
                     aria-label="Use your Keyboard"
+                    onInput={this.handleKeyboardInput}
                 />
 
                 <button
@@ -413,4 +434,8 @@ MobileControls.propTypes = {
     theme: PropTypes.object
 };
 
-export default MobileControls;
+const mapStateToProps = state => ({
+    theme: state.scratchGui.theme.theme
+});
+
+export default connect(mapStateToProps)(MobileControls);
