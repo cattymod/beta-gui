@@ -7,44 +7,7 @@
     <title>404 Not Found</title>
     <!-- CattyMod navbar -->
     <script src="https://cattymod.app/assets/navbar.js" defer></script>
-    <script>
-      (function() {
-        const host = window.location.host;
-        const path = window.location.pathname;
-        const hash = window.location.hash;
-        // Only run on cattymod.app and its subdomains
-        if (!host.endsWith("cattymod.app")) return;
-        // Don't redirect the dedicated 404 page
-        if (path === "/404" || path === "/404/") return;
-        let match = null;
-        let mode = "";
-        // /projects/123
-        const projectMatch = path.match(/^\/projects\/(\d+)\/?$/);
-        if (projectMatch) {
-          match = projectMatch[1];
-        }
-        // /projects/123/editor
-        const editorMatch = path.match(/^\/projects\/(\d+)\/editor\/?$/);
-        if (editorMatch) {
-          match = editorMatch[1];
-          mode = "/editor";
-        }
-        // /projects/123/fullscreen
-        const fullscreenMatch = path.match(/^\/projects\/(\d+)\/fullscreen\/?$/);
-        if (fullscreenMatch) {
-          match = fullscreenMatch[1];
-          mode = "/fullscreen";
-        }
-        // #123
-        if (!match && /^#\d+$/.test(hash)) {
-          match = hash.slice(1);
-        }
-        // Redirect
-        if (match) {
-          window.location.replace("https://studio.cattymod.app" + mode + "#" + match);
-        }
-      })();
-    </script>
+    
     <style>
       :root {
         --scratch-blue: #4D97FF;
