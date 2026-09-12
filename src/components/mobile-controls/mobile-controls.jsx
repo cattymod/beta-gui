@@ -69,19 +69,20 @@ class MobileControls extends React.Component {
             this.tapKey(character);
         }
 
+        // Clear only after the characters have been read.
         input.value = '';
     };
 
-    handleOpenKeyboard = event => {
-        event.preventDefault();
+    handleKeyboardFocus = event => {
+        const input = event.currentTarget;
 
-        const input = this.keyboardInputRef.current;
-
-        if (!input) {
-            return;
-        }
-
-        input.focus();
+        /*
+         * Prevent mobile browsers from automatically scrolling
+         * the input into view when it receives focus.
+         */
+        window.requestAnimationFrame(() => {
+            input.scrollIntoView = () => {};
+        });
     };
 
     handleButtonPointerDown = (key, event) => {
@@ -136,6 +137,10 @@ class MobileControls extends React.Component {
         </button>
     );
 
+    /*
+     * Joystick direction
+     */
+
     getJoystickDirection = (x, y) => {
         const deadZone = 12;
 
@@ -154,12 +159,16 @@ class MobileControls extends React.Component {
         switch (direction) {
         case 'up':
             return 'ArrowUp';
+
         case 'right':
             return 'ArrowRight';
+
         case 'down':
             return 'ArrowDown';
+
         case 'left':
             return 'ArrowLeft';
+
         default:
             return null;
         }
@@ -200,6 +209,10 @@ class MobileControls extends React.Component {
             joystickDirection: null
         });
     };
+
+    /*
+     * Joystick movement
+     */
 
     moveJoystick = event => {
         if (!this.joystickAreaRef.current) {
@@ -301,24 +314,18 @@ class MobileControls extends React.Component {
                 <div className={styles.controls}>
                     <input
                         ref={this.keyboardInputRef}
-                        className={styles.hiddenKeyboardInput}
+                        className={styles.keyboardInput}
                         type="text"
+                        placeholder="Use your Keyboard"
                         autoComplete="off"
                         autoCorrect="off"
                         autoCapitalize="off"
                         spellCheck={false}
                         inputMode="text"
                         onInput={this.handleKeyboardInput}
-                        aria-label="Mobile keyboard input"
+                        onFocus={this.handleKeyboardFocus}
+                        aria-label="Use your Keyboard"
                     />
-
-                    <button
-                        type="button"
-                        className={styles.openKeyboardButton}
-                        onPointerDown={this.handleOpenKeyboard}
-                    >
-                        Open Keyboard
-                    </button>
 
                     <div className={styles.gameboyControls}>
                         <div className={styles.dpad}>
