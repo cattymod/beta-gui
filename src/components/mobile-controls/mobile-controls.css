@@ -9,10 +9,13 @@
 
     .controls {
         display: flex;
+        flex-direction: column;
+
         position: fixed;
         left: 0;
         right: 0;
         bottom: 0;
+
         z-index: 99999;
 
         align-items: center;
@@ -23,42 +26,23 @@
 
         user-select: none;
         -webkit-user-select: none;
+
         touch-action: none;
 
         color: #111;
     }
 
     /*
-     * Hidden keyboard input
+     * Visible keyboard input
      */
 
     .keyboardInput {
-        position: absolute;
-
-        width: 1px;
-        height: 1px;
-
-        left: -10000px;
-        top: auto;
-
-        opacity: 0;
-    }
-
-    /*
-     * "Use your Keyboard"
-     */
-
-    .keyboardButton {
-        position: fixed;
-        left: 50%;
-        bottom: 230px;
-
-        transform: translateX(-50%);
+        box-sizing: border-box;
 
         width: min(320px, 80vw);
         height: 46px;
 
-        margin: 0;
+        margin: 0 0 16px 0;
         padding: 0 14px;
 
         border: 1px solid #d0d0d0;
@@ -73,19 +57,23 @@
         font-size: 15px;
         font-weight: 500;
 
-        cursor: pointer;
+        outline: none;
 
         touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
 
-        transition:
-            transform 0.04s ease,
-            box-shadow 0.04s ease;
+        user-select: text;
+        -webkit-user-select: text;
+
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .keyboardButton:active {
-        transform: translate(-50%, 4px);
-        box-shadow: 0 0 0 #b8b8b8;
+    .keyboardInput::placeholder {
+        color: #777;
+        opacity: 1;
+    }
+
+    .keyboardInput:focus {
+        border-color: #999;
     }
 
     /*
@@ -98,6 +86,7 @@
     .gameboyControls {
         display: flex;
         flex-direction: row;
+
         align-items: center;
         justify-content: center;
 
@@ -111,6 +100,7 @@
     .dpad {
         display: flex;
         flex-direction: column;
+
         align-items: center;
         justify-content: center;
     }
@@ -118,8 +108,9 @@
     .dpadTop,
     .dpadBottom {
         display: flex;
-        justify-content: center;
+
         align-items: center;
+        justify-content: center;
 
         width: 58px;
         height: 58px;
@@ -128,21 +119,11 @@
     .dpadMiddle {
         display: flex;
         flex-direction: row;
+
         align-items: center;
         justify-content: center;
 
         gap: 6px;
-    }
-
-    /*
-     * D-pad buttons
-     */
-
-    .dpad .button {
-        width: 58px;
-        height: 58px;
-
-        border-radius: 8px;
     }
 
     /*
@@ -181,6 +162,7 @@
 
         display: flex;
         flex-direction: column;
+
         align-items: center;
         justify-content: center;
 
@@ -191,6 +173,7 @@
         cursor: pointer;
 
         touch-action: none;
+
         -webkit-tap-highlight-color: transparent;
 
         transition:
@@ -199,10 +182,15 @@
     }
 
     /*
-     * D-pad arrows
+     * D-pad buttons
      */
 
     .dpad .button {
+        width: 58px;
+        height: 58px;
+
+        border-radius: 8px;
+
         font-size: 25px;
         line-height: 1;
     }
@@ -213,6 +201,7 @@
 
     .label {
         display: flex;
+
         align-items: center;
         justify-content: center;
 
@@ -226,11 +215,18 @@
     }
 
     /*
-     * A/B/C/D sublabels
+     * A/B/C/D labels
+     *
+     * Keep the main letter large and the
+     * keyboard mapping underneath it small.
      */
 
     .abcd .label {
+        width: auto;
         height: auto;
+
+        font-size: 22px;
+        line-height: 1;
     }
 
     .sublabel {
@@ -248,6 +244,7 @@
 
     .pressed {
         transform: translateY(4px);
+
         box-shadow: 0 0 0 #b8b8b8;
     }
 
@@ -264,10 +261,12 @@
         flex: 0 0 58px;
 
         display: flex;
+
         align-items: center;
         justify-content: center;
 
         touch-action: none;
+
         user-select: none;
         -webkit-user-select: none;
     }
@@ -301,6 +300,7 @@
         cursor: grab;
 
         touch-action: none;
+
         user-select: none;
         -webkit-user-select: none;
 
@@ -328,8 +328,8 @@
     /*
      * Dark mode
      *
-     * Buttons remain white.
-     * The joystick becomes white.
+     * Buttons stay white.
+     * Joystick becomes white.
      */
 
     .dark .joystick {
@@ -337,12 +337,10 @@
     }
 
     /*
-     * Dark mode button appearance
-     *
-     * The controls themselves remain white.
+     * Dark mode keyboard input
      */
 
-    .dark .keyboardButton {
+    .dark .keyboardInput {
         border-color: #444;
 
         background: #fff;
@@ -351,9 +349,13 @@
         box-shadow: 0 4px 0 #777;
     }
 
-    .dark .keyboardButton:active {
-        box-shadow: 0 0 0 #777;
+    .dark .keyboardInput::placeholder {
+        color: #666;
     }
+
+    /*
+     * Dark mode buttons
+     */
 
     .dark .button {
         border-color: #444;
