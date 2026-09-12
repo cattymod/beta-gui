@@ -72,29 +72,16 @@ class MobileControls extends React.Component {
         input.value = '';
     };
 
-    handleKeyboardFocus = event => {
-        const input = event.currentTarget;
-
-        /*
-         * Prevent mobile browsers from automatically scrolling
-         * the input into view when it receives focus.
-         */
-        window.requestAnimationFrame(() => {
-            input.scrollIntoView = () => {};
-        });
-    };
-
-    handleKeyboardPointerDown = event => {
-        /*
-         * Prevent the browser's normal focus scrolling behavior.
-         */
+    handleOpenKeyboard = event => {
         event.preventDefault();
 
-        const input = event.currentTarget;
+        const input = this.keyboardInputRef.current;
 
-        input.focus({
-            preventScroll: true
-        });
+        if (!input) {
+            return;
+        }
+
+        input.focus();
     };
 
     handleButtonPointerDown = (key, event) => {
@@ -149,10 +136,6 @@ class MobileControls extends React.Component {
         </button>
     );
 
-    /*
-     * Joystick direction
-     */
-
     getJoystickDirection = (x, y) => {
         const deadZone = 12;
 
@@ -171,16 +154,12 @@ class MobileControls extends React.Component {
         switch (direction) {
         case 'up':
             return 'ArrowUp';
-
         case 'right':
             return 'ArrowRight';
-
         case 'down':
             return 'ArrowDown';
-
         case 'left':
             return 'ArrowLeft';
-
         default:
             return null;
         }
@@ -221,10 +200,6 @@ class MobileControls extends React.Component {
             joystickDirection: null
         });
     };
-
-    /*
-     * Joystick movement
-     */
 
     moveJoystick = event => {
         if (!this.joystickAreaRef.current) {
@@ -326,19 +301,24 @@ class MobileControls extends React.Component {
                 <div className={styles.controls}>
                     <input
                         ref={this.keyboardInputRef}
-                        className={styles.keyboardInput}
+                        className={styles.hiddenKeyboardInput}
                         type="text"
-                        placeholder="Use your Keyboard"
                         autoComplete="off"
                         autoCorrect="off"
                         autoCapitalize="off"
                         spellCheck={false}
                         inputMode="text"
                         onInput={this.handleKeyboardInput}
-                        onFocus={this.handleKeyboardFocus}
-                        onPointerDown={this.handleKeyboardPointerDown}
-                        aria-label="Use your Keyboard"
+                        aria-label="Mobile keyboard input"
                     />
+
+                    <button
+                        type="button"
+                        className={styles.openKeyboardButton}
+                        onPointerDown={this.handleOpenKeyboard}
+                    >
+                        Open Keyboard
+                    </button>
 
                     <div className={styles.gameboyControls}>
                         <div className={styles.dpad}>
