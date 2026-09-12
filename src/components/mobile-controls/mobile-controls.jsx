@@ -57,12 +57,6 @@ class MobileControls extends React.Component {
         }, 50);
     };
 
-    /*
-     * Every character typed into the mobile keyboard is sent
-     * to the Scratch VM as a keyboard press and release.
-     *
-     * The input is then immediately cleared.
-     */
     handleKeyboardInput = event => {
         const input = event.currentTarget;
         const value = input.value;
@@ -76,6 +70,31 @@ class MobileControls extends React.Component {
         }
 
         input.value = '';
+    };
+
+    handleKeyboardFocus = event => {
+        const input = event.currentTarget;
+
+        /*
+         * Prevent mobile browsers from automatically scrolling
+         * the input into view when it receives focus.
+         */
+        window.requestAnimationFrame(() => {
+            input.scrollIntoView = () => {};
+        });
+    };
+
+    handleKeyboardPointerDown = event => {
+        /*
+         * Prevent the browser's normal focus scrolling behavior.
+         */
+        event.preventDefault();
+
+        const input = event.currentTarget;
+
+        input.focus({
+            preventScroll: true
+        });
     };
 
     handleButtonPointerDown = (key, event) => {
@@ -305,7 +324,6 @@ class MobileControls extends React.Component {
                 }`}
             >
                 <div className={styles.controls}>
-                    {/* Visible keyboard input */}
                     <input
                         ref={this.keyboardInputRef}
                         className={styles.keyboardInput}
@@ -317,12 +335,12 @@ class MobileControls extends React.Component {
                         spellCheck={false}
                         inputMode="text"
                         onInput={this.handleKeyboardInput}
+                        onFocus={this.handleKeyboardFocus}
+                        onPointerDown={this.handleKeyboardPointerDown}
                         aria-label="Use your Keyboard"
                     />
 
-                    {/* Main controls */}
                     <div className={styles.gameboyControls}>
-                        {/* D-pad */}
                         <div className={styles.dpad}>
                             <div className={styles.dpadTop}>
                                 {this.renderButton(
@@ -366,7 +384,6 @@ class MobileControls extends React.Component {
                             </div>
                         </div>
 
-                        {/* A / B / C / D */}
                         <div className={styles.abcd}>
                             {this.renderButton(
                                 'A',
