@@ -73,26 +73,23 @@ class MobileControls extends React.Component {
         input.value = '';
     };
 
-    handleKeyboardFocus = event => {
+    handleKeyboardPointerDown = event => {
+        event.preventDefault();
+
         const input = event.currentTarget;
 
+        /*
+         * Prevent the browser from using scrollIntoView()
+         * when focusing the input.
+         */
+        input.scrollIntoView = () => {};
+
+        /*
+         * Focus the input without allowing the browser
+         * to scroll the page to it.
+         */
         input.focus({
             preventScroll: true
-        });
-    };
-
-    handleKeyboardPointerDown = event => {
-        const input = event.currentTarget;
-
-        const scrollX = window.scrollX;
-        const scrollY = window.scrollY;
-
-        window.requestAnimationFrame(() => {
-            input.focus({
-                preventScroll: true
-            });
-
-            window.scrollTo(scrollX, scrollY);
         });
     };
 
@@ -334,7 +331,6 @@ class MobileControls extends React.Component {
                         spellCheck={false}
                         inputMode="text"
                         onInput={this.handleKeyboardInput}
-                        onFocus={this.handleKeyboardFocus}
                         onPointerDown={this.handleKeyboardPointerDown}
                         aria-label="Use your Keyboard"
                     />
