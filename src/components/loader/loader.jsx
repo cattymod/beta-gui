@@ -36,11 +36,12 @@ const chooseTip = () => {
     return tip;
 };
 
+// Returns true when CattyMod is running inside an iframe.
 const isInIframe = () => {
     try {
         return window.self !== window.top;
     } catch (e) {
-        // If accessing window.top is blocked, we're likely in a restricted iframe.
+        // If window.top cannot be accessed, assume we are inside an iframe.
         return true;
     }
 };
@@ -97,7 +98,7 @@ class LoaderComponent extends React.Component {
         this.messageEl = null;
         this.ignoreProgress = false;
 
-        // Only choose a tip when we're not inside an iframe.
+        // Only choose a tip when we are not inside an iframe.
         this.tip = isInIframe() ? null : chooseTip();
     }
 
@@ -222,3 +223,38 @@ class LoaderComponent extends React.Component {
         );
     }
 }
+
+LoaderComponent.propTypes = {
+    intl: intlShape,
+    isFullScreen: PropTypes.bool,
+    isRemote: PropTypes.bool,
+    messageId: PropTypes.string,
+    vm: PropTypes.shape({
+        on: PropTypes.func,
+        off: PropTypes.func,
+        runtime: PropTypes.shape({
+            totalAssetRequests: PropTypes.number,
+            finishedAssetRequests: PropTypes.number,
+            resetProgress: PropTypes.func,
+            on: PropTypes.func,
+            off: PropTypes.func
+        })
+    })
+};
+
+LoaderComponent.defaultProps = {
+    isFullScreen: false,
+    messageId: 'gui.loader.headline'
+};
+
+const mapStateToProps = state => ({
+    isRemote: getIsLoadingWithId(state.scratchGui.projectState.loadingState),
+    vm: state.scratchGui.vm
+});
+
+const mapDispatchToProps = () => ({});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(injectIntl(LoaderComponent));
