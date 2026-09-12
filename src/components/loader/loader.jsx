@@ -36,6 +36,15 @@ const chooseTip = () => {
     return tip;
 };
 
+const isInIframe = () => {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        // If accessing window.top is blocked, we're likely in a restricted iframe.
+        return true;
+    }
+};
+
 const mainMessages = {
     'gui.loader.headline': (
         <FormattedMessage
@@ -88,7 +97,8 @@ class LoaderComponent extends React.Component {
         this.messageEl = null;
         this.ignoreProgress = false;
 
-        this.tip = chooseTip();
+        // Only choose a tip when we're not inside an iframe.
+        this.tip = isInIframe() ? null : chooseTip();
     }
 
     componentDidMount () {
@@ -147,7 +157,7 @@ class LoaderComponent extends React.Component {
     }
 
     render () {
-        const tipParts = this.tip.split(':');
+        const tipParts = this.tip ? this.tip.split(':') : [];
         const tipTitle = tipParts[0];
         const tipText = tipParts.slice(1).join(':').trim();
 
@@ -194,54 +204,21 @@ class LoaderComponent extends React.Component {
                         />
                     </div>
 
-                    <div
-                        style={{
-                            color: 'white',
-                            marginTop: '8px',
-                            textAlign: 'center',
-                            pointerEvents: 'none'
-                        }}
-                    >
-                        {tipTitle}:{' '}
-                        <i>{tipText}</i>
-                    </div>
+                    {!isInIframe() && (
+                        <div
+                            style={{
+                                color: 'white',
+                                marginTop: '8px',
+                                textAlign: 'center',
+                                pointerEvents: 'none'
+                            }}
+                        >
+                            {tipTitle}:{' '}
+                            <i>{tipText}</i>
+                        </div>
+                    )}
                 </div>
             </div>
         );
     }
 }
-
-LoaderComponent.propTypes = {
-    intl: intlShape,
-    isFullScreen: PropTypes.bool,
-    isRemote: PropTypes.bool,
-    messageId: PropTypes.string,
-    vm: PropTypes.shape({
-        on: PropTypes.func,
-        off: PropTypes.func,
-        runtime: PropTypes.shape({
-            totalAssetRequests: PropTypes.number,
-            finishedAssetRequests: PropTypes.number,
-            resetProgress: PropTypes.func,
-            on: PropTypes.func,
-            off: PropTypes.func
-        })
-    })
-};
-
-LoaderComponent.defaultProps = {
-    isFullScreen: false,
-    messageId: 'gui.loader.headline'
-};
-
-const mapStateToProps = state => ({
-    isRemote: getIsLoadingWithId(state.scratchGui.projectState.loadingState),
-    vm: state.scratchGui.vm
-});
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(injectIntl(LoaderComponent));
