@@ -732,7 +732,7 @@ handleClickSeeInside () {
                                                                 />
                                                             ) : (
                                                                 <FormattedMessage
-                                                                    defaultMessage="Save to your computer"
+                                                                    defaultMessage="Save to your device"
                                                                     description="Menu bar item for downloading a project to your computer" // eslint-disable-line max-len
                                                                     id="gui.menuBar.downloadToComputer"
                                                                 />
