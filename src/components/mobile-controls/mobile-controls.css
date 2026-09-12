@@ -1,8 +1,12 @@
-.controls {
+.mobileControls {
     display: none;
 }
 
 @media (orientation: portrait) {
+    .mobileControls {
+        display: block;
+    }
+
     .controls {
         display: flex;
         position: fixed;
@@ -11,8 +15,8 @@
         bottom: 0;
         z-index: 99999;
 
-        flex-direction: column;
         align-items: center;
+        justify-content: center;
 
         padding: 16px;
         padding-bottom: max(16px, env(safe-area-inset-bottom));
@@ -25,7 +29,7 @@
     }
 
     /*
-     * Keyboard
+     * Hidden keyboard input
      */
 
     .keyboardInput {
@@ -34,15 +38,27 @@
         width: 1px;
         height: 1px;
 
+        left: -10000px;
+        top: auto;
+
         opacity: 0;
-        pointer-events: none;
     }
 
+    /*
+     * "Use your Keyboard"
+     */
+
     .keyboardButton {
+        position: fixed;
+        left: 50%;
+        bottom: 230px;
+
+        transform: translateX(-50%);
+
         width: min(320px, 80vw);
         height: 46px;
 
-        margin: 0 0 24px;
+        margin: 0;
         padding: 0 14px;
 
         border: 1px solid #d0d0d0;
@@ -68,16 +84,20 @@
     }
 
     .keyboardButton:active {
-        transform: translateY(4px);
+        transform: translate(-50%, 4px);
         box-shadow: 0 0 0 #b8b8b8;
     }
 
     /*
-     * Main controls
+     * Main Game Boy-style controls
+     *
+     * D-pad on the left
+     * A/B/C/D on the right
      */
 
     .gameboyControls {
         display: flex;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
 
@@ -92,17 +112,25 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
     }
 
     .dpadTop,
     .dpadBottom {
         display: flex;
         justify-content: center;
+        align-items: center;
+
+        width: 58px;
+        height: 58px;
     }
 
     .dpadMiddle {
         display: flex;
+        flex-direction: row;
         align-items: center;
+        justify-content: center;
+
         gap: 6px;
     }
 
@@ -118,7 +146,7 @@
     }
 
     /*
-     * A/B/C/D
+     * A / B / C / D
      */
 
     .abcd {
@@ -135,9 +163,12 @@
      */
 
     .button {
+        box-sizing: border-box;
+
         width: 64px;
         height: 64px;
 
+        margin: 0;
         padding: 0;
 
         border: 1px solid #d0d0d0;
@@ -176,7 +207,11 @@
         line-height: 1;
     }
 
-    .dpad .label {
+    /*
+     * Button labels
+     */
+
+    .label {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -191,11 +226,11 @@
     }
 
     /*
-     * A/B/C/D labels
+     * A/B/C/D sublabels
      */
 
-    .label {
-        line-height: 1;
+    .abcd .label {
+        height: auto;
     }
 
     .sublabel {
@@ -208,10 +243,7 @@
     }
 
     /*
-     * Pressed physical button
-     *
-     * The button moves down exactly as far as its
-     * shadow, making the shadow disappear underneath it.
+     * Pressed button
      */
 
     .pressed {
@@ -220,7 +252,7 @@
     }
 
     /*
-     * Joystick
+     * Joystick area
      */
 
     .joystickArea {
@@ -236,16 +268,22 @@
         justify-content: center;
 
         touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
     }
+
+    /*
+     * Actual draggable joystick
+     */
 
     .joystick {
         position: absolute;
 
-        width: 38px;
-        height: 38px;
-
         left: 50%;
         top: 50%;
+
+        width: 38px;
+        height: 38px;
 
         margin-left: -19px;
         margin-top: -19px;
@@ -263,66 +301,70 @@
         cursor: grab;
 
         touch-action: none;
-
-        transition: transform 0.06s ease;
+        user-select: none;
+        -webkit-user-select: none;
 
         z-index: 5;
+
+        transition: transform 0.06s ease;
     }
 
     .joystickArea:active .joystick {
         cursor: grabbing;
     }
 
-    /*
-     * When released, make the joystick snap back
-     * smoothly to the center.
-     */
-
     .joystickArea:not(:active) .joystick {
         transition: transform 0.1s ease;
     }
 
     /*
-     * Dark mode
-     *
-     * The buttons stay white as requested.
-     * The joystick becomes white so it remains
-     * visible against a dark interface.
+     * Light mode
      */
 
-    @media (prefers-color-scheme: dark) {
-        .controls {
-            color: #fff;
-        }
+    .light .joystick {
+        background: #111;
+    }
 
-        .keyboardButton {
-            border-color: #444;
+    /*
+     * Dark mode
+     *
+     * Buttons remain white.
+     * The joystick becomes white.
+     */
 
-            background: #fff;
-            color: #111;
+    .dark .joystick {
+        background: #fff;
+    }
 
-            box-shadow: 0 4px 0 #777;
-        }
+    /*
+     * Dark mode button appearance
+     *
+     * The controls themselves remain white.
+     */
 
-        .keyboardButton:active {
-            box-shadow: 0 0 0 #777;
-        }
+    .dark .keyboardButton {
+        border-color: #444;
 
-        .button {
-            border-color: #444;
+        background: #fff;
+        color: #111;
 
-            background: #fff;
-            color: #111;
+        box-shadow: 0 4px 0 #777;
+    }
 
-            box-shadow: 0 4px 0 #777;
-        }
+    .dark .keyboardButton:active {
+        box-shadow: 0 0 0 #777;
+    }
 
-        .pressed {
-            box-shadow: 0 0 0 #777;
-        }
+    .dark .button {
+        border-color: #444;
 
-        .joystick {
-            background: #fff;
-        }
+        background: #fff;
+        color: #111;
+
+        box-shadow: 0 4px 0 #777;
+    }
+
+    .dark .pressed {
+        box-shadow: 0 0 0 #777;
     }
 }
