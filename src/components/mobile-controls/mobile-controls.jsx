@@ -1,99 +1,141 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import styles from './mobile-controls.css';
 
 class MobileControls extends React.Component {
-    constructor (props) {
+    constructor(props) {
         super(props);
 
-        this.inputRef = React.createRef();
+        this.state = {
+            keyboardValue: '',
+            joystickDirection: null,
+            joystickActive: false
+        };
+
+        this.keyboardInputRef = React.createRef();
+        this.joystickAreaRef = React.createRef();
         this.joystickRef = React.createRef();
-
-        this.joystickActive = false;
-        this.joystickDirection = null;
-
-        this.handleKeyboardInput = this.handleKeyboardInput.bind(this);
-        this.openKeyboard = this.openKeyboard.bind(this);
-
-        this.handleJoystickDown = this.handleJoystickDown.bind(this);
-        this.handleJoystickMove = this.handleJoystickMove.bind(this);
-        this.handleJoystickUp = this.handleJoystickUp.bind(this);
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
         this.releaseJoystickKey();
     }
 
-    pressKey (key) {
-        this.props.vm.postIOData('keyboard', {
+    pressKey = key => {
+        const {vm} = this.props;
+
+        if (!vm) return;
+
+        vm.postIOData('keyboard', {
             key,
             isDown: true
         });
-    }
+    };
 
-    releaseKey (key) {
-        this.props.vm.postIOData('keyboard', {
+    releaseKey = key => {
+        const {vm} = this.props;
+
+        if (!vm) return;
+
+        vm.postIOData('keyboard', {
             key,
             isDown: false
         });
-    }
+    };
 
-    handleKeyboardInput (event) {
-        const input = event.target;
-        const value = input.value;
+    tapKey = key => {
+        this.pressKey(key);
+
+        window.setTimeout(() => {
+            this.releaseKey(key);
+        }, 50);
+    };
+
+    handleKeyboardInput = event => {
+        const value = event.target.value;
 
         if (!value) {
             return;
         }
 
         for (const character of value) {
-            this.pressKey(character);
-            this.releaseKey(character);
+            this.tapKey(character);
         }
 
-        input.value = '';
-    }
+        this.setState({
+            keyboardValue: ''
+        });
+    };
 
-    openKeyboard () {
-        if (this.inputRef.current) {
-            this.inputRef.current.focus();
+    handleKeyboardChange = event => {
+        this.setState({
+            keyboardValue: event.target.value
+        });
+    };
+
+    openKeyboard = () => {
+        if (this.keyboardInputRef.current) {
+            this.keyboardInputRef.current.focus();
         }
-    }
+    };
 
-    renderButton (label, key, sublabel, extraClass = '') {
-        return (
-            <button
-                className={`${styles.button} ${extraClass}`}
-                onPointerDown={event => {
-                    event.preventDefault();
-                    event.currentTarget.setPointerCapture(event.pointerId);
-                    event.currentTarget.classList.add(styles.pressed);
-                    this.pressKey(key);
-                }}
-                onPointerUp={event => {
-                    event.preventDefault();
-                    event.currentTarget.classList.remove(styles.pressed);
-                    this.releaseKey(key);
-                }}
-                onPointerCancel={event => {
-                    event.currentTarget.classList.remove(styles.pressed);
-                    this.releaseKey(key);
-                }}
-            >
-                <span className={styles.label}>{label}</span>
+    handleButtonPointerDown = (key, event) => {
+        event.preventDefault();
 
-                {sublabel ? (
-                    <span className={styles.sublabel}>{sublabel}</span>
-                ) : null}
-            </button>
-        );
-    }
+        event.currentTarget.setPointerCapture(event.pointerId);
+        event.currentTarget.classList.add(styles.pressed);
 
-    getJoystickDirection (x, y) {
+        this.pressKey(key);
+    };
+
+    handleButtonPointerUp = (key, event) => {
+        event.preventDefault();
+
+        event.currentTarget.classList.remove(styles.pressed);
+
+        this.releaseKey(key);
+    };
+
+    handleButtonPointerCancel = (key, event) => {
+        event.preventDefault();
+
+        event.currentTarget.classList.remove(styles.pressed);
+
+        this.releaseKey(key);
+    };
+
+    renderButton = (label, key, sublabel = null, extraClass = '') => (
+        <button
+            type="button"
+            className={`${styles.button} ${extraClass}`}
+            onPointerDown={event => this.handleButtonPointerDown(key, event)}
+            onPointerUp={event => this.handleButtonPointerUp(key, event)}
+            onPointerCancel={event => this.handleButtonPointerCancel(key, event)}
+            onPointerLeave={event => {
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                    return;
+                }
+
+                event.currentTarget.classList.remove(styles.pressed);
+                this.releaseKey(key);
+            }}
+        >
+            <span className={styles.buttonLabel}>
+                {label}
+            </span>
+
+            {sublabel ? (
+                <span className={styles.buttonSubLabel}>
+                    {sublabel}
+                </span>
+            ) : null}
+        </button>
+    );
+
+    getJoystickDirection = (x, y) => {
         const deadZone = 12;
 
-        if (Math.sqrt((x * x) + (y * y)) < deadZone) {
+        if (Math.abs(x) < deadZone && Math.abs(y) < deadZone) {
             return null;
         }
 
@@ -102,177 +144,263 @@ class MobileControls extends React.Component {
         }
 
         return y > 0 ? 'down' : 'up';
-    }
+    };
 
-    getJoystickKey (direction) {
+    getJoystickKey = direction => {
         switch (direction) {
         case 'up':
             return 'ArrowUp';
-        case 'down':
-            return 'ArrowDown';
-        case 'left':
-            return 'ArrowLeft';
+
         case 'right':
             return 'ArrowRight';
+
+        case 'down':
+            return 'ArrowDown';
+
+        case 'left':
+            return 'ArrowLeft';
+
         default:
             return null;
         }
-    }
+    };
 
-    setJoystickDirection (direction) {
-        if (direction === this.joystickDirection) {
+    setJoystickDirection = direction => {
+        const oldDirection = this.state.joystickDirection;
+
+        if (oldDirection === direction) {
             return;
         }
 
-        this.releaseJoystickKey();
+        const oldKey = this.getJoystickKey(oldDirection);
+        const newKey = this.getJoystickKey(direction);
 
-        if (direction) {
-            const key = this.getJoystickKey(direction);
-
-            if (key) {
-                this.pressKey(key);
-                this.joystickDirection = direction;
-            }
-        }
-    }
-
-    releaseJoystickKey () {
-        if (!this.joystickDirection) {
-            return;
+        if (oldKey) {
+            this.releaseKey(oldKey);
         }
 
-        const key = this.getJoystickKey(this.joystickDirection);
+        if (newKey) {
+            this.pressKey(newKey);
+        }
+
+        this.setState({
+            joystickDirection: direction
+        });
+    };
+
+    releaseJoystickKey = () => {
+        const {joystickDirection} = this.state;
+        const key = this.getJoystickKey(joystickDirection);
 
         if (key) {
             this.releaseKey(key);
         }
 
-        this.joystickDirection = null;
-    }
+        this.setState({
+            joystickDirection: null
+        });
+    };
 
-    moveJoystick (event) {
-        if (!this.joystickActive || !this.joystickRef.current) {
+    moveJoystick = event => {
+        if (!this.joystickAreaRef.current) {
             return;
         }
 
-        const area = this.joystickRef.current;
-        const rect = area.getBoundingClientRect();
+        const rect = this.joystickAreaRef.current.getBoundingClientRect();
 
-        const centerX = rect.left + (rect.width / 2);
-        const centerY = rect.top + (rect.height / 2);
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
 
         let x = event.clientX - centerX;
         let y = event.clientY - centerY;
 
         const maxDistance = 27;
-
         const distance = Math.sqrt((x * x) + (y * y));
 
         if (distance > maxDistance) {
             const scale = maxDistance / distance;
+
             x *= scale;
             y *= scale;
         }
 
-        area.style.setProperty('--joystick-x', `${x}px`);
-        area.style.setProperty('--joystick-y', `${y}px`);
+        if (this.joystickRef.current) {
+            this.joystickRef.current.style.setProperty(
+                '--joystick-x',
+                `${x}px`
+            );
 
-        const direction = this.getJoystickDirection(x, y);
+            this.joystickRef.current.style.setProperty(
+                '--joystick-y',
+                `${y}px`
+            );
+        }
 
-        this.setJoystickDirection(direction);
-    }
+        this.setJoystickDirection(
+            this.getJoystickDirection(x, y)
+        );
+    };
 
-    handleJoystickDown (event) {
+    handleJoystickPointerDown = event => {
         event.preventDefault();
 
-        this.joystickActive = true;
+        this.setState({
+            joystickActive: true
+        });
 
         event.currentTarget.setPointerCapture(event.pointerId);
 
         this.moveJoystick(event);
-    }
+    };
 
-    handleJoystickMove (event) {
+    handleJoystickPointerMove = event => {
+        if (!this.state.joystickActive) {
+            return;
+        }
+
         event.preventDefault();
 
         this.moveJoystick(event);
-    }
+    };
 
-    handleJoystickUp (event) {
+    handleJoystickPointerUp = event => {
         event.preventDefault();
 
-        this.joystickActive = false;
+        this.setState({
+            joystickActive: false
+        });
 
         if (this.joystickRef.current) {
-            this.joystickRef.current.style.setProperty('--joystick-x', '0px');
-            this.joystickRef.current.style.setProperty('--joystick-y', '0px');
+            this.joystickRef.current.style.setProperty(
+                '--joystick-x',
+                '0px'
+            );
+
+            this.joystickRef.current.style.setProperty(
+                '--joystick-y',
+                '0px'
+            );
         }
 
         this.releaseJoystickKey();
+    };
 
-        try {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        } catch (e) {
-            // Pointer capture may already have been released.
-        }
-    }
+    render() {
+        const {
+            theme
+        } = this.props;
 
-    render () {
+        const isDark = theme && theme.gui === 'GUI_DARK';
+
         return (
-            <div className={styles.controls}>
+            <div
+                className={`${styles.mobileControls} ${
+                    isDark ? styles.dark : styles.light
+                }`}
+            >
                 <input
-                    ref={this.inputRef}
+                    ref={this.keyboardInputRef}
                     className={styles.keyboardInput}
                     type="text"
-                    inputMode="text"
+                    value={this.state.keyboardValue}
+                    onChange={this.handleKeyboardChange}
+                    onInput={this.handleKeyboardInput}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
                     spellCheck="false"
-                    onInput={this.handleKeyboardInput}
-                    aria-label="Keyboard input"
+                    inputMode="text"
+                    aria-label="Use your Keyboard"
                 />
 
                 <button
+                    type="button"
                     className={styles.keyboardButton}
                     onClick={this.openKeyboard}
                 >
                     Use your Keyboard
                 </button>
 
-                <div className={styles.gameboyControls}>
+                <div className={styles.controls}>
                     <div className={styles.dpad}>
                         <div className={styles.dpadTop}>
-                            {this.renderButton('↑', 'ArrowUp')}
+                            {this.renderButton(
+                                '↑',
+                                'ArrowUp',
+                                null,
+                                styles.arrowButton
+                            )}
                         </div>
 
                         <div className={styles.dpadMiddle}>
-                            {this.renderButton('←', 'ArrowLeft')}
+                            {this.renderButton(
+                                '←',
+                                'ArrowLeft',
+                                null,
+                                styles.arrowButton
+                            )}
 
                             <div
-                                ref={this.joystickRef}
+                                ref={this.joystickAreaRef}
                                 className={styles.joystickArea}
-                                onPointerDown={this.handleJoystickDown}
-                                onPointerMove={this.handleJoystickMove}
-                                onPointerUp={this.handleJoystickUp}
-                                onPointerCancel={this.handleJoystickUp}
+                                onPointerDown={this.handleJoystickPointerDown}
+                                onPointerMove={this.handleJoystickPointerMove}
+                                onPointerUp={this.handleJoystickPointerUp}
+                                onPointerCancel={this.handleJoystickPointerUp}
+                                onLostPointerCapture={this.handleJoystickPointerUp}
                             >
-                                <div className={styles.joystick} />
+                                <div
+                                    ref={this.joystickRef}
+                                    className={styles.joystick}
+                                />
                             </div>
 
-                            {this.renderButton('→', 'ArrowRight')}
+                            {this.renderButton(
+                                '→',
+                                'ArrowRight',
+                                null,
+                                styles.arrowButton
+                            )}
                         </div>
 
                         <div className={styles.dpadBottom}>
-                            {this.renderButton('↓', 'ArrowDown')}
+                            {this.renderButton(
+                                '↓',
+                                'ArrowDown',
+                                null,
+                                styles.arrowButton
+                            )}
                         </div>
                     </div>
 
-                    <div className={styles.abcd}>
-                        {this.renderButton('A', ' ', 'Space')}
-                        {this.renderButton('B', 'Enter', 'Enter')}
-                        {this.renderButton('C', 'z', 'Z')}
-                        {this.renderButton('D', 'x', 'X')}
+                    <div className={styles.actionButtons}>
+                        {this.renderButton(
+                            'A',
+                            ' ',
+                            'Space',
+                            styles.actionButton
+                        )}
+
+                        {this.renderButton(
+                            'B',
+                            'Enter',
+                            'Enter',
+                            styles.actionButton
+                        )}
+
+                        {this.renderButton(
+                            'C',
+                            'z',
+                            'Z',
+                            styles.actionButton
+                        )}
+
+                        {this.renderButton(
+                            'D',
+                            'x',
+                            'X',
+                            styles.actionButton
+                        )}
                     </div>
                 </div>
             </div>
@@ -281,9 +409,8 @@ class MobileControls extends React.Component {
 }
 
 MobileControls.propTypes = {
-    vm: PropTypes.shape({
-        postIOData: PropTypes.func.isRequired
-    }).isRequired
+    vm: PropTypes.object,
+    theme: PropTypes.object
 };
 
 export default MobileControls;
