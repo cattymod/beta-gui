@@ -155,14 +155,6 @@
       font-weight: 600;
     }
 
-    /*
-      Rainbow active sidebar item.
-
-      Keep the selected-item background,
-      but make it red instead of using
-      the Rainbow gradient.
-    */
-
     .nav-button.active.rainbow-accent {
       background: color-mix(
         in srgb,
@@ -387,7 +379,7 @@
     .setting-options {
       padding: 0 18px 18px;
       overflow: hidden;
-      max-height: 150px;
+      max-height: 220px;
       opacity: 1;
       transition:
         max-height 0.22s ease,
@@ -432,6 +424,30 @@
           var(--accent) 15%,
           transparent
         );
+    }
+
+    /* Preset Buttons */
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .preset-btn {
+      background: var(--input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .preset-btn:hover {
+      background: var(--hover);
+      border-color: var(--accent);
     }
 
     /* Rainbow animation */
@@ -819,10 +835,16 @@
                   id="custom-project-id"
                   class="text-input"
                   type="text"
-                  placeholder="e.g. 60917032"
+                  placeholder="e.g. 1368094633"
                   inputmode="numeric"
                   autocomplete="off"
                 >
+
+                <div class="preset-buttons">
+                  <button type="button" class="preset-btn" data-id="510186917">ScratchCat</button>
+                  <button type="button" class="preset-btn" data-id="1051157469">Dango Cat</button>
+                  <button type="button" class="preset-btn" data-id="432688418">Blank</button>
+                </div>
 
               </div>
 
@@ -902,15 +924,15 @@
                   By GarboMuffin
                 </div>
 
-              </div>
-
             </div>
 
-            <p class="about-description">
-              Block-based programming language.
-            </p>
-
           </div>
+
+          <p class="about-description">
+              Block-based programming language.
+          </p>
+
+        </div>
           
           <p></p>
           
@@ -934,21 +956,21 @@
                   By Scratch Foundation
                 </div>
 
-              </div>
-
             </div>
-
-            <p class="about-description">
-              Imagine, Program, Share.
-            </p>
 
           </div>
 
-        </section>
+          <p class="about-description">
+              Imagine, Program, Share.
+          </p>
 
       </div>
 
-    </main>
+    </section>
+
+  </div>
+
+</main>
 
   </div>
 
@@ -1147,14 +1169,6 @@
       document.documentElement;
 
 
-    /*
-      Remove all Rainbow styling first.
-
-      This prevents old Rainbow classes
-      from remaining after switching
-      to another accent.
-    */
-
     document
       .querySelectorAll(
         ".rainbow-accent"
@@ -1179,15 +1193,6 @@
 
     if (accent === "rainbow") {
 
-      /*
-        Keep --accent as a real color
-        because color-mix() requires
-        a real color.
-
-        Rainbow-capable elements use
-        --accent-gradient.
-      */
-
       root.style.setProperty(
         "--accent",
         "#009ccc"
@@ -1204,11 +1209,6 @@
       );
 
 
-      /*
-        Selected sidebar item gets
-        the special Rainbow class.
-      */
-
       document
         .querySelectorAll(
           ".nav-button.active"
@@ -1219,10 +1219,6 @@
           );
         });
 
-
-      /*
-        Checked switches remain Rainbow.
-      */
 
       document
         .querySelectorAll(
@@ -1437,11 +1433,6 @@
         GO_ICON_KEY
       );
 
-    /*
-      If a valid value exists in
-      localStorage, use it.
-    */
-
     if (
       saved === "play" ||
       saved === "greenflag" ||
@@ -1450,11 +1441,6 @@
     ) {
       return saved;
     }
-
-    /*
-      If the value does not exist,
-      Play Button is the default.
-    */
 
     return "play";
   }
@@ -1465,11 +1451,6 @@
     if (!goIconSelect) {
       return;
     }
-
-    /*
-      Make the dropdown match
-      the localStorage value.
-    */
 
     goIconSelect.value =
       getCurrentGoIcon();
@@ -1492,11 +1473,6 @@
       GO_ICON_KEY,
       icon
     );
-
-    /*
-      Immediately make the dropdown
-      match the saved value.
-    */
 
     loadGoIcon();
 
@@ -1646,6 +1622,18 @@
     }
   );
 
+  /* Preset buttons logic */
+  document.querySelectorAll(".preset-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      customProjectId.value = id;
+      customProjectToggle.checked = true;
+      localStorage.setItem(CUSTOM_PROJECT_KEY, id);
+      updateCustomProjectVisibility();
+      applySettingsAccent();
+    });
+  });
+
 
   /* -------------------------
      Navigation
@@ -1708,12 +1696,6 @@
         }
 
 
-        /*
-          Reapply accent so the newly
-          selected sidebar item gets
-          the correct Rainbow styling.
-        */
-
         applySettingsAccent();
 
       }
@@ -1739,25 +1721,6 @@
           "_blank",
           "noopener,noreferrer"
         );
-
-      }
-    );
-
-
-  /* -------------------------
-     Back to CattyMod
-  ------------------------- */
-
-  document
-    .getElementById(
-      "back-to-cattymod"
-    )
-    .addEventListener(
-      "click",
-      () => {
-
-        window.location.href =
-          "https://studio.cattymod.app";
 
       }
     );
@@ -1851,6 +1814,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-</script>
 </body>
 </html>
