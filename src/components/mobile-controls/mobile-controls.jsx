@@ -10,16 +10,25 @@ class MobileControls extends React.Component {
         super(props);
 
         this.state = {
+            controlMode: 'gamepad',
             joystickDirections: [],
             joystickActive: false
         };
 
-        this.keyboardInputRef = React.createRef();
         this.joystickAreaRef = React.createRef();
         this.joystickRef = React.createRef();
+
+        /*
+         * Keys currently held by the custom keyboard.
+         *
+         * This is intentionally kept outside React state because
+         * key presses do not need to cause a component re-render.
+         */
+        this.keyboardKeys = new Set();
     }
 
     componentWillUnmount() {
+        this.releaseKeyboardKeys();
         this.releaseJoystickKeys();
     }
 
@@ -30,7 +39,7 @@ class MobileControls extends React.Component {
     pressKey = key => {
         const {vm} = this.props;
 
-        if (!vm) {
+        if (!vm || !key) {
             return;
         }
 
@@ -43,7 +52,7 @@ class MobileControls extends React.Component {
     releaseKey = key => {
         const {vm} = this.props;
 
-        if (!vm) {
+        if (!vm || !key) {
             return;
         }
 
@@ -53,36 +62,91 @@ class MobileControls extends React.Component {
         });
     };
 
-    tapKey = key => {
+    /*
+     * Custom keyboard
+     */
+
+    handleKeyboardKeyDown = (key, event) => {
+        event.preventDefault();
+
+        if (this.keyboardKeys.has(key)) {
+            return;
+        }
+
+        this.keyboardKeys.add(key);
+
+        event.currentTarget.setPointerCapture(event.pointerId);
+        event.currentTarget.classList.add(styles.pressed);
+
         this.pressKey(key);
+    };
 
-        window.setTimeout(() => {
+    handleKeyboardKeyUp = (key, event) => {
+        event.preventDefault();
+
+        this.releaseKeyboardKey(key, event.currentTarget);
+    };
+
+    handleKeyboardKeyCancel = (key, event) => {
+        event.preventDefault();
+
+        this.releaseKeyboardKey(key, event.currentTarget);
+    };
+
+    handleKeyboardKeyLostPointerCapture = (key, event) => {
+        this.releaseKeyboardKey(key, event.currentTarget);
+    };
+
+    releaseKeyboardKey = (key, element = null) => {
+        if (!this.keyboardKeys.has(key)) {
+            return;
+        }
+
+        this.keyboardKeys.delete(key);
+
+        if (element) {
+            element.classList.remove(styles.pressed);
+        }
+
+        this.releaseKey(key);
+    };
+
+    releaseKeyboardKeys = () => {
+        for (const key of this.keyboardKeys) {
             this.releaseKey(key);
-        }, 50);
+        }
+
+        this.keyboardKeys.clear();
     };
 
-    handleKeyboardKeyDown = event => {
+    /*
+     * Switch between gamepad and keyboard.
+     */
+
+    toggleControlMode = event => {
         event.preventDefault();
 
-        this.pressKey(event.key);
-    };
+        this.releaseKeyboardKeys();
+        this.releaseJoystickKeys();
 
-    handleKeyboardKeyUp = event => {
-        event.preventDefault();
+        this.setState(previousState => ({
+            controlMode: previousState.controlMode === 'gamepad' ?
+                'keyboard' :
+                'gamepad',
+            joystickActive: false
+        }));
 
-        this.releaseKey(event.key);
-    };
+        if (this.joystickRef.current) {
+            this.joystickRef.current.style.setProperty(
+                '--joystick-x',
+                '0px'
+            );
 
-    handleKeyboardPointerDown = event => {
-        event.preventDefault();
-
-        const input = event.currentTarget;
-
-        input.scrollIntoView = () => {};
-
-        input.focus({
-            preventScroll: true
-        });
+            this.joystickRef.current.style.setProperty(
+                '--joystick-y',
+                '0px'
+            );
+        }
     };
 
     /*
@@ -142,14 +206,31 @@ class MobileControls extends React.Component {
     );
 
     /*
-     * Joystick direction
-     *
-     * Returns one or two directions.
-     *
-     * Examples:
-     *   up       -> ['up']
-     *   right    -> ['right']
-     *   up-right -> ['up', 'right']
+     * Custom keyboard button
+     */
+
+    renderKeyboardKey = (
+        label,
+        key,
+        extraClass = ''
+    ) => (
+        <button
+            type="button"
+            className={`${styles.keyboardKey} ${extraClass}`}
+            onPointerDown={event => this.handleKeyboardKeyDown(key, event)}
+            onPointerUp={event => this.handleKeyboardKeyUp(key, event)}
+            onPointerCancel={event => this.handleKeyboardKeyCancel(key, event)}
+            onLostPointerCapture={
+                event => this.handleKeyboardKeyLostPointerCapture(key, event)
+            }
+            aria-label={label}
+        >
+            {label}
+        </button>
+    );
+
+    /*
+     * Joystick
      */
 
     getJoystickDirections = (x, y) => {
@@ -160,18 +241,6 @@ class MobileControls extends React.Component {
         }
 
         const angle = Math.atan2(y, x) * (180 / Math.PI);
-
-        /*
-         * The joystick uses:
-         *
-         *   x > 0 = right
-         *   x < 0 = left
-         *   y > 0 = down
-         *   y < 0 = up
-         *
-         * A diagonal is allowed when the joystick is
-         * roughly 22.5 degrees away from the diagonal.
-         */
 
         if (angle >= -22.5 && angle < 22.5) {
             return ['right'];
@@ -273,10 +342,6 @@ class MobileControls extends React.Component {
         });
     };
 
-    /*
-     * Joystick movement
-     */
-
     moveJoystick = event => {
         if (!this.joystickAreaRef.current) {
             return;
@@ -361,12 +426,193 @@ class MobileControls extends React.Component {
         this.releaseJoystickKeys();
     };
 
+    /*
+     * Gamepad
+     */
+
+    renderGamepad = () => (
+        <div className={styles.gameboyControls}>
+            <div className={styles.dpad}>
+                <div className={styles.dpadTop}>
+                    {this.renderButton(
+                        '↑',
+                        'ArrowUp'
+                    )}
+                </div>
+
+                <div className={styles.dpadMiddle}>
+                    {this.renderButton(
+                        '←',
+                        'ArrowLeft'
+                    )}
+
+                    <div
+                        ref={this.joystickAreaRef}
+                        className={styles.joystickArea}
+                        onPointerDown={this.handleJoystickPointerDown}
+                        onPointerMove={this.handleJoystickPointerMove}
+                        onPointerUp={this.handleJoystickPointerUp}
+                        onPointerCancel={this.handleJoystickPointerUp}
+                        onLostPointerCapture={this.handleJoystickPointerUp}
+                    >
+                        <div
+                            ref={this.joystickRef}
+                            className={styles.joystick}
+                        />
+                    </div>
+
+                    {this.renderButton(
+                        '→',
+                        'ArrowRight'
+                    )}
+                </div>
+
+                <div className={styles.dpadBottom}>
+                    {this.renderButton(
+                        '↓',
+                        'ArrowDown'
+                    )}
+                </div>
+            </div>
+
+            <div className={styles.abcd}>
+                {this.renderButton(
+                    'A',
+                    ' ',
+                    'Space'
+                )}
+
+                {this.renderButton(
+                    'B',
+                    'Enter',
+                    'Enter'
+                )}
+
+                {this.renderButton(
+                    'C',
+                    'z',
+                    'Z'
+                )}
+
+                {this.renderButton(
+                    'D',
+                    'x',
+                    'X'
+                )}
+            </div>
+        </div>
+    );
+
+    /*
+     * Custom keyboard
+     */
+
+    renderKeyboard = () => (
+        <div className={styles.keyboard}>
+            <div className={styles.keyboardRow}>
+                {[
+                    ['Q', 'q'],
+                    ['W', 'w'],
+                    ['E', 'e'],
+                    ['R', 'r'],
+                    ['T', 't'],
+                    ['Y', 'y'],
+                    ['U', 'u'],
+                    ['I', 'i'],
+                    ['O', 'o'],
+                    ['P', 'p']
+                ].map(([label, key]) => (
+                    <React.Fragment key={key}>
+                        {this.renderKeyboardKey(label, key)}
+                    </React.Fragment>
+                ))}
+            </div>
+
+            <div className={styles.keyboardRow}>
+                {[
+                    ['A', 'a'],
+                    ['S', 's'],
+                    ['D', 'd'],
+                    ['F', 'f'],
+                    ['G', 'g'],
+                    ['H', 'h'],
+                    ['J', 'j'],
+                    ['K', 'k'],
+                    ['L', 'l']
+                ].map(([label, key]) => (
+                    <React.Fragment key={key}>
+                        {this.renderKeyboardKey(label, key)}
+                    </React.Fragment>
+                ))}
+            </div>
+
+            <div className={styles.keyboardRow}>
+                {[
+                    ['Z', 'z'],
+                    ['X', 'x'],
+                    ['C', 'c'],
+                    ['V', 'v'],
+                    ['B', 'b'],
+                    ['N', 'n'],
+                    ['M', 'm']
+                ].map(([label, key]) => (
+                    <React.Fragment key={key}>
+                        {this.renderKeyboardKey(label, key)}
+                    </React.Fragment>
+                ))}
+            </div>
+
+            <div className={styles.keyboardBottomRow}>
+                {this.renderKeyboardKey(
+                    'Space',
+                    ' ',
+                    styles.spaceKey
+                )}
+
+                {this.renderKeyboardKey(
+                    'Enter',
+                    'Enter',
+                    styles.enterKey
+                )}
+
+                {this.renderKeyboardKey(
+                    '←',
+                    'ArrowLeft',
+                    styles.arrowKey
+                )}
+
+                {this.renderKeyboardKey(
+                    '↑',
+                    'ArrowUp',
+                    styles.arrowKey
+                )}
+
+                {this.renderKeyboardKey(
+                    '↓',
+                    'ArrowDown',
+                    styles.arrowKey
+                )}
+
+                {this.renderKeyboardKey(
+                    '→',
+                    'ArrowRight',
+                    styles.arrowKey
+                )}
+            </div>
+        </div>
+    );
+
     render() {
         const {
             theme
         } = this.props;
 
+        const {
+            controlMode
+        } = this.state;
+
         const isDark = theme.gui === GUI_DARK;
+        const isKeyboard = controlMode === 'keyboard';
 
         return (
             <div
@@ -375,92 +621,22 @@ class MobileControls extends React.Component {
                 }`}
             >
                 <div className={styles.controls}>
-                    <input
-                        ref={this.keyboardInputRef}
+                    <button
+                        type="button"
                         className={styles.keyboardInput}
-                        type="text"
-                        placeholder="Use your Keyboard"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck={false}
-                        inputMode="text"
-                        onKeyDown={this.handleKeyboardKeyDown}
-                        onKeyUp={this.handleKeyboardKeyUp}
-                        onPointerDown={this.handleKeyboardPointerDown}
-                        aria-label="Use your Keyboard"
-                    />
+                        onPointerDown={this.toggleControlMode}
+                        aria-label={
+                            isKeyboard ?
+                                'Switch to gamepad controls' :
+                                'Switch to keyboard controls'
+                        }
+                    >
+                        {isKeyboard ? 'Use Gamepad' : 'Use Keyboard'}
+                    </button>
 
-                    <div className={styles.gameboyControls}>
-                        <div className={styles.dpad}>
-                            <div className={styles.dpadTop}>
-                                {this.renderButton(
-                                    '↑',
-                                    'ArrowUp'
-                                )}
-                            </div>
-
-                            <div className={styles.dpadMiddle}>
-                                {this.renderButton(
-                                    '←',
-                                    'ArrowLeft'
-                                )}
-
-                                <div
-                                    ref={this.joystickAreaRef}
-                                    className={styles.joystickArea}
-                                    onPointerDown={this.handleJoystickPointerDown}
-                                    onPointerMove={this.handleJoystickPointerMove}
-                                    onPointerUp={this.handleJoystickPointerUp}
-                                    onPointerCancel={this.handleJoystickPointerUp}
-                                    onLostPointerCapture={this.handleJoystickPointerUp}
-                                >
-                                    <div
-                                        ref={this.joystickRef}
-                                        className={styles.joystick}
-                                    />
-                                </div>
-
-                                {this.renderButton(
-                                    '→',
-                                    'ArrowRight'
-                                )}
-                            </div>
-
-                            <div className={styles.dpadBottom}>
-                                {this.renderButton(
-                                    '↓',
-                                    'ArrowDown'
-                                )}
-                            </div>
-                        </div>
-
-                        <div className={styles.abcd}>
-                            {this.renderButton(
-                                'A',
-                                ' ',
-                                'Space'
-                            )}
-
-                            {this.renderButton(
-                                'B',
-                                'Enter',
-                                'Enter'
-                            )}
-
-                            {this.renderButton(
-                                'C',
-                                'z',
-                                'Z'
-                            )}
-
-                            {this.renderButton(
-                                'D',
-                                'x',
-                                'X'
-                            )}
-                        </div>
-                    </div>
+                    {isKeyboard ?
+                        this.renderKeyboard() :
+                        this.renderGamepad()}
                 </div>
             </div>
         );
