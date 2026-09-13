@@ -427,6 +427,7 @@
     }
 
     /* Preset Buttons */
+
     .preset-buttons {
       display: flex;
       gap: 8px;
@@ -706,7 +707,7 @@
                 </select>
 
               </div>
-              
+
               <!-- Go Icon -->
 
               <div class="setting-row">
@@ -739,7 +740,7 @@
                   <option value="blueflag">
                     Blue Flag
                   </option>
-                  
+
                   <option value="purpleflag">
                     Purple Flag
                   </option>
@@ -780,10 +781,8 @@
                 </select>
 
               </div>
-                
+
             </div>
-            
-            
 
           </div>
 
@@ -852,6 +851,46 @@
 
           </div>
 
+          <!-- MOBILE -->
+
+          <div class="section">
+
+            <div class="section-title">
+              Mobile
+            </div>
+
+            <div class="card">
+
+              <!-- Mobile Touch Controls -->
+
+              <div class="setting-row">
+
+                <div class="setting-info">
+
+                  <div class="setting-title">
+                    Mobile Touch Controls
+                  </div>
+
+                  <div class="setting-description">
+                    Show on-screen controls when playing projects on a supported touchscreen device.
+                  </div>
+
+                </div>
+
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="mobile-touch-controls-toggle"
+                  >
+                  <span class="slider"></span>
+                </label>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </section>
 
         <!-- ABOUT -->
@@ -901,9 +940,9 @@
             </p>
 
           </div>
-          
+
           <p></p>
-          
+
           <div class="card about-card">
 
             <div class="about-header">
@@ -924,18 +963,18 @@
                   By GarboMuffin
                 </div>
 
+              </div>
+
             </div>
+
+            <p class="about-description">
+              Block-based programming language.
+            </p>
 
           </div>
 
-          <p class="about-description">
-              Block-based programming language.
-          </p>
-
-        </div>
-          
           <p></p>
-          
+
           <div class="card about-card">
 
             <div class="about-header">
@@ -956,265 +995,229 @@
                   By Scratch Foundation
                 </div>
 
+              </div>
+
             </div>
+
+            <p class="about-description">
+              Imagine, Program, Share.
+            </p>
 
           </div>
 
-          <p class="about-description">
-              Imagine, Program, Share.
-          </p>
+        </section>
 
       </div>
 
-    </section>
-
-  </div>
-
-</main>
+    </main>
 
   </div>
 
   <script>
-  const THEME_KEY = "tw:theme";
-  const CUSTOM_PROJECT_KEY =
-    "cattymod:customDefaultProject";
+    const THEME_KEY = "tw:theme";
 
-  const GO_ICON_KEY =
-    "cattymod:goIcon";
+    const CUSTOM_PROJECT_KEY =
+      "cattymod:customDefaultProject";
+
+    const GO_ICON_KEY =
+      "cattymod:goIcon";
+
+    const MOBILE_TOUCH_CONTROLS_KEY =
+      "cattymod:mobileTouchControls";
 
 
-  /* -------------------------
-     Theme
-  ------------------------- */
+    /* -------------------------
+       Theme
+    ------------------------- */
 
-  function readTheme() {
-    const raw =
-      localStorage.getItem(THEME_KEY);
+    function readTheme() {
+      const raw =
+        localStorage.getItem(THEME_KEY);
 
-    if (!raw) {
+      if (!raw) {
+        return null;
+      }
+
+      try {
+        const parsed =
+          JSON.parse(raw);
+
+        if (
+          parsed &&
+          typeof parsed === "object"
+        ) {
+          return parsed;
+        }
+
+        if (
+          typeof parsed === "string"
+        ) {
+          return {
+            gui: parsed
+          };
+        }
+
+      } catch {
+        if (
+          raw === "dark" ||
+          raw === "light"
+        ) {
+          return {
+            gui: raw
+          };
+        }
+      }
+
       return null;
     }
 
-    try {
-      const parsed =
-        JSON.parse(raw);
 
-      if (
-        parsed &&
-        typeof parsed === "object"
-      ) {
-        return parsed;
-      }
-
-      if (
-        typeof parsed === "string"
-      ) {
-        return {
-          gui: parsed
-        };
-      }
-
-    } catch {
-      if (
-        raw === "dark" ||
-        raw === "light"
-      ) {
-        return {
-          gui: raw
-        };
-      }
+    function systemIsDark() {
+      return (
+        window.matchMedia &&
+        window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches
+      );
     }
 
-    return null;
-  }
 
+    function getCurrentGuiTheme() {
+      const theme =
+        readTheme();
 
-  function systemIsDark() {
-    return (
-      window.matchMedia &&
-      window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches
-    );
-  }
+      if (
+        theme &&
+        (
+          theme.gui === "dark" ||
+          theme.gui === "light"
+        )
+      ) {
+        return theme.gui;
+      }
 
-
-  function getCurrentGuiTheme() {
-    const theme =
-      readTheme();
-
-    if (
-      theme &&
-      (
-        theme.gui === "dark" ||
-        theme.gui === "light"
-      )
-    ) {
-      return theme.gui;
+      return systemIsDark()
+        ? "dark"
+        : "light";
     }
 
-    return systemIsDark()
-      ? "dark"
-      : "light";
-  }
+
+    function applyTheme() {
+      const theme =
+        getCurrentGuiTheme();
+
+      document.body.classList.toggle(
+        "dark",
+        theme === "dark"
+      );
+
+      document.getElementById(
+        "dark-mode-toggle"
+      ).checked =
+        theme === "dark";
+    }
 
 
-  function applyTheme() {
-    const theme =
-      getCurrentGuiTheme();
+    function updateTheme(updater) {
+      const current =
+        readTheme() || {};
 
-    document.body.classList.toggle(
-      "dark",
-      theme === "dark"
-    );
+      const newTheme = {
+        ...current
+      };
 
-    document.getElementById(
-      "dark-mode-toggle"
-    ).checked =
-      theme === "dark";
-  }
+      updater(newTheme);
+
+      localStorage.setItem(
+        THEME_KEY,
+        JSON.stringify(newTheme)
+      );
+
+      applyTheme();
+      applySettingsAccent();
+      loadBlockStyle();
+      loadAccent();
+    }
 
 
-  function updateTheme(updater) {
-    const current =
-      readTheme() || {};
+    function setGuiTheme(gui) {
+      updateTheme(theme => {
+        theme.gui = gui;
+      });
+    }
 
-    const newTheme = {
-      ...current
+
+    /* -------------------------
+       Accent
+    ------------------------- */
+
+    const accentSelect =
+      document.getElementById(
+        "accent-select"
+      );
+
+
+    const ACCENT_COLORS = {
+      red: "#e53935",
+      orange: "#fb8c00",
+      yellow: "#fbc02d",
+      green: "#43a047",
+      blue: "#009ccc",
+      indigo: "#3949ab",
+      violet: "#8e44ad",
+      purple: "#9c27b0"
     };
 
-    updater(newTheme);
 
-    localStorage.setItem(
-      THEME_KEY,
-      JSON.stringify(newTheme)
-    );
-
-    applyTheme();
-    applySettingsAccent();
-    loadBlockStyle();
-    loadAccent();
-  }
+    const RAINBOW_GRADIENT =
+      "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
 
 
-  function setGuiTheme(gui) {
-    updateTheme(theme => {
-      theme.gui = gui;
-    });
-  }
+    const ACCENT_OPTIONS = [
+      "red",
+      "orange",
+      "yellow",
+      "green",
+      "blue",
+      "indigo",
+      "violet",
+      "purple",
+      "rainbow"
+    ];
 
 
-  /* -------------------------
-     Accent
-  ------------------------- */
+    function getCurrentAccent() {
+      const theme =
+        readTheme();
 
-  const accentSelect =
-    document.getElementById(
-      "accent-select"
-    );
+      if (
+        theme &&
+        typeof theme.accent === "string" &&
+        ACCENT_OPTIONS.includes(
+          theme.accent.toLowerCase()
+        )
+      ) {
+        return theme.accent.toLowerCase();
+      }
 
-
-  const ACCENT_COLORS = {
-    red: "#e53935",
-    orange: "#fb8c00",
-    yellow: "#fbc02d",
-    green: "#43a047",
-    blue: "#009ccc",
-    indigo: "#3949ab",
-    violet: "#8e44ad",
-    purple: "#9c27b0"
-  };
-
-
-  const RAINBOW_GRADIENT =
-    "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
-
-
-  const ACCENT_OPTIONS = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "blue",
-    "indigo",
-    "violet",
-    "purple",
-    "rainbow"
-  ];
-
-
-  function getCurrentAccent() {
-    const theme =
-      readTheme();
-
-    if (
-      theme &&
-      typeof theme.accent === "string" &&
-      ACCENT_OPTIONS.includes(
-        theme.accent.toLowerCase()
-      )
-    ) {
-      return theme.accent.toLowerCase();
+      return "blue";
     }
 
-    return "blue";
-  }
 
+    function applySettingsAccent() {
+      const accent =
+        getCurrentAccent();
 
-  function applySettingsAccent() {
-    const accent =
-      getCurrentAccent();
-
-    const root =
-      document.documentElement;
-
-
-    document
-      .querySelectorAll(
-        ".rainbow-accent"
-      )
-      .forEach(element => {
-        element.classList.remove(
-          "rainbow-accent"
-        );
-      });
-
-
-    document
-      .querySelectorAll(
-        ".rainbow-text"
-      )
-      .forEach(element => {
-        element.classList.remove(
-          "rainbow-text"
-        );
-      });
-
-
-    if (accent === "rainbow") {
-
-      root.style.setProperty(
-        "--accent",
-        "#009ccc"
-      );
-
-      root.style.setProperty(
-        "--accent-hover",
-        "#008db8"
-      );
-
-      root.style.setProperty(
-        "--accent-gradient",
-        RAINBOW_GRADIENT
-      );
+      const root =
+        document.documentElement;
 
 
       document
         .querySelectorAll(
-          ".nav-button.active"
+          ".rainbow-accent"
         )
         .forEach(element => {
-          element.classList.add(
+          element.classList.remove(
             "rainbow-accent"
           );
         });
@@ -1222,392 +1225,453 @@
 
       document
         .querySelectorAll(
-          ".switch input:checked + .slider"
+          ".rainbow-text"
         )
         .forEach(element => {
-          element.classList.add(
-            "rainbow-accent"
+          element.classList.remove(
+            "rainbow-text"
           );
         });
 
 
-    } else {
+      if (accent === "rainbow") {
+
+        root.style.setProperty(
+          "--accent",
+          "#009ccc"
+        );
+
+        root.style.setProperty(
+          "--accent-hover",
+          "#008db8"
+        );
+
+        root.style.setProperty(
+          "--accent-gradient",
+          RAINBOW_GRADIENT
+        );
+
+
+        document
+          .querySelectorAll(
+            ".nav-button.active"
+          )
+          .forEach(element => {
+            element.classList.add(
+              "rainbow-accent"
+            );
+          });
+
+
+        document
+          .querySelectorAll(
+            ".switch input:checked + .slider"
+          )
+          .forEach(element => {
+            element.classList.add(
+              "rainbow-accent"
+            );
+          });
 
-      const color =
-        ACCENT_COLORS[accent] ||
-        ACCENT_COLORS.blue;
-
-
-      root.style.setProperty(
-        "--accent",
-        color
-      );
-
-      root.style.setProperty(
-        "--accent-hover",
-        color
-      );
-
-      root.style.setProperty(
-        "--accent-gradient",
-        color
-      );
-    }
-  }
-
-
-  function setAccent(accent) {
-
-    if (
-      !ACCENT_OPTIONS.includes(
-        accent
-      )
-    ) {
-      return;
-    }
-
-    updateTheme(theme => {
-      theme.accent = accent;
-    });
-  }
-
-
-  function loadAccent() {
-
-    accentSelect.value =
-      getCurrentAccent();
-
-    applySettingsAccent();
-  }
-
-
-  accentSelect.addEventListener(
-    "change",
-    () => {
-
-      setAccent(
-        accentSelect.value
-      );
-
-    }
-  );
-
-
-  /* -------------------------
-     Dark Mode
-  ------------------------- */
-
-  const darkModeToggle =
-    document.getElementById(
-      "dark-mode-toggle"
-    );
-
-
-  darkModeToggle.addEventListener(
-    "change",
-    () => {
-
-      setGuiTheme(
-        darkModeToggle.checked
-          ? "dark"
-          : "light"
-      );
-
-    }
-  );
-
-
-  const mediaQuery =
-    window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    );
-
-
-  mediaQuery.addEventListener(
-    "change",
-    () => {
-
-      if (
-        !localStorage.getItem(
-          THEME_KEY
-        )
-      ) {
-        applyTheme();
-        applySettingsAccent();
-      }
-
-    }
-  );
-
-
-  /* -------------------------
-     Block Style
-  ------------------------- */
-
-  const blockStyleSelect =
-    document.getElementById(
-      "block-style-select"
-    );
-
-
-  function getBlockStyle() {
-
-    const theme =
-      readTheme();
-
-    if (
-      !theme ||
-      typeof theme.blocks !== "string"
-    ) {
-      return "original";
-    }
-
-    if (
-      theme.blocks ===
-      "high-contrast"
-    ) {
-      return "high-contrast";
-    }
-
-    if (
-      theme.blocks === "dark"
-    ) {
-      return "dark";
-    }
-
-    return "original";
-  }
-
-
-  function setBlockStyle(style) {
-
-    updateTheme(theme => {
-
-      if (
-        style === "original"
-      ) {
-        delete theme.blocks;
-        return;
-      }
-
-      theme.blocks = style;
-
-    });
-  }
-
-
-  function loadBlockStyle() {
-
-    blockStyleSelect.value =
-      getBlockStyle();
-
-  }
-
-
-  blockStyleSelect.addEventListener(
-    "change",
-    () => {
-
-      setBlockStyle(
-        blockStyleSelect.value
-      );
-
-    }
-  );
-
-
-  /* -------------------------
-     Go Icon
-  ------------------------- */
-
-  const goIconSelect =
-    document.getElementById(
-      "go-icon-select"
-    );
-
-
-  function getCurrentGoIcon() {
-
-    const saved =
-      localStorage.getItem(
-        GO_ICON_KEY
-      );
-
-    if (
-      saved === "play" ||
-      saved === "greenflag" ||
-      saved === "blueflag" ||
-      saved === "purpleflag"
-    ) {
-      return saved;
-    }
-
-    return "play";
-  }
-
-
-  function loadGoIcon() {
-
-    if (!goIconSelect) {
-      return;
-    }
-
-    goIconSelect.value =
-      getCurrentGoIcon();
-
-  }
-
-
-  function setGoIcon(icon) {
-
-    if (
-      icon !== "play" &&
-      icon !== "greenflag" &&
-      icon !== "blueflag" &&
-      icon !== "purpleflag"
-    ) {
-      icon = "play";
-    }
-
-    localStorage.setItem(
-      GO_ICON_KEY,
-      icon
-    );
-
-    loadGoIcon();
-
-  }
-
-
-  goIconSelect.addEventListener(
-    "change",
-    () => {
-
-      setGoIcon(
-        goIconSelect.value
-      );
-
-    }
-  );
-
-
-  /* -------------------------
-     Custom Default Project
-  ------------------------- */
-
-  const customProjectToggle =
-    document.getElementById(
-      "custom-project-toggle"
-    );
-
-  const customProjectOptions =
-    document.getElementById(
-      "custom-project-options"
-    );
-
-  const customProjectId =
-    document.getElementById(
-      "custom-project-id"
-    );
-
-
-  function updateCustomProjectVisibility() {
-
-    customProjectOptions.classList.toggle(
-      "collapsed",
-      !customProjectToggle.checked
-    );
-
-  }
-
-
-  function loadCustomProject() {
-
-    const saved =
-      localStorage.getItem(
-        CUSTOM_PROJECT_KEY
-      );
-
-    if (saved) {
-
-      customProjectToggle.checked =
-        true;
-
-      customProjectId.value =
-        saved;
-
-    } else {
-
-      customProjectToggle.checked =
-        false;
-
-      customProjectId.value =
-        "";
-
-    }
-
-    updateCustomProjectVisibility();
-  }
-
-
-  customProjectToggle.addEventListener(
-    "change",
-    () => {
-
-      if (
-        customProjectToggle.checked
-      ) {
-
-        if (
-          customProjectId.value.trim()
-        ) {
-
-          localStorage.setItem(
-            CUSTOM_PROJECT_KEY,
-            customProjectId.value
-          );
-
-        }
 
       } else {
 
-        localStorage.removeItem(
+        const color =
+          ACCENT_COLORS[accent] ||
+          ACCENT_COLORS.blue;
+
+
+        root.style.setProperty(
+          "--accent",
+          color
+        );
+
+        root.style.setProperty(
+          "--accent-hover",
+          color
+        );
+
+        root.style.setProperty(
+          "--accent-gradient",
+          color
+        );
+      }
+    }
+
+
+    function setAccent(accent) {
+
+      if (
+        !ACCENT_OPTIONS.includes(
+          accent
+        )
+      ) {
+        return;
+      }
+
+      updateTheme(theme => {
+        theme.accent = accent;
+      });
+    }
+
+
+    function loadAccent() {
+
+      accentSelect.value =
+        getCurrentAccent();
+
+      applySettingsAccent();
+    }
+
+
+    accentSelect.addEventListener(
+      "change",
+      () => {
+
+        setAccent(
+          accentSelect.value
+        );
+
+      }
+    );
+
+
+    /* -------------------------
+       Dark Mode
+    ------------------------- */
+
+    const darkModeToggle =
+      document.getElementById(
+        "dark-mode-toggle"
+      );
+
+
+    darkModeToggle.addEventListener(
+      "change",
+      () => {
+
+        setGuiTheme(
+          darkModeToggle.checked
+            ? "dark"
+            : "light"
+        );
+
+      }
+    );
+
+
+    const mediaQuery =
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      );
+
+
+    mediaQuery.addEventListener(
+      "change",
+      () => {
+
+        if (
+          !localStorage.getItem(
+            THEME_KEY
+          )
+        ) {
+          applyTheme();
+          applySettingsAccent();
+        }
+
+      }
+    );
+
+
+    /* -------------------------
+       Block Style
+    ------------------------- */
+
+    const blockStyleSelect =
+      document.getElementById(
+        "block-style-select"
+      );
+
+
+    function getBlockStyle() {
+
+      const theme =
+        readTheme();
+
+      if (
+        !theme ||
+        typeof theme.blocks !== "string"
+      ) {
+        return "original";
+      }
+
+      if (
+        theme.blocks ===
+        "high-contrast"
+      ) {
+        return "high-contrast";
+      }
+
+      if (
+        theme.blocks === "dark"
+      ) {
+        return "dark";
+      }
+
+      return "original";
+    }
+
+
+    function setBlockStyle(style) {
+
+      updateTheme(theme => {
+
+        if (
+          style === "original"
+        ) {
+          delete theme.blocks;
+          return;
+        }
+
+        theme.blocks = style;
+
+      });
+    }
+
+
+    function loadBlockStyle() {
+
+      blockStyleSelect.value =
+        getBlockStyle();
+
+    }
+
+
+    blockStyleSelect.addEventListener(
+      "change",
+      () => {
+
+        setBlockStyle(
+          blockStyleSelect.value
+        );
+
+      }
+    );
+
+
+    /* -------------------------
+       Go Icon
+    ------------------------- */
+
+    const goIconSelect =
+      document.getElementById(
+        "go-icon-select"
+      );
+
+
+    function getCurrentGoIcon() {
+
+      const saved =
+        localStorage.getItem(
+          GO_ICON_KEY
+        );
+
+      if (
+        saved === "play" ||
+        saved === "greenflag" ||
+        saved === "blueflag" ||
+        saved === "purpleflag"
+      ) {
+        return saved;
+      }
+
+      return "play";
+    }
+
+
+    function loadGoIcon() {
+
+      if (!goIconSelect) {
+        return;
+      }
+
+      goIconSelect.value =
+        getCurrentGoIcon();
+
+    }
+
+
+    function setGoIcon(icon) {
+
+      if (
+        icon !== "play" &&
+        icon !== "greenflag" &&
+        icon !== "blueflag" &&
+        icon !== "purpleflag"
+      ) {
+        icon = "play";
+      }
+
+      localStorage.setItem(
+        GO_ICON_KEY,
+        icon
+      );
+
+      loadGoIcon();
+
+    }
+
+
+    goIconSelect.addEventListener(
+      "change",
+      () => {
+
+        setGoIcon(
+          goIconSelect.value
+        );
+
+      }
+    );
+
+
+    /* -------------------------
+       Mobile Touch Controls
+    ------------------------- */
+
+    const mobileTouchControlsToggle =
+      document.getElementById(
+        "mobile-touch-controls-toggle"
+      );
+
+
+    function getMobileTouchControlsEnabled() {
+
+      const saved =
+        localStorage.getItem(
+          MOBILE_TOUCH_CONTROLS_KEY
+        );
+
+      // Enabled by default.
+      return saved !== "false";
+    }
+
+
+    function loadMobileTouchControls() {
+
+      if (!mobileTouchControlsToggle) {
+        return;
+      }
+
+      mobileTouchControlsToggle.checked =
+        getMobileTouchControlsEnabled();
+
+      applySettingsAccent();
+    }
+
+
+    function setMobileTouchControlsEnabled(
+      enabled
+    ) {
+
+      localStorage.setItem(
+        MOBILE_TOUCH_CONTROLS_KEY,
+        enabled ? "true" : "false"
+      );
+
+      loadMobileTouchControls();
+
+    }
+
+
+    mobileTouchControlsToggle.addEventListener(
+      "change",
+      () => {
+
+        setMobileTouchControlsEnabled(
+          mobileTouchControlsToggle.checked
+        );
+
+      }
+    );
+
+
+    /* -------------------------
+       Custom Default Project
+    ------------------------- */
+
+    const customProjectToggle =
+      document.getElementById(
+        "custom-project-toggle"
+      );
+
+    const customProjectOptions =
+      document.getElementById(
+        "custom-project-options"
+      );
+
+    const customProjectId =
+      document.getElementById(
+        "custom-project-id"
+      );
+
+
+    function updateCustomProjectVisibility() {
+
+      customProjectOptions.classList.toggle(
+        "collapsed",
+        !customProjectToggle.checked
+      );
+
+    }
+
+
+    function loadCustomProject() {
+
+      const saved =
+        localStorage.getItem(
           CUSTOM_PROJECT_KEY
         );
+
+      if (saved) {
+
+        customProjectToggle.checked =
+          true;
+
+        customProjectId.value =
+          saved;
+
+      } else {
+
+        customProjectToggle.checked =
+          false;
+
+        customProjectId.value =
+          "";
 
       }
 
       updateCustomProjectVisibility();
-
-      applySettingsAccent();
-
     }
-  );
 
 
-  customProjectId.addEventListener(
-    "input",
-    () => {
+    customProjectToggle.addEventListener(
+      "change",
+      () => {
 
-      const numbersOnly =
-        customProjectId.value.replace(
-          /\D/g,
-          ""
-        );
+        if (
+          customProjectToggle.checked
+        ) {
 
-      customProjectId.value =
-        numbersOnly;
+          if (
+            customProjectId.value.trim()
+          ) {
 
-      if (
-        customProjectToggle.checked
-      ) {
+            localStorage.setItem(
+              CUSTOM_PROJECT_KEY,
+              customProjectId.value
+            );
 
-        if (numbersOnly) {
-
-          localStorage.setItem(
-            CUSTOM_PROJECT_KEY,
-            numbersOnly
-          );
+          }
 
         } else {
 
@@ -1617,202 +1681,314 @@
 
         }
 
+        updateCustomProjectVisibility();
+
+        applySettingsAccent();
+
       }
-
-    }
-  );
-
-  /* Preset buttons logic */
-  document.querySelectorAll(".preset-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      customProjectId.value = id;
-      customProjectToggle.checked = true;
-      localStorage.setItem(CUSTOM_PROJECT_KEY, id);
-      updateCustomProjectVisibility();
-      applySettingsAccent();
-    });
-  });
-
-
-  /* -------------------------
-     Navigation
-  ------------------------- */
-
-  const navButtons =
-    document.querySelectorAll(
-      ".nav-button[data-page]"
-    );
-
-  const pages =
-    document.querySelectorAll(
-      ".page"
     );
 
 
-  navButtons.forEach(button => {
-
-    button.addEventListener(
-      "click",
+    customProjectId.addEventListener(
+      "input",
       () => {
 
-        const pageName =
-          button.dataset.page;
+        const numbersOnly =
+          customProjectId.value.replace(
+            /\D/g,
+            ""
+          );
+
+        customProjectId.value =
+          numbersOnly;
+
+        if (
+          customProjectToggle.checked
+        ) {
+
+          if (numbersOnly) {
+
+            localStorage.setItem(
+              CUSTOM_PROJECT_KEY,
+              numbersOnly
+            );
+
+          } else {
+
+            localStorage.removeItem(
+              CUSTOM_PROJECT_KEY
+            );
+
+          }
+
+        }
+
+      }
+    );
 
 
-        navButtons.forEach(item => {
+    /* Preset buttons logic */
 
-          item.classList.remove(
+    document
+      .querySelectorAll(".preset-btn")
+      .forEach(btn => {
+
+        btn.addEventListener(
+          "click",
+          () => {
+
+            const id =
+              btn.dataset.id;
+
+            customProjectId.value =
+              id;
+
+            customProjectToggle.checked =
+              true;
+
+            localStorage.setItem(
+              CUSTOM_PROJECT_KEY,
+              id
+            );
+
+            updateCustomProjectVisibility();
+            applySettingsAccent();
+
+          }
+        );
+
+      });
+
+
+    /* -------------------------
+       Navigation
+    ------------------------- */
+
+    const navButtons =
+      document.querySelectorAll(
+        ".nav-button[data-page]"
+      );
+
+    const pages =
+      document.querySelectorAll(
+        ".page"
+      );
+
+
+    navButtons.forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const pageName =
+            button.dataset.page;
+
+
+          navButtons.forEach(item => {
+
+            item.classList.remove(
+              "active"
+            );
+
+          });
+
+
+          button.classList.add(
             "active"
           );
 
-        });
+
+          pages.forEach(page => {
+
+            page.style.display =
+              "none";
+
+          });
 
 
-        button.classList.add(
-          "active"
-        );
+          const selectedPage =
+            document.getElementById(
+              "page-" + pageName
+            );
 
 
-        pages.forEach(page => {
+          if (selectedPage) {
 
-          page.style.display =
-            "none";
+            selectedPage.style.display =
+              "";
 
-        });
+          }
 
 
-        const selectedPage =
-          document.getElementById(
-            "page-" + pageName
+          applySettingsAccent();
+
+        }
+      );
+
+    });
+
+
+    /* -------------------------
+       Addons
+    ------------------------- */
+
+    document
+      .getElementById(
+        "addons-button"
+      )
+      .addEventListener(
+        "click",
+        () => {
+
+          window.open(
+            "https://studio.cattymod.app/addons.html",
+            "_blank",
+            "noopener,noreferrer"
           );
 
+        }
+      );
 
-        if (selectedPage) {
 
-          selectedPage.style.display =
-            "";
+    /* -------------------------
+       Storage Sync
+    ------------------------- */
+
+    window.addEventListener(
+      "storage",
+      event => {
+
+        if (
+          event.key === THEME_KEY
+        ) {
+
+          applyTheme();
+          applySettingsAccent();
+          loadBlockStyle();
+          loadAccent();
 
         }
 
 
-        applySettingsAccent();
+        if (
+          event.key ===
+          CUSTOM_PROJECT_KEY
+        ) {
+
+          loadCustomProject();
+
+        }
+
+
+        if (
+          event.key ===
+          GO_ICON_KEY
+        ) {
+
+          loadGoIcon();
+
+        }
+
+
+        if (
+          event.key ===
+          MOBILE_TOUCH_CONTROLS_KEY
+        ) {
+
+          loadMobileTouchControls();
+
+        }
 
       }
     );
 
-  });
 
+    /* -------------------------
+       Start
+    ------------------------- */
 
-  /* -------------------------
-     Addons
-  ------------------------- */
+    applyTheme();
+    applySettingsAccent();
+    loadBlockStyle();
+    loadAccent();
+    loadCustomProject();
+    loadGoIcon();
+    loadMobileTouchControls();
 
-  document
-    .getElementById(
-      "addons-button"
-    )
-    .addEventListener(
-      "click",
+    lucide.createIcons();
+  </script>
+
+  <script>
+    document.addEventListener(
+      "DOMContentLoaded",
       () => {
 
-        window.open(
-          "https://studio.cattymod.app/addons.html",
-          "_blank",
-          "noopener,noreferrer"
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
+
+        const from =
+          params.get("from");
+
+        const backButton =
+          document.getElementById(
+            "back-to-cattymod"
+          );
+
+        if (
+          !backButton ||
+          !from
+        ) {
+          return;
+        }
+
+        let destination =
+          "https://studio.cattymod.app/";
+
+        try {
+
+          const url =
+            new URL(from);
+
+          // Only allow cattymod.app and its subdomains.
+          const isCattyMod =
+            url.hostname === "cattymod.app" ||
+            url.hostname.endsWith(
+              ".cattymod.app"
+            );
+
+          if (
+            isCattyMod &&
+            (
+              url.protocol === "https:" ||
+              url.protocol === "http:"
+            )
+          ) {
+
+            destination =
+              url.href;
+
+          }
+
+        } catch {
+          // Invalid URL, so keep the default destination.
+        }
+
+        backButton.addEventListener(
+          "click",
+          () => {
+
+            window.location.href =
+              destination;
+
+          }
         );
 
       }
     );
-
-
-  /* -------------------------
-     Storage Sync
-  ------------------------- */
-
-  window.addEventListener(
-    "storage",
-    event => {
-
-      if (
-        event.key === THEME_KEY
-      ) {
-
-        applyTheme();
-        applySettingsAccent();
-        loadBlockStyle();
-        loadAccent();
-
-      }
-
-
-      if (
-        event.key ===
-        CUSTOM_PROJECT_KEY
-      ) {
-
-        loadCustomProject();
-
-      }
-
-
-      if (
-        event.key ===
-        GO_ICON_KEY
-      ) {
-
-        loadGoIcon();
-
-      }
-
-    }
-  );
-
-
-  /* -------------------------
-     Start
-  ------------------------- */
-
-  applyTheme();
-  applySettingsAccent();
-  loadBlockStyle();
-  loadAccent();
-  loadCustomProject();
-  loadGoIcon();
-
-  lucide.createIcons();
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const from = params.get("from");
-  const backButton = document.getElementById("back-to-cattymod");
-
-  if (!backButton || !from) return;
-
-  let destination = "https://studio.cattymod.app/";
-
-  try {
-    const url = new URL(from);
-
-    // Only allow cattymod.app and its subdomains
-    const isCattyMod =
-      url.hostname === "cattymod.app" ||
-      url.hostname.endsWith(".cattymod.app");
-
-    if (isCattyMod && (url.protocol === "https:" || url.protocol === "http:")) {
-      destination = url.href;
-    }
-  } catch {
-    // Invalid URL, so keep the default destination
-  }
-
-  backButton.addEventListener("click", () => {
-    window.location.href = destination;
-  });
-});
-</script>
+  </script>
 
 </body>
 </html>
