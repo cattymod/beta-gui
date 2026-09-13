@@ -1,52 +1,49 @@
 .mobileControls {
     display: none;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 999999;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    pointer-events: auto;
+
+    touch-action: none;
 }
 
 @media (orientation: portrait) {
     .mobileControls {
-        display: block;
-    }
-
-    .controls {
         display: flex;
         flex-direction: column;
 
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-
-        z-index: 99999;
-
         align-items: center;
-        justify-content: center;
+        justify-content: flex-end;
 
-        padding: 16px;
-        padding-bottom: max(16px, env(safe-area-inset-bottom));
-
-        user-select: none;
-        -webkit-user-select: none;
-
-        touch-action: none;
-
-        color: #111;
+        width: 100%;
     }
 
     /*
-     * Control mode button
-     *
-     * This stays in the same place where the old
-     * keyboard input was.
+     * Gamepad / keyboard mode toggle
      */
 
-    .keyboardInput {
+    .modeToggle {
         box-sizing: border-box;
 
         width: min(320px, 80vw);
-        height: 46px;
+        min-height: 44px;
 
-        margin: 0 0 16px 0;
-        padding: 0 14px;
+        margin: 0 0 12px 0;
+        padding: 8px 14px;
 
         border: 1px solid #d0d0d0;
         border-radius: 8px;
@@ -58,45 +55,36 @@
 
         font-family: inherit;
         font-size: 15px;
-        font-weight: 500;
-
-        outline: none;
+        font-weight: 600;
 
         cursor: pointer;
 
         touch-action: manipulation;
-
         user-select: none;
         -webkit-user-select: none;
 
         -webkit-tap-highlight-color: transparent;
-
-        transition:
-            transform 0.04s ease,
-            box-shadow 0.04s ease;
     }
 
-    .keyboardInput:active {
+    .modeToggle:active {
         transform: translateY(4px);
-
         box-shadow: 0 0 0 #b8b8b8;
     }
 
     /*
-     * Main Game Boy-style controls
-     *
-     * D-pad on the left
-     * A/B/C/D on the right
+     * Gamepad
      */
 
-    .gameboyControls {
+    .gamepad {
         display: flex;
         flex-direction: row;
 
         align-items: center;
         justify-content: center;
 
-        gap: clamp(28px, 9vw, 55px);
+        width: 100%;
+
+        gap: clamp(24px, 8vw, 55px);
     }
 
     /*
@@ -104,56 +92,174 @@
      */
 
     .dpad {
-        display: flex;
-        flex-direction: column;
+        position: relative;
 
-        align-items: center;
-        justify-content: center;
+        width: 150px;
+        height: 150px;
+
+        flex: 0 0 150px;
     }
 
-    .dpadTop,
-    .dpadBottom {
+    .dpadButton {
+        position: absolute;
+
+        box-sizing: border-box;
+
+        width: 50px;
+        height: 50px;
+
+        margin: 0;
+        padding: 0;
+
+        border: 1px solid #d0d0d0;
+        border-radius: 8px;
+
+        background: #fff;
+        color: #111;
+
+        box-shadow: 0 4px 0 #b8b8b8;
+
         display: flex;
 
         align-items: center;
         justify-content: center;
+
+        font-family: inherit;
+        font-size: 24px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        touch-action: none;
+
+        user-select: none;
+        -webkit-user-select: none;
+
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .dpadButton:active {
+        transform: translateY(4px);
+        box-shadow: 0 0 0 #b8b8b8;
+    }
+
+    .dpadUp {
+        top: 0;
+        left: 50%;
+
+        transform: translateX(-50%);
+    }
+
+    .dpadUp:active {
+        transform: translateX(-50%) translateY(4px);
+    }
+
+    .dpadLeft {
+        top: 50%;
+        left: 0;
+
+        transform: translateY(-50%);
+    }
+
+    .dpadLeft:active {
+        transform: translateY(calc(-50% + 4px));
+    }
+
+    .dpadDown {
+        bottom: 0;
+        left: 50%;
+
+        transform: translateX(-50%);
+    }
+
+    .dpadDown:active {
+        transform: translateX(-50%) translateY(4px);
+    }
+
+    .dpadRight {
+        top: 50%;
+        right: 0;
+
+        transform: translateY(-50%);
+    }
+
+    .dpadRight:active {
+        transform: translateY(calc(-50% + 4px));
+    }
+
+    /*
+     * Joystick
+     */
+
+    .joystick {
+        position: relative;
+
+        width: 76px;
+        height: 76px;
+
+        flex: 0 0 76px;
+
+        border-radius: 50%;
+
+        background: #ddd;
+
+        box-shadow:
+            inset 0 0 0 3px #c0c0c0,
+            0 4px 0 #aaa;
+
+        cursor: grab;
+
+        touch-action: none;
+
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .joystick:active {
+        cursor: grabbing;
+    }
+
+    .joystickKnob {
+        position: absolute;
+
+        left: 50%;
+        top: 50%;
+
+        width: 42px;
+        height: 42px;
+
+        margin-left: -21px;
+        margin-top: -21px;
+
+        border-radius: 50%;
+
+        background: #111;
+
+        transform: translate(0, 0);
+
+        pointer-events: none;
+    }
+
+    /*
+     * A / B / C / D buttons
+     */
+
+    .actionButtons {
+        display: grid;
+
+        grid-template-columns: 58px 58px;
+        grid-template-rows: 58px 58px;
+
+        gap: 12px;
+
+        flex: 0 0 auto;
+    }
+
+    .actionButton {
+        box-sizing: border-box;
 
         width: 58px;
         height: 58px;
-    }
-
-    .dpadMiddle {
-        display: flex;
-        flex-direction: row;
-
-        align-items: center;
-        justify-content: center;
-
-        gap: 6px;
-    }
-
-    /*
-     * A / B / C / D
-     */
-
-    .abcd {
-        display: grid;
-
-        grid-template-columns: 64px 64px;
-        grid-template-rows: 64px 64px;
-
-        gap: 14px;
-    }
-
-    /*
-     * All physical buttons
-     */
-
-    .button {
-        box-sizing: border-box;
-
-        width: 64px;
-        height: 64px;
 
         margin: 0;
         padding: 0;
@@ -167,164 +273,35 @@
         box-shadow: 0 4px 0 #b8b8b8;
 
         display: flex;
-        flex-direction: column;
 
         align-items: center;
         justify-content: center;
 
         font-family: inherit;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 700;
 
         cursor: pointer;
 
         touch-action: none;
 
+        user-select: none;
+        -webkit-user-select: none;
+
         -webkit-tap-highlight-color: transparent;
-
-        transition:
-            transform 0.04s ease,
-            box-shadow 0.04s ease;
     }
 
-    /*
-     * D-pad buttons
-     */
-
-    .dpad .button {
-        width: 58px;
-        height: 58px;
-
-        border-radius: 8px;
-
-        font-size: 25px;
-        line-height: 1;
-    }
-
-    /*
-     * Button labels
-     */
-
-    .label {
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        width: 100%;
-        height: 100%;
-
-        margin: 0;
-        padding: 0;
-
-        line-height: 1;
-    }
-
-    /*
-     * A/B/C/D labels
-     */
-
-    .abcd .label {
-        width: auto;
-        height: auto;
-
-        font-size: 22px;
-        line-height: 1;
-    }
-
-    .sublabel {
-        margin-top: 4px;
-
-        font-size: 10px;
-        font-weight: 500;
-
-        line-height: 1;
-    }
-
-    /*
-     * Pressed button
-     */
-
-    .pressed {
+    .actionButton:active {
         transform: translateY(4px);
 
         box-shadow: 0 0 0 #b8b8b8;
     }
 
     /*
-     * Joystick area
+     * Keyboard mode
      */
 
-    .joystickArea {
-        position: relative;
-
-        width: 58px;
-        height: 58px;
-
-        flex: 0 0 58px;
-
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        touch-action: none;
-
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
-    /*
-     * Actual draggable joystick
-     */
-
-    .joystick {
-        position: absolute;
-
-        left: 50%;
-        top: 50%;
-
-        width: 38px;
-        height: 38px;
-
-        margin-left: -19px;
-        margin-top: -19px;
-
-        border-radius: 50%;
-
-        background: #111;
-
-        transform:
-            translate(
-                var(--joystick-x, 0px),
-                var(--joystick-y, 0px)
-            );
-
-        cursor: grab;
-
-        touch-action: none;
-
-        user-select: none;
-        -webkit-user-select: none;
-
-        z-index: 5;
-
-        transition: transform 0.06s ease;
-    }
-
-    .joystickArea:active .joystick {
-        cursor: grabbing;
-    }
-
-    .joystickArea:not(:active) .joystick {
-        transition: transform 0.1s ease;
-    }
-
-    /*
-     * Custom keyboard
-     */
-
-    .keyboard {
+    .keyboardContainer {
         display: flex;
         flex-direction: column;
 
@@ -333,7 +310,66 @@
 
         width: min(520px, 96vw);
 
-        gap: 7px;
+        margin: 0 auto;
+    }
+
+    .keyboardTopRow {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 100%;
+
+        margin-bottom: 8px;
+    }
+
+    .keyboardLayoutButton {
+        box-sizing: border-box;
+
+        min-width: 80px;
+        min-height: 40px;
+
+        padding: 8px 14px;
+
+        border: 1px solid #d0d0d0;
+        border-radius: 7px;
+
+        background: #fff;
+        color: #111;
+
+        box-shadow: 0 4px 0 #b8b8b8;
+
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        touch-action: manipulation;
+
+        user-select: none;
+        -webkit-user-select: none;
+
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .keyboardLayoutButton:active {
+        transform: translateY(4px);
+
+        box-shadow: 0 0 0 #b8b8b8;
+    }
+
+    .keyboardLayout {
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 100%;
+
+        gap: 6px;
 
         touch-action: none;
 
@@ -347,22 +383,9 @@
         align-items: center;
         justify-content: center;
 
+        width: 100%;
+
         gap: 5px;
-
-        width: 100%;
-    }
-
-    .keyboardBottomRow {
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        gap: 6px;
-
-        width: 100%;
-
-        margin-top: 2px;
     }
 
     .keyboardKey {
@@ -401,99 +424,204 @@
         -webkit-user-select: none;
 
         -webkit-tap-highlight-color: transparent;
-
-        transition:
-            transform 0.04s ease,
-            box-shadow 0.04s ease;
     }
 
-    .keyboardKey.pressed {
+    .keyboardKey:active {
         transform: translateY(4px);
 
         box-shadow: 0 0 0 #b8b8b8;
     }
 
     /*
-     * Special keyboard keys
+     * Arrow keys
      */
 
-    .spaceKey {
-        flex: 4 1 0;
+    .arrowKeys {
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        margin-top: 4px;
     }
 
-    .enterKey {
-        flex: 2 1 0;
-    }
+    .arrowRow {
+        display: flex;
 
-    .arrowKey {
-        flex: 0 0 44px;
+        align-items: center;
+        justify-content: center;
 
-        font-size: 20px;
-    }
-
-    /*
-     * Light mode
-     */
-
-    .light .joystick {
-        background: #111;
+        gap: 5px;
     }
 
     /*
      * Dark mode
-     *
-     * Buttons stay white.
-     * Joystick becomes white.
      */
+
+    .dark .modeToggle,
+    .dark .keyboardLayoutButton,
+    .dark .keyboardKey,
+    .dark .dpadButton,
+    .dark .actionButton {
+        border-color: #444;
+
+        background: #fff;
+        color: #111;
+
+        box-shadow: 0 4px 0 #777;
+    }
+
+    .dark .modeToggle:active,
+    .dark .keyboardLayoutButton:active,
+    .dark .keyboardKey:active,
+    .dark .dpadButton:active,
+    .dark .actionButton:active {
+        box-shadow: 0 0 0 #777;
+    }
 
     .dark .joystick {
+        background: #555;
+
+        box-shadow:
+            inset 0 0 0 3px #444,
+            0 4px 0 #333;
+    }
+
+    .dark .joystickKnob {
         background: #fff;
     }
+}
 
-    /*
-     * Dark mode control switch
-     */
+/*
+ * Small portrait phones
+ */
 
-    .dark .keyboardInput {
-        border-color: #444;
-
-        background: #fff;
-        color: #111;
-
-        box-shadow: 0 4px 0 #777;
+@media (orientation: portrait) and (max-width: 480px) {
+    .mobileControls {
+        padding-left: 8px;
+        padding-right: 8px;
     }
 
-    /*
-     * Dark mode physical buttons
-     */
-
-    .dark .button {
-        border-color: #444;
-
-        background: #fff;
-        color: #111;
-
-        box-shadow: 0 4px 0 #777;
+    .gamepad {
+        gap: 14px;
     }
 
-    .dark .pressed {
-        box-shadow: 0 0 0 #777;
+    .dpad {
+        width: 126px;
+        height: 126px;
+
+        flex-basis: 126px;
     }
 
-    /*
-     * Dark mode custom keyboard
-     */
+    .dpadButton {
+        width: 42px;
+        height: 42px;
 
-    .dark .keyboardKey {
-        border-color: #444;
-
-        background: #fff;
-        color: #111;
-
-        box-shadow: 0 4px 0 #777;
+        font-size: 20px;
     }
 
-    .dark .keyboardKey.pressed {
-        box-shadow: 0 0 0 #777;
+    .actionButtons {
+        grid-template-columns: 50px 50px;
+        grid-template-rows: 50px 50px;
+
+        gap: 8px;
+    }
+
+    .actionButton {
+        width: 50px;
+        height: 50px;
+
+        font-size: 18px;
+    }
+
+    .joystick {
+        width: 64px;
+        height: 64px;
+
+        flex-basis: 64px;
+    }
+
+    .joystickKnob {
+        width: 36px;
+        height: 36px;
+
+        margin-left: -18px;
+        margin-top: -18px;
+    }
+}
+
+/*
+ * Very small portrait phones
+ */
+
+@media (orientation: portrait) and (max-width: 360px) {
+    .mobileControls {
+        padding: 6px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
+    }
+
+    .gamepad {
+        gap: 8px;
+    }
+
+    .dpad {
+        width: 108px;
+        height: 108px;
+
+        flex-basis: 108px;
+    }
+
+    .dpadButton {
+        width: 36px;
+        height: 36px;
+
+        font-size: 17px;
+    }
+
+    .actionButtons {
+        grid-template-columns: 44px 44px;
+        grid-template-rows: 44px 44px;
+
+        gap: 6px;
+    }
+
+    .actionButton {
+        width: 44px;
+        height: 44px;
+
+        font-size: 16px;
+    }
+
+    .joystick {
+        width: 56px;
+        height: 56px;
+
+        flex-basis: 56px;
+    }
+
+    .joystickKnob {
+        width: 30px;
+        height: 30px;
+
+        margin-left: -15px;
+        margin-top: -15px;
+    }
+
+    .modeToggle {
+        width: min(280px, 90vw);
+        min-height: 40px;
+    }
+}
+
+/*
+ * Landscape: hide the mobile controls.
+ */
+
+@media (orientation: landscape) {
+    .mobileControls {
+        display: none;
     }
 }
