@@ -30,6 +30,7 @@ import TWPackagerIntegrationHOC from '../lib/tw-packager-integration-hoc.jsx';
 import SettingsStore from '../addons/settings-store-singleton';
 import '../lib/tw-fix-history-api';
 import GUI from './render-gui.jsx';
+import MobileControls from '../components/mobile-controls/mobile-controls.jsx';
 import MenuBar from '../components/menu-bar/menu-bar.jsx';
 import ProjectInput from '../components/tw-project-input/project-input.jsx';
 import FeaturedProjects from '../components/tw-featured-projects/featured-projects.jsx';
@@ -295,14 +296,21 @@ class Interface extends React.Component {
                         width: `${Math.max(480, props.customStageSize.width) + 2}px`
                     }) : null}
                 >
-                    <GUI
-                        onClickAddonSettings={handleClickAddonSettings}
-                        onUpdateProjectTitle={this.handleUpdateProjectTitle}
-                        backpackVisible
-                        backpackHost="_local_"
-                        {...props}
-                    />
-                    {isHomepage ? (
+                   <GUI
+    onClickAddonSettings={handleClickAddonSettings}
+    onUpdateProjectTitle={this.handleUpdateProjectTitle}
+    backpackVisible
+    backpackHost="_local_"
+    {...props}
+/>
+
+{isFullScreen &&
+    props.vm &&
+    !isLoading &&
+    (localStorage.getItem('cattymod:mobileTouchControls') === null ||
+     localStorage.getItem('cattymod:mobileTouchControls') === 'true') && (
+        <MobileControls vm={props.vm} />
+    )} {isHomepage ? (
                         <React.Fragment>
                             {isBrowserSupported() ? null : (
                                 <BrowserModal isRtl={isRtl} />
