@@ -10,7 +10,7 @@ class MobileControls extends React.Component {
         super(props);
 
         this.state = {
-            joystickDirection: null,
+            joystickDirections: [],
             joystickActive: false
         };
 
@@ -20,7 +20,7 @@ class MobileControls extends React.Component {
     }
 
     componentWillUnmount() {
-        this.releaseJoystickKey();
+        this.releaseJoystickKeys();
     }
 
     /*
@@ -78,16 +78,8 @@ class MobileControls extends React.Component {
 
         const input = event.currentTarget;
 
-        /*
-         * Prevent the browser from using scrollIntoView()
-         * when focusing the input.
-         */
         input.scrollIntoView = () => {};
 
-        /*
-         * Focus the input without allowing the browser
-         * to scroll the page to it.
-         */
         input.focus({
             preventScroll: true
         });
@@ -151,20 +143,65 @@ class MobileControls extends React.Component {
 
     /*
      * Joystick direction
+     *
+     * Returns one or two directions.
+     *
+     * Examples:
+     *   up       -> ['up']
+     *   right    -> ['right']
+     *   up-right -> ['up', 'right']
      */
 
-    getJoystickDirection = (x, y) => {
+    getJoystickDirections = (x, y) => {
         const deadZone = 12;
 
         if (Math.abs(x) < deadZone && Math.abs(y) < deadZone) {
-            return null;
+            return [];
         }
 
-        if (Math.abs(x) > Math.abs(y)) {
-            return x > 0 ? 'right' : 'left';
+        const angle = Math.atan2(y, x) * (180 / Math.PI);
+
+        /*
+         * The joystick uses:
+         *
+         *   x > 0 = right
+         *   x < 0 = left
+         *   y > 0 = down
+         *   y < 0 = up
+         *
+         * A diagonal is allowed when the joystick is
+         * roughly 22.5 degrees away from the diagonal.
+         */
+
+        if (angle >= -22.5 && angle < 22.5) {
+            return ['right'];
         }
 
-        return y > 0 ? 'down' : 'up';
+        if (angle >= 22.5 && angle < 67.5) {
+            return ['down', 'right'];
+        }
+
+        if (angle >= 67.5 && angle < 112.5) {
+            return ['down'];
+        }
+
+        if (angle >= 112.5 && angle < 157.5) {
+            return ['down', 'left'];
+        }
+
+        if (angle >= 157.5 || angle < -157.5) {
+            return ['left'];
+        }
+
+        if (angle >= -157.5 && angle < -112.5) {
+            return ['up', 'left'];
+        }
+
+        if (angle >= -112.5 && angle < -67.5) {
+            return ['up'];
+        }
+
+        return ['up', 'right'];
     };
 
     getJoystickKey = direction => {
@@ -186,39 +223,53 @@ class MobileControls extends React.Component {
         }
     };
 
-    setJoystickDirection = direction => {
-        const oldDirection = this.state.joystickDirection;
+    setJoystickDirections = directions => {
+        const oldDirections = this.state.joystickDirections;
 
-        if (oldDirection === direction) {
-            return;
+        /*
+         * Release directions that are no longer active.
+         */
+        for (const direction of oldDirections) {
+            if (!directions.includes(direction)) {
+                const key = this.getJoystickKey(direction);
+
+                if (key) {
+                    this.releaseKey(key);
+                }
+            }
         }
 
-        const oldKey = this.getJoystickKey(oldDirection);
-        const newKey = this.getJoystickKey(direction);
+        /*
+         * Press newly active directions.
+         */
+        for (const direction of directions) {
+            if (!oldDirections.includes(direction)) {
+                const key = this.getJoystickKey(direction);
 
-        if (oldKey) {
-            this.releaseKey(oldKey);
-        }
-
-        if (newKey) {
-            this.pressKey(newKey);
+                if (key) {
+                    this.pressKey(key);
+                }
+            }
         }
 
         this.setState({
-            joystickDirection: direction
+            joystickDirections: directions
         });
     };
 
-    releaseJoystickKey = () => {
-        const {joystickDirection} = this.state;
-        const key = this.getJoystickKey(joystickDirection);
+    releaseJoystickKeys = () => {
+        const {joystickDirections} = this.state;
 
-        if (key) {
-            this.releaseKey(key);
+        for (const direction of joystickDirections) {
+            const key = this.getJoystickKey(direction);
+
+            if (key) {
+                this.releaseKey(key);
+            }
         }
 
         this.setState({
-            joystickDirection: null
+            joystickDirections: []
         });
     };
 
@@ -261,8 +312,8 @@ class MobileControls extends React.Component {
             );
         }
 
-        this.setJoystickDirection(
-            this.getJoystickDirection(x, y)
+        this.setJoystickDirections(
+            this.getJoystickDirections(x, y)
         );
     };
 
@@ -307,7 +358,7 @@ class MobileControls extends React.Component {
             );
         }
 
-        this.releaseJoystickKey();
+        this.releaseJoystickKeys();
     };
 
     render() {
