@@ -1,325 +1,104 @@
-import PropTypes from 'prop-types';
 import React from 'react';
-import {connect} from 'react-redux';
-
-import {GUI_DARK} from '../../lib/themes/index.js';
 import styles from './mobile-controls.css';
 
 class MobileControls extends React.Component {
-    constructor(props) {
+    constructor (props) {
         super(props);
 
         this.state = {
             controlMode: 'gamepad',
+            keyboardLayout: 'abc',
             joystickDirections: [],
             joystickActive: false
         };
 
-        this.joystickAreaRef = React.createRef();
         this.joystickRef = React.createRef();
-
-        /*
-         * Keys currently held by the custom keyboard.
-         *
-         * This is intentionally kept outside React state because
-         * key presses do not need to cause a component re-render.
-         */
-        this.keyboardKeys = new Set();
     }
 
-    componentWillUnmount() {
-        this.releaseKeyboardKeys();
-        this.releaseJoystickKeys();
+    componentWillUnmount () {
+        this.releaseAllKeys();
     }
-
-    /*
-     * Keyboard input
-     */
 
     pressKey = key => {
-        const {vm} = this.props;
-
-        if (!vm || !key) {
-            return;
-        }
-
-        vm.postIOData('keyboard', {
+        this.props.vm.postIOData('keyboard', {
             key,
             isDown: true
         });
     };
 
     releaseKey = key => {
-        const {vm} = this.props;
-
-        if (!vm || !key) {
-            return;
-        }
-
-        vm.postIOData('keyboard', {
+        this.props.vm.postIOData('keyboard', {
             key,
             isDown: false
         });
     };
 
-    /*
-     * Custom keyboard
-     */
-
-    handleKeyboardKeyDown = (key, event) => {
-        event.preventDefault();
-
-        if (this.keyboardKeys.has(key)) {
-            return;
-        }
-
-        this.keyboardKeys.add(key);
-
-        event.currentTarget.setPointerCapture(event.pointerId);
-        event.currentTarget.classList.add(styles.pressed);
-
+    tapKey = key => {
         this.pressKey(key);
-    };
 
-    handleKeyboardKeyUp = (key, event) => {
-        event.preventDefault();
-
-        this.releaseKeyboardKey(key, event.currentTarget);
-    };
-
-    handleKeyboardKeyCancel = (key, event) => {
-        event.preventDefault();
-
-        this.releaseKeyboardKey(key, event.currentTarget);
-    };
-
-    handleKeyboardKeyLostPointerCapture = (key, event) => {
-        this.releaseKeyboardKey(key, event.currentTarget);
-    };
-
-    releaseKeyboardKey = (key, element = null) => {
-        if (!this.keyboardKeys.has(key)) {
-            return;
-        }
-
-        this.keyboardKeys.delete(key);
-
-        if (element) {
-            element.classList.remove(styles.pressed);
-        }
-
-        this.releaseKey(key);
-    };
-
-    releaseKeyboardKeys = () => {
-        for (const key of this.keyboardKeys) {
+        setTimeout(() => {
             this.releaseKey(key);
-        }
-
-        this.keyboardKeys.clear();
+        }, 50);
     };
 
-    /*
-     * Switch between gamepad and keyboard.
-     */
+    releaseAllKeys = () => {
+        const keys = [
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+            'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+            's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            'space',
+            'enter',
+            'left',
+            'up',
+            'down',
+            'right'
+        ];
 
-    toggleControlMode = event => {
-        event.preventDefault();
+        keys.forEach(key => {
+            this.releaseKey(key);
+        });
 
-        this.releaseKeyboardKeys();
         this.releaseJoystickKeys();
+    };
 
-        this.setState(previousState => ({
-            controlMode: previousState.controlMode === 'gamepad' ?
-                'keyboard' :
-                'gamepad',
+    setControlMode = mode => {
+        this.releaseAllKeys();
+
+        this.setState({
+            controlMode: mode,
+            keyboardLayout: 'abc',
+            joystickDirections: [],
             joystickActive: false
+        });
+    };
+
+    toggleKeyboardLayout = () => {
+        this.releaseAllKeys();
+
+        this.setState(prevState => ({
+            keyboardLayout:
+                prevState.keyboardLayout === 'abc'
+                    ? 'numbers'
+                    : 'abc'
         }));
-
-        if (this.joystickRef.current) {
-            this.joystickRef.current.style.setProperty(
-                '--joystick-x',
-                '0px'
-            );
-
-            this.joystickRef.current.style.setProperty(
-                '--joystick-y',
-                '0px'
-            );
-        }
-    };
-
-    /*
-     * Buttons
-     */
-
-    handleButtonPointerDown = (key, event) => {
-        event.preventDefault();
-
-        event.currentTarget.setPointerCapture(event.pointerId);
-        event.currentTarget.classList.add(styles.pressed);
-
-        this.pressKey(key);
-    };
-
-    handleButtonPointerUp = (key, event) => {
-        event.preventDefault();
-
-        event.currentTarget.classList.remove(styles.pressed);
-
-        this.releaseKey(key);
-    };
-
-    handleButtonPointerCancel = (key, event) => {
-        event.preventDefault();
-
-        event.currentTarget.classList.remove(styles.pressed);
-
-        this.releaseKey(key);
-    };
-
-    handleButtonLostPointerCapture = (key, event) => {
-        event.currentTarget.classList.remove(styles.pressed);
-
-        this.releaseKey(key);
-    };
-
-    renderButton = (label, key, sublabel = null, extraClass = '') => (
-        <button
-            type="button"
-            className={`${styles.button} ${extraClass}`}
-            onPointerDown={event => this.handleButtonPointerDown(key, event)}
-            onPointerUp={event => this.handleButtonPointerUp(key, event)}
-            onPointerCancel={event => this.handleButtonPointerCancel(key, event)}
-            onLostPointerCapture={event => this.handleButtonLostPointerCapture(key, event)}
-        >
-            <span className={styles.label}>
-                {label}
-            </span>
-
-            {sublabel ? (
-                <span className={styles.sublabel}>
-                    {sublabel}
-                </span>
-            ) : null}
-        </button>
-    );
-
-    /*
-     * Custom keyboard button
-     */
-
-    renderKeyboardKey = (
-        label,
-        key,
-        extraClass = ''
-    ) => (
-        <button
-            type="button"
-            className={`${styles.keyboardKey} ${extraClass}`}
-            onPointerDown={event => this.handleKeyboardKeyDown(key, event)}
-            onPointerUp={event => this.handleKeyboardKeyUp(key, event)}
-            onPointerCancel={event => this.handleKeyboardKeyCancel(key, event)}
-            onLostPointerCapture={
-                event => this.handleKeyboardKeyLostPointerCapture(key, event)
-            }
-            aria-label={label}
-        >
-            {label}
-        </button>
-    );
-
-    /*
-     * Joystick
-     */
-
-    getJoystickDirections = (x, y) => {
-        const deadZone = 12;
-
-        if (Math.abs(x) < deadZone && Math.abs(y) < deadZone) {
-            return [];
-        }
-
-        const angle = Math.atan2(y, x) * (180 / Math.PI);
-
-        if (angle >= -22.5 && angle < 22.5) {
-            return ['right'];
-        }
-
-        if (angle >= 22.5 && angle < 67.5) {
-            return ['down', 'right'];
-        }
-
-        if (angle >= 67.5 && angle < 112.5) {
-            return ['down'];
-        }
-
-        if (angle >= 112.5 && angle < 157.5) {
-            return ['down', 'left'];
-        }
-
-        if (angle >= 157.5 || angle < -157.5) {
-            return ['left'];
-        }
-
-        if (angle >= -157.5 && angle < -112.5) {
-            return ['up', 'left'];
-        }
-
-        if (angle >= -112.5 && angle < -67.5) {
-            return ['up'];
-        }
-
-        return ['up', 'right'];
-    };
-
-    getJoystickKey = direction => {
-        switch (direction) {
-        case 'up':
-            return 'ArrowUp';
-
-        case 'right':
-            return 'ArrowRight';
-
-        case 'down':
-            return 'ArrowDown';
-
-        case 'left':
-            return 'ArrowLeft';
-
-        default:
-            return null;
-        }
     };
 
     setJoystickDirections = directions => {
-        const oldDirections = this.state.joystickDirections;
+        const oldDirections =
+            this.state.joystickDirections;
 
-        /*
-         * Release directions that are no longer active.
-         */
-        for (const direction of oldDirections) {
+        oldDirections.forEach(direction => {
             if (!directions.includes(direction)) {
-                const key = this.getJoystickKey(direction);
-
-                if (key) {
-                    this.releaseKey(key);
-                }
+                this.releaseKey(direction);
             }
-        }
+        });
 
-        /*
-         * Press newly active directions.
-         */
-        for (const direction of directions) {
+        directions.forEach(direction => {
             if (!oldDirections.includes(direction)) {
-                const key = this.getJoystickKey(direction);
-
-                if (key) {
-                    this.pressKey(key);
-                }
+                this.pressKey(direction);
             }
-        }
+        });
 
         this.setState({
             joystickDirections: directions
@@ -327,329 +106,540 @@ class MobileControls extends React.Component {
     };
 
     releaseJoystickKeys = () => {
-        const {joystickDirections} = this.state;
-
-        for (const direction of joystickDirections) {
-            const key = this.getJoystickKey(direction);
-
-            if (key) {
-                this.releaseKey(key);
-            }
-        }
+        this.state.joystickDirections.forEach(direction => {
+            this.releaseKey(direction);
+        });
 
         this.setState({
             joystickDirections: []
         });
     };
 
-    moveJoystick = event => {
-        if (!this.joystickAreaRef.current) {
-            return;
-        }
-
-        const rect = this.joystickAreaRef.current.getBoundingClientRect();
-
-        const centerX = rect.left + (rect.width / 2);
-        const centerY = rect.top + (rect.height / 2);
-
-        let x = event.clientX - centerX;
-        let y = event.clientY - centerY;
-
-        const maxDistance = 27;
-        const distance = Math.sqrt((x * x) + (y * y));
-
-        if (distance > maxDistance) {
-            const scale = maxDistance / distance;
-
-            x *= scale;
-            y *= scale;
-        }
-
-        if (this.joystickRef.current) {
-            this.joystickRef.current.style.setProperty(
-                '--joystick-x',
-                `${x}px`
-            );
-
-            this.joystickRef.current.style.setProperty(
-                '--joystick-y',
-                `${y}px`
-            );
-        }
-
-        this.setJoystickDirections(
-            this.getJoystickDirections(x, y)
-        );
-    };
-
-    handleJoystickPointerDown = event => {
+    handleJoystickStart = event => {
         event.preventDefault();
-
-        event.currentTarget.setPointerCapture(event.pointerId);
 
         this.setState({
             joystickActive: true
         });
 
-        this.moveJoystick(event);
+        this.updateJoystick(event);
     };
 
-    handleJoystickPointerMove = event => {
+    handleJoystickMove = event => {
         if (!this.state.joystickActive) {
             return;
         }
 
         event.preventDefault();
 
-        this.moveJoystick(event);
+        this.updateJoystick(event);
     };
 
-    handleJoystickPointerUp = event => {
+    handleJoystickEnd = event => {
         event.preventDefault();
 
         this.setState({
             joystickActive: false
         });
 
-        if (this.joystickRef.current) {
-            this.joystickRef.current.style.setProperty(
-                '--joystick-x',
-                '0px'
-            );
-
-            this.joystickRef.current.style.setProperty(
-                '--joystick-y',
-                '0px'
-            );
-        }
-
         this.releaseJoystickKeys();
     };
 
-    /*
-     * Gamepad
-     */
+    updateJoystick = event => {
+        const joystick =
+            this.joystickRef.current;
+
+        if (!joystick) {
+            return;
+        }
+
+        const rect =
+            joystick.getBoundingClientRect();
+
+        const centerX =
+            rect.left + rect.width / 2;
+
+        const centerY =
+            rect.top + rect.height / 2;
+
+        const x =
+            event.clientX - centerX;
+
+        const y =
+            event.clientY - centerY;
+
+        const distance =
+            Math.sqrt(
+                x * x +
+                y * y
+            );
+
+        const deadZone = 12;
+        const maxDistance = 27;
+
+        if (distance < deadZone) {
+            this.setJoystickDirections([]);
+            return;
+        }
+
+        const angle =
+            Math.atan2(y, x) *
+            180 /
+            Math.PI;
+
+        let directions = [];
+
+        if (
+            angle >= -22.5 &&
+            angle < 22.5
+        ) {
+            directions = ['right'];
+        } else if (
+            angle >= 22.5 &&
+            angle < 67.5
+        ) {
+            directions = ['down', 'right'];
+        } else if (
+            angle >= 67.5 &&
+            angle < 112.5
+        ) {
+            directions = ['down'];
+        } else if (
+            angle >= 112.5 &&
+            angle < 157.5
+        ) {
+            directions = ['down', 'left'];
+        } else if (
+            angle >= 157.5 ||
+            angle < -157.5
+        ) {
+            directions = ['left'];
+        } else if (
+            angle >= -157.5 &&
+            angle < -112.5
+        ) {
+            directions = ['up', 'left'];
+        } else if (
+            angle >= -112.5 &&
+            angle < -67.5
+        ) {
+            directions = ['up'];
+        } else if (
+            angle >= -67.5 &&
+            angle < -22.5
+        ) {
+            directions = ['up', 'right'];
+        }
+
+        this.setJoystickDirections(
+            directions
+        );
+
+        const knob =
+            joystick.querySelector(
+                `.${styles.joystickKnob}`
+            );
+
+        if (!knob) {
+            return;
+        }
+
+        const knobX =
+            distance === 0
+                ? 0
+                : (x / distance) *
+                  Math.min(
+                      distance,
+                      maxDistance
+                  );
+
+        const knobY =
+            distance === 0
+                ? 0
+                : (y / distance) *
+                  Math.min(
+                      distance,
+                      maxDistance
+                  );
+
+        knob.style.transform =
+            `translate(${knobX}px, ${knobY}px)`;
+    };
+
+    resetJoystickPosition = () => {
+        const joystick =
+            this.joystickRef.current;
+
+        if (!joystick) {
+            return;
+        }
+
+        const knob =
+            joystick.querySelector(
+                `.${styles.joystickKnob}`
+            );
+
+        if (knob) {
+            knob.style.transform =
+                'translate(0, 0)';
+        }
+    };
+
+    handleJoystickEndAndReset = event => {
+        this.handleJoystickEnd(event);
+        this.resetJoystickPosition();
+    };
+
+    renderKeyboardButton = (
+        key,
+        label = key
+    ) => (
+        <button
+            className={styles.keyboardKey}
+            onPointerDown={event => {
+                event.preventDefault();
+                this.pressKey(key);
+            }}
+            onPointerUp={event => {
+                event.preventDefault();
+                this.releaseKey(key);
+            }}
+            onPointerCancel={event => {
+                event.preventDefault();
+                this.releaseKey(key);
+            }}
+            onPointerLeave={event => {
+                if (
+                    event.buttons === 1
+                ) {
+                    this.releaseKey(key);
+                }
+            }}
+        >
+            {label}
+        </button>
+    );
+
+    renderNumberPad = () => {
+        const rows = [
+            ['1', '2', '3'],
+            ['4', '5', '6'],
+            ['7', '8', '9'],
+            ['0']
+        ];
+
+        return (
+            <div className={styles.keyboardLayout}>
+                {rows.map((row, rowIndex) => (
+                    <div
+                        className={styles.keyboardRow}
+                        key={`number-row-${rowIndex}`}
+                    >
+                        {row.map(number =>
+                            this.renderKeyboardButton(
+                                number,
+                                number
+                            )
+                        )}
+                    </div>
+                ))}
+
+                <div className={styles.keyboardRow}>
+                    <button
+                        className={styles.keyboardKey}
+                        onPointerDown={event => {
+                            event.preventDefault();
+                            this.pressKey('space');
+                        }}
+                        onPointerUp={event => {
+                            event.preventDefault();
+                            this.releaseKey('space');
+                        }}
+                        onPointerCancel={event => {
+                            event.preventDefault();
+                            this.releaseKey('space');
+                        }}
+                    >
+                        Space
+                    </button>
+
+                    <button
+                        className={styles.keyboardKey}
+                        onPointerDown={event => {
+                            event.preventDefault();
+                            this.pressKey('enter');
+                        }}
+                        onPointerUp={event => {
+                            event.preventDefault();
+                            this.releaseKey('enter');
+                        }}
+                        onPointerCancel={event => {
+                            event.preventDefault();
+                            this.releaseKey('enter');
+                        }}
+                    >
+                        Enter
+                    </button>
+                </div>
+
+                {this.renderArrowKeys()}
+            </div>
+        );
+    };
+
+    renderArrowKeys = () => (
+        <div className={styles.arrowKeys}>
+            <div className={styles.arrowRow}>
+                {this.renderKeyboardButton(
+                    'up',
+                    '↑'
+                )}
+            </div>
+
+            <div className={styles.arrowRow}>
+                {this.renderKeyboardButton(
+                    'left',
+                    '←'
+                )}
+
+                {this.renderKeyboardButton(
+                    'down',
+                    '↓'
+                )}
+
+                {this.renderKeyboardButton(
+                    'right',
+                    '→'
+                )}
+            </div>
+        </div>
+    );
+
+    renderKeyboard = () => {
+        const rows = [
+            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+            ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+        ];
+
+        return (
+            <div className={styles.keyboardLayout}>
+
+                {rows.map((row, rowIndex) => (
+                    <div
+                        className={styles.keyboardRow}
+                        key={`keyboard-row-${rowIndex}`}
+                    >
+                        {row.map(key =>
+                            this.renderKeyboardButton(
+                                key,
+                                key.toUpperCase()
+                            )
+                        )}
+                    </div>
+                ))}
+
+                <div className={styles.keyboardRow}>
+
+                    <button
+                        className={styles.keyboardKey}
+                        onPointerDown={event => {
+                            event.preventDefault();
+                            this.pressKey('space');
+                        }}
+                        onPointerUp={event => {
+                            event.preventDefault();
+                            this.releaseKey('space');
+                        }}
+                        onPointerCancel={event => {
+                            event.preventDefault();
+                            this.releaseKey('space');
+                        }}
+                    >
+                        Space
+                    </button>
+
+                    <button
+                        className={styles.keyboardKey}
+                        onPointerDown={event => {
+                            event.preventDefault();
+                            this.pressKey('enter');
+                        }}
+                        onPointerUp={event => {
+                            event.preventDefault();
+                            this.releaseKey('enter');
+                        }}
+                        onPointerCancel={event => {
+                            event.preventDefault();
+                            this.releaseKey('enter');
+                        }}
+                    >
+                        Enter
+                    </button>
+
+                    <button
+                        className={styles.keyboardKey}
+                        onPointerDown={event => {
+                            event.preventDefault();
+                            this.toggleKeyboardLayout();
+                        }}
+                    >
+                        123
+                    </button>
+
+                </div>
+
+                {this.renderArrowKeys()}
+
+            </div>
+        );
+    };
+
+    renderKeyboardMode = () => (
+        <div className={styles.keyboardContainer}>
+
+            <div className={styles.keyboardTopRow}>
+
+                <button
+                    className={styles.keyboardLayoutButton}
+                    onPointerDown={event => {
+                        event.preventDefault();
+                        this.toggleKeyboardLayout();
+                    }}
+                >
+                    {this.state.keyboardLayout === 'abc'
+                        ? '123'
+                        : 'ABC'}
+                </button>
+
+            </div>
+
+            {this.state.keyboardLayout === 'abc'
+                ? this.renderKeyboard()
+                : this.renderNumberPad()}
+
+        </div>
+    );
 
     renderGamepad = () => (
-        <div className={styles.gameboyControls}>
+        <div className={styles.gamepad}>
+
             <div className={styles.dpad}>
-                <div className={styles.dpadTop}>
-                    {this.renderButton(
-                        '↑',
-                        'ArrowUp'
-                    )}
-                </div>
+                <button
+                    className={`${styles.dpadButton} ${styles.dpadUp}`}
+                    onPointerDown={() => this.pressKey('up')}
+                    onPointerUp={() => this.releaseKey('up')}
+                    onPointerCancel={() => this.releaseKey('up')}
+                >
+                    ↑
+                </button>
 
-                <div className={styles.dpadMiddle}>
-                    {this.renderButton(
-                        '←',
-                        'ArrowLeft'
-                    )}
+                <button
+                    className={`${styles.dpadButton} ${styles.dpadLeft}`}
+                    onPointerDown={() => this.pressKey('left')}
+                    onPointerUp={() => this.releaseKey('left')}
+                    onPointerCancel={() => this.releaseKey('left')}
+                >
+                    ←
+                </button>
 
-                    <div
-                        ref={this.joystickAreaRef}
-                        className={styles.joystickArea}
-                        onPointerDown={this.handleJoystickPointerDown}
-                        onPointerMove={this.handleJoystickPointerMove}
-                        onPointerUp={this.handleJoystickPointerUp}
-                        onPointerCancel={this.handleJoystickPointerUp}
-                        onLostPointerCapture={this.handleJoystickPointerUp}
+                <button
+                    className={`${styles.dpadButton} ${styles.dpadDown}`}
+                    onPointerDown={() => this.pressKey('down')}
+                    onPointerUp={() => this.releaseKey('down')}
+                    onPointerCancel={() => this.releaseKey('down')}
+                >
+                    ↓
+                </button>
+
+                <button
+                    className={`${styles.dpadButton} ${styles.dpadRight}`}
+                    onPointerDown={() => this.pressKey('right')}
+                    onPointerUp={() => this.releaseKey('right')}
+                    onPointerCancel={() => this.releaseKey('right')}
+                >
+                    →
+                </button>
+            </div>
+
+            <div
+                ref={this.joystickRef}
+                className={styles.joystick}
+                onPointerDown={this.handleJoystickStart}
+                onPointerMove={this.handleJoystickMove}
+                onPointerUp={this.handleJoystickEndAndReset}
+                onPointerCancel={this.handleJoystickEndAndReset}
+                onPointerLeave={event => {
+                    if (event.buttons === 1) {
+                        this.handleJoystickEndAndReset(event);
+                    }
+                }}
+            >
+                <div
+                    className={styles.joystickKnob}
+                />
+            </div>
+
+            <div className={styles.actionButtons}>
+                {['a', 'b', 'c', 'd'].map(key => (
+                    <button
+                        key={key}
+                        className={
+                            styles.actionButton
+                        }
+                        onPointerDown={event => {
+                            event.preventDefault();
+                            this.pressKey(key);
+                        }}
+                        onPointerUp={event => {
+                            event.preventDefault();
+                            this.releaseKey(key);
+                        }}
+                        onPointerCancel={event => {
+                            event.preventDefault();
+                            this.releaseKey(key);
+                        }}
                     >
-                        <div
-                            ref={this.joystickRef}
-                            className={styles.joystick}
-                        />
-                    </div>
-
-                    {this.renderButton(
-                        '→',
-                        'ArrowRight'
-                    )}
-                </div>
-
-                <div className={styles.dpadBottom}>
-                    {this.renderButton(
-                        '↓',
-                        'ArrowDown'
-                    )}
-                </div>
+                        {key.toUpperCase()}
+                    </button>
+                ))}
             </div>
 
-            <div className={styles.abcd}>
-                {this.renderButton(
-                    'A',
-                    ' ',
-                    'Space'
-                )}
-
-                {this.renderButton(
-                    'B',
-                    'Enter',
-                    'Enter'
-                )}
-
-                {this.renderButton(
-                    'C',
-                    'z',
-                    'Z'
-                )}
-
-                {this.renderButton(
-                    'D',
-                    'x',
-                    'X'
-                )}
-            </div>
         </div>
     );
 
-    /*
-     * Custom keyboard
-     */
-
-    renderKeyboard = () => (
-        <div className={styles.keyboard}>
-            <div className={styles.keyboardRow}>
-                {[
-                    ['Q', 'q'],
-                    ['W', 'w'],
-                    ['E', 'e'],
-                    ['R', 'r'],
-                    ['T', 't'],
-                    ['Y', 'y'],
-                    ['U', 'u'],
-                    ['I', 'i'],
-                    ['O', 'o'],
-                    ['P', 'p']
-                ].map(([label, key]) => (
-                    <React.Fragment key={key}>
-                        {this.renderKeyboardKey(label, key)}
-                    </React.Fragment>
-                ))}
-            </div>
-
-            <div className={styles.keyboardRow}>
-                {[
-                    ['A', 'a'],
-                    ['S', 's'],
-                    ['D', 'd'],
-                    ['F', 'f'],
-                    ['G', 'g'],
-                    ['H', 'h'],
-                    ['J', 'j'],
-                    ['K', 'k'],
-                    ['L', 'l']
-                ].map(([label, key]) => (
-                    <React.Fragment key={key}>
-                        {this.renderKeyboardKey(label, key)}
-                    </React.Fragment>
-                ))}
-            </div>
-
-            <div className={styles.keyboardRow}>
-                {[
-                    ['Z', 'z'],
-                    ['X', 'x'],
-                    ['C', 'c'],
-                    ['V', 'v'],
-                    ['B', 'b'],
-                    ['N', 'n'],
-                    ['M', 'm']
-                ].map(([label, key]) => (
-                    <React.Fragment key={key}>
-                        {this.renderKeyboardKey(label, key)}
-                    </React.Fragment>
-                ))}
-            </div>
-
-            <div className={styles.keyboardBottomRow}>
-                {this.renderKeyboardKey(
-                    'Space',
-                    ' ',
-                    styles.spaceKey
-                )}
-
-                {this.renderKeyboardKey(
-                    'Enter',
-                    'Enter',
-                    styles.enterKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '←',
-                    'ArrowLeft',
-                    styles.arrowKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '↑',
-                    'ArrowUp',
-                    styles.arrowKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '↓',
-                    'ArrowDown',
-                    styles.arrowKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '→',
-                    'ArrowRight',
-                    styles.arrowKey
-                )}
-            </div>
-        </div>
-    );
-
-    render() {
-        const {
-            theme
-        } = this.props;
-
+    render () {
         const {
             controlMode
         } = this.state;
 
-        const isDark = theme.gui === GUI_DARK;
-        const isKeyboard = controlMode === 'keyboard';
-
         return (
-            <div
-                className={`${styles.mobileControls} ${
-                    isDark ? styles.dark : styles.light
-                }`}
-            >
-                <div className={styles.controls}>
-                    <button
-                        type="button"
-                        className={styles.keyboardInput}
-                        onPointerDown={this.toggleControlMode}
-                        aria-label={
-                            isKeyboard ?
-                                'Switch to gamepad controls' :
-                                'Switch to keyboard controls'
-                        }
-                    >
-                        {isKeyboard ? 'Use Gamepad' : 'Use Keyboard'}
-                    </button>
+            <div className={styles.mobileControls}>
 
-                    {isKeyboard ?
-                        this.renderKeyboard() :
-                        this.renderGamepad()}
-                </div>
+                <button
+                    className={styles.modeToggle}
+                    onPointerDown={event => {
+                        event.preventDefault();
+
+                        this.setControlMode(
+                            controlMode === 'gamepad'
+                                ? 'keyboard'
+                                : 'gamepad'
+                        );
+                    }}
+                >
+                    {controlMode === 'gamepad'
+                        ? 'Use your Keyboard'
+                        : 'Use Gamepad'}
+                </button>
+
+                {controlMode === 'gamepad'
+                    ? this.renderGamepad()
+                    : this.renderKeyboardMode()}
+
             </div>
         );
     }
 }
 
-MobileControls.propTypes = {
-    vm: PropTypes.object,
-    theme: PropTypes.object
-};
-
-const mapStateToProps = state => ({
-    theme: state.scratchGui.theme.theme
-});
-
-export default connect(mapStateToProps)(MobileControls);
+export default MobileControls;
