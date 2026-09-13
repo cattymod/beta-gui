@@ -304,8 +304,11 @@ class Interface extends React.Component {
     {...props}
 />
 
-{isFullScreen && props.vm && !isLoading &&
-    ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? (
+{isFullScreen &&
+    props.vm &&
+    !isLoading &&
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0) &&
+    localStorage.getItem('cattymod:mobileTouchControls') !== 'false' ? (
     <MobileControls vm={props.vm} />
 ) : null} {isHomepage ? (
                         <React.Fragment>
