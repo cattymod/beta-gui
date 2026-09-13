@@ -304,7 +304,8 @@ class Interface extends React.Component {
     {...props}
 />
 
-{isFullScreen && props.vm && !isLoading ? (
+{isFullScreen && props.vm && !isLoading &&
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? (
     <MobileControls vm={props.vm} />
 ) : null} {isHomepage ? (
                         <React.Fragment>
