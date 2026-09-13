@@ -304,7 +304,7 @@ class Interface extends React.Component {
     {...props}
 />
 
-{isFullScreen && props.vm ? (
+{isFullScreen && props.vm && !isLoading ? (
     <MobileControls vm={props.vm} />
 ) : null} {isHomepage ? (
                         <React.Fragment>
