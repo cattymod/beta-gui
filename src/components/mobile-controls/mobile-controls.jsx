@@ -431,7 +431,7 @@ class MobileControls extends React.Component {
      */
 
     renderGamepad = () => (
-        <div className={styles.gameboyControls}>
+        <div className={styles.gamepadControls}>
             <div className={styles.dpad}>
                 <div className={styles.dpadTop}>
                     {this.renderButton(
