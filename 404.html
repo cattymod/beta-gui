@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>404 Not Found</title>
+    <!-- CattyMod navbar -->
+    <script src="https://cattymod.app/assets/navbar.js" defer></script>
+    
+    <style>
+      :root {
+        --scratch-blue: #4D97FF;
+        --scratch-blue-dark: #3373CC;
+        --background: #ffffff;
+        --text: #575E75;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background: var(--background);
+        color: var(--text);
+      }
+
+      /*
+     * The CattyMod navbar is injected at the very top
+     * of 
+						<body> by navbar.js.
+     */
+      header {
+        background: var(--scratch-blue);
+        color: #ffffff;
+        text-align: center;
+        padding: 40px 16px 40px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        line-height: 1.2;
+      }
+
+      main {
+        max-width: 600px;
+        /*
+       * Push the 404 message farther down from the header.
+       */
+        margin: 25px auto 60px;
+        padding: 0 20px;
+        line-height: 1.6;
+      }
+
+      main p {
+        margin: 0 0 20px;
+      }
+
+      a {
+        color: var(--scratch-blue-dark);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #111827;
+          --text: #e5e7eb;
+        }
+
+        body {
+          background: var(--background);
+          color: var(--text);
+        }
+
+        /*
+       * Keep the header blue in dark mode too.
+       * No body background is exposed above it.
+       */
+        header {
+          background: var(--scratch-blue-dark);
+        }
+
+        a {
+          color: #7db8ff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- navbar.js automatically inserts the CattyMod navbar here -->
+    <header>
+      <h1>404 Not Found</h1>
+    </header>
+    <main>
+      <p>Sorry, it looks like that page doesn't exist.</p>
+      <p> Perhaps you should <a href="/">go back to the homepage</a>? </p>
+      <p> If you believe you're seeing this message in error, please <a href="https://scratch.mit.edu/projects/1335032585/"> let me know</a>. </p>
+    </main>
+  </body>
+</html>
