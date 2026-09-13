@@ -23,6 +23,10 @@ class MobileControls extends React.Component {
         this.releaseJoystickKey();
     }
 
+    /*
+     * Keyboard input
+     */
+
     pressKey = key => {
         const {vm} = this.props;
 
@@ -57,20 +61,16 @@ class MobileControls extends React.Component {
         }, 50);
     };
 
-    handleKeyboardInput = event => {
-        const input = event.currentTarget;
-        const value = input.value;
+    handleKeyboardKeyDown = event => {
+        event.preventDefault();
 
-        if (!value) {
-            return;
-        }
+        this.pressKey(event.key);
+    };
 
-        for (const character of value) {
-            this.tapKey(character);
-        }
+    handleKeyboardKeyUp = event => {
+        event.preventDefault();
 
-        // Read the characters first, then clear the input.
-        input.value = '';
+        this.releaseKey(event.key);
     };
 
     handleKeyboardPointerDown = event => {
@@ -92,6 +92,10 @@ class MobileControls extends React.Component {
             preventScroll: true
         });
     };
+
+    /*
+     * Buttons
+     */
 
     handleButtonPointerDown = (key, event) => {
         event.preventDefault();
@@ -330,7 +334,8 @@ class MobileControls extends React.Component {
                         autoCapitalize="off"
                         spellCheck={false}
                         inputMode="text"
-                        onInput={this.handleKeyboardInput}
+                        onKeyDown={this.handleKeyboardKeyDown}
+                        onKeyUp={this.handleKeyboardKeyUp}
                         onPointerDown={this.handleKeyboardPointerDown}
                         aria-label="Use your Keyboard"
                     />
