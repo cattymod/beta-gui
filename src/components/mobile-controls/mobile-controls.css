@@ -89,7 +89,7 @@
      * A/B/C/D on the right
      */
 
-    .gameboyControls {
+    .gamepadControls {
         display: flex;
         flex-direction: row;
 
