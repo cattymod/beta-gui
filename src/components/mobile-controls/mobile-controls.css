@@ -33,7 +33,10 @@
     }
 
     /*
-     * Visible keyboard input
+     * Control mode button
+     *
+     * This stays in the same place where the old
+     * keyboard input was.
      */
 
     .keyboardInput {
@@ -59,21 +62,24 @@
 
         outline: none;
 
+        cursor: pointer;
+
         touch-action: manipulation;
 
-        user-select: text;
-        -webkit-user-select: text;
+        user-select: none;
+        -webkit-user-select: none;
 
         -webkit-tap-highlight-color: transparent;
+
+        transition:
+            transform 0.04s ease,
+            box-shadow 0.04s ease;
     }
 
-    .keyboardInput::placeholder {
-        color: #777;
-        opacity: 1;
-    }
+    .keyboardInput:active {
+        transform: translateY(4px);
 
-    .keyboardInput:focus {
-        border-color: #999;
+        box-shadow: 0 0 0 #b8b8b8;
     }
 
     /*
@@ -216,9 +222,6 @@
 
     /*
      * A/B/C/D labels
-     *
-     * Keep the main letter large and the
-     * keyboard mapping underneath it small.
      */
 
     .abcd .label {
@@ -318,6 +321,117 @@
     }
 
     /*
+     * Custom keyboard
+     */
+
+    .keyboard {
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        width: min(520px, 96vw);
+
+        gap: 7px;
+
+        touch-action: none;
+
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .keyboardRow {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        width: 100%;
+    }
+
+    .keyboardBottomRow {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 6px;
+
+        width: 100%;
+
+        margin-top: 2px;
+    }
+
+    .keyboardKey {
+        box-sizing: border-box;
+
+        min-width: 30px;
+        height: 44px;
+
+        flex: 1 1 0;
+
+        margin: 0;
+        padding: 0 5px;
+
+        border: 1px solid #d0d0d0;
+        border-radius: 7px;
+
+        background: #fff;
+        color: #111;
+
+        box-shadow: 0 4px 0 #b8b8b8;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        touch-action: none;
+
+        user-select: none;
+        -webkit-user-select: none;
+
+        -webkit-tap-highlight-color: transparent;
+
+        transition:
+            transform 0.04s ease,
+            box-shadow 0.04s ease;
+    }
+
+    .keyboardKey.pressed {
+        transform: translateY(4px);
+
+        box-shadow: 0 0 0 #b8b8b8;
+    }
+
+    /*
+     * Special keyboard keys
+     */
+
+    .spaceKey {
+        flex: 4 1 0;
+    }
+
+    .enterKey {
+        flex: 2 1 0;
+    }
+
+    .arrowKey {
+        flex: 0 0 44px;
+
+        font-size: 20px;
+    }
+
+    /*
      * Light mode
      */
 
@@ -337,7 +451,7 @@
     }
 
     /*
-     * Dark mode keyboard input
+     * Dark mode control switch
      */
 
     .dark .keyboardInput {
@@ -349,12 +463,8 @@
         box-shadow: 0 4px 0 #777;
     }
 
-    .dark .keyboardInput::placeholder {
-        color: #666;
-    }
-
     /*
-     * Dark mode buttons
+     * Dark mode physical buttons
      */
 
     .dark .button {
@@ -367,6 +477,23 @@
     }
 
     .dark .pressed {
+        box-shadow: 0 0 0 #777;
+    }
+
+    /*
+     * Dark mode custom keyboard
+     */
+
+    .dark .keyboardKey {
+        border-color: #444;
+
+        background: #fff;
+        color: #111;
+
+        box-shadow: 0 4px 0 #777;
+    }
+
+    .dark .keyboardKey.pressed {
         box-shadow: 0 0 0 #777;
     }
 }
