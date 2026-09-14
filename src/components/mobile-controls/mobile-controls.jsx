@@ -746,7 +746,7 @@ class MobileControls extends React.Component {
                         {isKeyboard ? (
                             <button
                                 type="button"
-                                className={styles.keyboardLayoutButton}
+                                className={styles.keyboardKey}
                                 onPointerDown={this.toggleKeyboardLayout}
                                 aria-label={
                                     keyboardLayout === 'abc' ?
