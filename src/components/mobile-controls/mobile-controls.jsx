@@ -718,6 +718,25 @@ class MobileControls extends React.Component {
         const isDark = theme.gui === GUI_DARK;
         const isKeyboard = controlMode === 'keyboard';
 
+        /*
+         * The wrapper below is inline-flex so the existing
+         * keyboardInput keeps its normal sizing and position,
+         * while the 123/ABC key sits directly beside it.
+         *
+         * No CSS changes are required.
+         */
+        const modeButtonWrapperStyle = isKeyboard ? {
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            marginBottom: '16px'
+        } : null;
+
+        const keyboardInputStyle = isKeyboard ? {
+            marginBottom: '0'
+        } : null;
+
         return (
             <div
                 className={`${styles.mobileControls} ${
@@ -725,14 +744,11 @@ class MobileControls extends React.Component {
                 }`}
             >
                 <div className={styles.controls}>
-                    <div className={
-                        isKeyboard ?
-                            styles.keyboardModeButtons :
-                            styles.controlModeButtons
-                    }>
+                    <div style={modeButtonWrapperStyle}>
                         <button
                             type="button"
                             className={styles.keyboardInput}
+                            style={keyboardInputStyle}
                             onPointerDown={this.toggleControlMode}
                             aria-label={
                                 isKeyboard ?
