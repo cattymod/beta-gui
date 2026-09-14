@@ -11,6 +11,7 @@ class MobileControls extends React.Component {
 
         this.state = {
             controlMode: 'gamepad',
+            keyboardLayout: 'abc',
             joystickDirections: [],
             joystickActive: false
         };
@@ -120,6 +121,22 @@ class MobileControls extends React.Component {
     };
 
     /*
+     * Switch between ABC and 123 keyboard layouts.
+     */
+
+    toggleKeyboardLayout = event => {
+        event.preventDefault();
+
+        this.releaseKeyboardKeys();
+
+        this.setState(previousState => ({
+            keyboardLayout: previousState.keyboardLayout === 'abc' ?
+                'numbers' :
+                'abc'
+        }));
+    };
+
+    /*
      * Switch between gamepad and keyboard.
      */
 
@@ -133,6 +150,7 @@ class MobileControls extends React.Component {
             controlMode: previousState.controlMode === 'gamepad' ?
                 'keyboard' :
                 'gamepad',
+            keyboardLayout: 'abc',
             joystickActive: false
         }));
 
@@ -191,7 +209,9 @@ class MobileControls extends React.Component {
             onPointerDown={event => this.handleButtonPointerDown(key, event)}
             onPointerUp={event => this.handleButtonPointerUp(key, event)}
             onPointerCancel={event => this.handleButtonPointerCancel(key, event)}
-            onLostPointerCapture={event => this.handleButtonLostPointerCapture(key, event)}
+            onLostPointerCapture={
+                event => this.handleButtonLostPointerCapture(key, event)
+            }
         >
             <span className={styles.label}>
                 {label}
@@ -504,11 +524,11 @@ class MobileControls extends React.Component {
     );
 
     /*
-     * Custom keyboard
+     * Regular ABC keyboard
      */
 
-    renderKeyboard = () => (
-        <div className={styles.keyboard}>
+    renderAbcKeyboard = () => (
+        <>
             <div className={styles.keyboardRow}>
                 {[
                     ['Q', 'q'],
@@ -561,46 +581,129 @@ class MobileControls extends React.Component {
                     </React.Fragment>
                 ))}
             </div>
-
-            <div className={styles.keyboardBottomRow}>
-                {this.renderKeyboardKey(
-                    'Space',
-                    ' ',
-                    styles.spaceKey
-                )}
-
-                {this.renderKeyboardKey(
-                    'Enter',
-                    'Enter',
-                    styles.enterKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '←',
-                    'ArrowLeft',
-                    styles.arrowKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '↑',
-                    'ArrowUp',
-                    styles.arrowKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '↓',
-                    'ArrowDown',
-                    styles.arrowKey
-                )}
-
-                {this.renderKeyboardKey(
-                    '→',
-                    'ArrowRight',
-                    styles.arrowKey
-                )}
-            </div>
-        </div>
+        </>
     );
+
+    /*
+     * Number / symbol keyboard
+     */
+
+    renderNumberKeyboard = () => (
+        <>
+            <div className={styles.keyboardRow}>
+                {[
+                    ['1', '1'],
+                    ['2', '2'],
+                    ['3', '3'],
+                    ['4', '4'],
+                    ['5', '5'],
+                    ['6', '6'],
+                    ['7', '7'],
+                    ['8', '8'],
+                    ['9', '9'],
+                    ['0', '0']
+                ].map(([label, key]) => (
+                    <React.Fragment key={key}>
+                        {this.renderKeyboardKey(label, key)}
+                    </React.Fragment>
+                ))}
+            </div>
+
+            <div className={styles.keyboardRow}>
+                {[
+                    ['-', '-'],
+                    ['_', '_'],
+                    ['+', '+'],
+                    ['=', '='],
+                    ['*', '*'],
+                    ['/', '/'],
+                    ['%', '%'],
+                    ['#', '#'],
+                    ['@', '@']
+                ].map(([label, key]) => (
+                    <React.Fragment key={key}>
+                        {this.renderKeyboardKey(label, key)}
+                    </React.Fragment>
+                ))}
+            </div>
+
+            <div className={styles.keyboardRow}>
+                {[
+                    ['!', '!'],
+                    ['?', '?'],
+                    ['.', '.'],
+                    [',', ','],
+                    [':', ':'],
+                    [';', ';'],
+                    ['(', '('],
+                    [')', ')'],
+                    ['&', '&']
+                ].map(([label, key]) => (
+                    <React.Fragment key={key}>
+                        {this.renderKeyboardKey(label, key)}
+                    </React.Fragment>
+                ))}
+            </div>
+        </>
+    );
+
+    /*
+     * Custom keyboard
+     */
+
+    renderKeyboard = () => {
+        const {
+            keyboardLayout
+        } = this.state;
+
+        const isNumberKeyboard = keyboardLayout === 'numbers';
+
+        return (
+            <div className={styles.keyboard}>
+                {isNumberKeyboard ?
+                    this.renderNumberKeyboard() :
+                    this.renderAbcKeyboard()}
+
+                <div className={styles.keyboardBottomRow}>
+                    {this.renderKeyboardKey(
+                        'Space',
+                        ' ',
+                        styles.spaceKey
+                    )}
+
+                    {this.renderKeyboardKey(
+                        'Enter',
+                        'Enter',
+                        styles.enterKey
+                    )}
+
+                    {this.renderKeyboardKey(
+                        '←',
+                        'ArrowLeft',
+                        styles.arrowKey
+                    )}
+
+                    {this.renderKeyboardKey(
+                        '↑',
+                        'ArrowUp',
+                        styles.arrowKey
+                    )}
+
+                    {this.renderKeyboardKey(
+                        '↓',
+                        'ArrowDown',
+                        styles.arrowKey
+                    )}
+
+                    {this.renderKeyboardKey(
+                        '→',
+                        'ArrowRight',
+                        styles.arrowKey
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     render() {
         const {
@@ -608,7 +711,8 @@ class MobileControls extends React.Component {
         } = this.props;
 
         const {
-            controlMode
+            controlMode,
+            keyboardLayout
         } = this.state;
 
         const isDark = theme.gui === GUI_DARK;
@@ -621,18 +725,39 @@ class MobileControls extends React.Component {
                 }`}
             >
                 <div className={styles.controls}>
-                    <button
-                        type="button"
-                        className={styles.keyboardInput}
-                        onPointerDown={this.toggleControlMode}
-                        aria-label={
-                            isKeyboard ?
-                                'Switch to gamepad controls' :
-                                'Switch to keyboard controls'
-                        }
-                    >
-                        {isKeyboard ? 'Use Gamepad' : 'Use Keyboard'}
-                    </button>
+                    <div className={
+                        isKeyboard ?
+                            styles.keyboardModeButtons :
+                            styles.controlModeButtons
+                    }>
+                        <button
+                            type="button"
+                            className={styles.keyboardInput}
+                            onPointerDown={this.toggleControlMode}
+                            aria-label={
+                                isKeyboard ?
+                                    'Switch to gamepad controls' :
+                                    'Switch to keyboard controls'
+                            }
+                        >
+                            {isKeyboard ? 'Use Gamepad' : 'Use Keyboard'}
+                        </button>
+
+                        {isKeyboard ? (
+                            <button
+                                type="button"
+                                className={styles.keyboardLayoutButton}
+                                onPointerDown={this.toggleKeyboardLayout}
+                                aria-label={
+                                    keyboardLayout === 'abc' ?
+                                        'Switch to number keyboard' :
+                                        'Switch to letter keyboard'
+                                }
+                            >
+                                {keyboardLayout === 'abc' ? '123' : 'ABC'}
+                            </button>
+                        ) : null}
+                    </div>
 
                     {isKeyboard ?
                         this.renderKeyboard() :
