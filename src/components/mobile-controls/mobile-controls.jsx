@@ -737,6 +737,15 @@ class MobileControls extends React.Component {
             marginBottom: '0'
         } : null;
 
+        /*
+         * Keep the 123/ABC button the exact same width
+         * regardless of which label is currently displayed.
+         */
+        const keyboardLayoutButtonStyle = {
+            width: '3.5em',
+            minWidth: '3.5em'
+        };
+
         return (
             <div
                 className={`${styles.mobileControls} ${
@@ -763,6 +772,7 @@ class MobileControls extends React.Component {
                             <button
                                 type="button"
                                 className={styles.keyboardKey}
+                                style={keyboardLayoutButtonStyle}
                                 onPointerDown={this.toggleKeyboardLayout}
                                 aria-label={
                                     keyboardLayout === 'abc' ?
