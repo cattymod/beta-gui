@@ -3,7 +3,7 @@
 .wrapper {
     background-color: $menu-bar-background;
     width: 480px;
-    height: 360px;
+    height: 405px;
     display: flex;
     overflow: auto;
 }
