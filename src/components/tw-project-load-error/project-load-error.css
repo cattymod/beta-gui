@@ -2,8 +2,8 @@
 
 .wrapper {
     background-color: $menu-bar-background;
-    width: 480px;
-    height: 405px;
+    width: 482px;
+    height: 405.5px;
     display: flex;
     overflow: auto;
 }
