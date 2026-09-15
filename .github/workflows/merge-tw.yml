@@ -1,0 +1,35 @@
+name: Merge TurboWarp develop
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout beta-gui
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Fetch TurboWarp develop
+        run: |
+          git fetch https://github.com/TurboWarp/scratch-gui.git develop
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge TurboWarp
+        run: |
+          git merge FETCH_HEAD --no-edit -X theirs
+
+      - name: Push merged develop
+        run: |
+          git push origin develop
