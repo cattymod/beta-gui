@@ -6,8 +6,9 @@ import Box from '../box/box.jsx';
 import {ProjectUnavailableLegalReasons, ProjectUnsharedError} from '../../lib/tw-load-project-error';
 
 import styles from './project-load-error.css';
+import reloadIcon from '../crash-message/reload.svg';
 
-const UNSHARED_DOCS = 'https://docs.turbowarp.org/unshared-projects';
+const UNSHARED_DOCS = 'https://cattymod.app/docs/unshared-projects';
 
 const isSafeURL = url => {
     try {
@@ -136,6 +137,11 @@ const ProjectLoadError = ({error, isFullScreen}) => (
         })}
     >
         <Box className={styles.body}>
+            <img
+                className={styles.reloadIcon}
+                src={reloadIcon}
+                draggable={false}
+            />
             {error instanceof ProjectUnavailableLegalReasons ? (
                 <UnavailableLegalReasonsMessage moreUrl={error.moreUrl} />
             ) : (
