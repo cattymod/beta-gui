@@ -336,8 +336,7 @@ class Interface extends React.Component {
                                 <p>
                                     <FormattedMessage
                                         // eslint-disable-next-line max-len
-                                        defaultMessage="{APP_NAME} is a Scratch mod that compiles projects to JavaScript to make them run really fast. Try it out by inputting a project ID or URL above or choosing a featured project below."
-                                        description="Description of TurboWarp on the homepage"
+                                        defaultMessage="{APP_NAME} is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below."                                        description="Description of TurboWarp on the homepage"
                                         id="tw.home.description"
                                         values={{
                                             APP_NAME
