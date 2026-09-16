@@ -15,6 +15,18 @@ export default async function ({ addon, console }) {
   // document.fullscreenElement is updated. We want to ignore that event.
   let isEnteringFullscreen = false;
 
+  // Change the fullscreen page back to the correct Player or Editor page.
+  // addon.tab.editorMode tells us whether we are in the editor.
+  // search and hash are preserved.
+  function exitFullscreenPage() {
+    const targetPath = addon.tab.editorMode ? "/editor" : "/";
+    const { search, hash } = window.location;
+
+    if (window.location.pathname === "/fullscreen") {
+      window.history.replaceState(null, "", targetPath + search + hash);
+    }
+  }
+
   // "Browser fullscreen" is defined as the mode that hides the browser UI.
   function updateBrowserFullscreen() {
     if (addon.settings.get("browserFullscreen") && !addon.self.disabled) {
@@ -81,6 +93,7 @@ export default async function ({ addon, console }) {
           header.classList.add("stage-header-hover");
         }
       });
+
       // and for when the mouse re-enters the page
       document.body.addEventListener("mouseenter", () => {
         header.classList.remove("stage-header-hover");
@@ -119,16 +132,19 @@ export default async function ({ addon, console }) {
   let monitorScaler, resizeObserver, stage;
   async function initScaler() {
     monitorScaler = await addon.tab.waitForElement("[class*=monitor-list_monitor-list-scaler]");
-    stage = await addon.tab.waitForElement('[class*="stage-wrapper_full-screen"] [class*="stage_stage"] canvas');
+    stage = await addon.tab.waitForElement('[class*="stage-wrapper_full-screen"] [class*="stage_stage"] canvas");
     resizeObserver = new ResizeObserver(() => {
       const stageSize = stage.getBoundingClientRect();
+
       // When switching between project page and editor, the canvas
       // is removed from the DOM and inserted again in a different place.
       // This causes the size to be reported as 0x0.
       if (!stageSize.width || !stageSize.height) return;
+
       // Width and height attributes of the canvas need to match the actual size.
       const renderer = addon.tab.traps.vm.runtime.renderer;
       if (renderer) renderer.resize(stageSize.width, stageSize.height);
+
       // Scratch uses the `transform` CSS property on a stage overlay element
       // to control the scaling of variable monitors.
       const scale = stageSize.width / vm.runtime.stageWidth;
@@ -149,18 +165,27 @@ export default async function ({ addon, console }) {
   addon.tab.redux.initialize();
   addon.tab.redux.addEventListener("statechanged", (e) => {
     if (e.detail.action.type === "scratch-gui/mode/SET_FULL_SCREEN") {
+      const wasFullscreen = e.detail.action.isFullScreen;
+
       initScaler();
       updateBrowserFullscreen();
       setPageScrollbar();
       updatePhantomHeader();
+
+      // Only change the URL when fullscreen is being turned off.
+      if (!wasFullscreen) {
+        exitFullscreenPage();
+      }
     }
   });
+
   // Changing to or from browser fullscreen is signified by a window resize.
   window.addEventListener("resize", () => {
     if (!isEnteringFullscreen) {
       updateScratchFullscreen();
     }
   });
+
   // Handles the case of F11 full screen AND document full screen being enabled
   // at the same time.
   document.addEventListener("fullscreenchange", () => {
@@ -170,19 +195,26 @@ export default async function ({ addon, console }) {
         isFullScreen: false,
       });
     }
+
+    // Browser fullscreen was exited.
+    if (document.fullscreenElement === null) {
+      exitFullscreenPage();
+    }
   });
 
   // These handle the case of the user already being in Scratch fullscreen
-  // (without being in browser fullscreen) when the addon or sync option are
-  // dynamically enabled.
+  // (without being in browser fullscreen) when the addon or sync option
+  // is dynamically enabled.
   addon.settings.addEventListener("change", () => {
     updateBrowserFullscreen();
     updatePhantomHeader();
   });
+
   addon.self.addEventListener("disabled", () => {
     resizeObserver.disconnect();
     updatePhantomHeader();
   });
+
   addon.self.addEventListener("reenabled", () => {
     resizeObserver.observe(stage);
     updateBrowserFullscreen();
