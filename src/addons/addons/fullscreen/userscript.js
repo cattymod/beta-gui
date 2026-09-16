@@ -4,38 +4,49 @@
  */
 export default async function ({ addon, console }) {
   const vm = addon.tab.traps.vm;
+
   const updateStageSize = () => {
-    document.documentElement.style.setProperty("--sa-fullscreen-width", vm.runtime.stageWidth);
-    document.documentElement.style.setProperty("--sa-fullscreen-height", vm.runtime.stageHeight);
+    document.documentElement.style.setProperty(
+      "--sa-fullscreen-width",
+      vm.runtime.stageWidth
+    );
+    document.documentElement.style.setProperty(
+      "--sa-fullscreen-height",
+      vm.runtime.stageHeight
+    );
   };
+
   updateStageSize();
   vm.on("STAGE_SIZE_CHANGED", updateStageSize);
 
-  // In Electron, after running requestFullscreen() a resize event can be fired before
-  // document.fullscreenElement is updated. We want to ignore that event.
+  // In Electron, after running requestFullscreen() a resize event can be fired
+  // before document.fullscreenElement is updated. We want to ignore that event.
   let isEnteringFullscreen = false;
 
-  // Remember whether fullscreen was entered from the editor or player.
-  // addon.tab.editorMode is "editor", "projectpage", "fullscreen", etc.
+  // The pathname that existed BEFORE Scratch changes the URL to /fullscreen.
+  // This intentionally contains no search parameters or hash.
   let fullscreenOrigin = null;
 
-  function updateFullscreenOrigin() {
-    if (addon.tab.editorMode === "editor") {
-      fullscreenOrigin = "editor";
-    } else if (addon.tab.editorMode === "projectpage") {
-      fullscreenOrigin = "player";
+  // Capture the current URL before Scratch changes it to /fullscreen.
+  function saveFullscreenOrigin() {
+    if (window.location.pathname !== "/fullscreen") {
+      fullscreenOrigin = window.location.pathname;
     }
   }
 
-  // When leaving fullscreen, return to the page we came from.
-  // Keep the existing query parameters and hash.
+  // When leaving fullscreen, return to the URL path we saved before entering.
+  // The current query parameters and hash are appended afterward.
   function exitFullscreenPage() {
     if (window.location.pathname !== "/fullscreen") return;
+    if (!fullscreenOrigin) return;
 
-    const targetPath = fullscreenOrigin === "editor" ? "/editor" : "/";
     const { search, hash } = window.location;
 
-    window.history.replaceState(null, "", targetPath + search + hash);
+    window.history.replaceState(
+      null,
+      "",
+      fullscreenOrigin + search + hash
+    );
 
     fullscreenOrigin = null;
   }
@@ -49,11 +60,13 @@ export default async function ({ addon, console }) {
         addon.tab.redux.state.scratchGui.mode.isFullScreen &&
         document.fullscreenElement === null
       ) {
-        // Capture whether we're in the editor or player before Scratch changes
-        // editorMode to "fullscreen".
-        updateFullscreenOrigin();
+        // IMPORTANT:
+        // Save the URL BEFORE entering browser fullscreen.
+        // Scratch may change the URL to /fullscreen during this process.
+        saveFullscreenOrigin();
 
         isEnteringFullscreen = true;
+
         document.documentElement
           .requestFullscreen()
           .then(() => {
@@ -101,16 +114,19 @@ export default async function ({ addon, console }) {
       const canvas = await addon.tab.waitForElement(
         '[class*="stage_full-screen"] canvas'
       );
+
       const header = await addon.tab.waitForElement(
         '[class^="stage-header_stage-header-wrapper"]'
       );
+
       const phantom = header.parentElement.appendChild(
         document.createElement("div")
       );
+
       phantom.classList.add("phantom-header");
 
-      // Make the header a child of the phantom, so that mouseleave will trigger when the
-      // mouse leaves the header OR the phantom header.
+      // Make the header a child of the phantom, so that mouseleave will trigger
+      // when the mouse leaves the header OR the phantom header.
       phantom.appendChild(header);
 
       phantom.addEventListener("mouseenter", () => {
@@ -121,19 +137,21 @@ export default async function ({ addon, console }) {
         header.classList.remove("stage-header-hover");
       });
 
-      // Listen for when the mouse moves above the page (helps to show header when not in browser full screen mode)
+      // Listen for when the mouse moves above the page
+      // (helps to show header when not in browser full screen mode)
       document.body.addEventListener("mouseleave", (e) => {
         if (e.clientY < 8) {
           header.classList.add("stage-header-hover");
         }
       });
 
-      // And for when the mouse re-enters the page.
+      // And when the mouse re-enters the page.
       document.body.addEventListener("mouseenter", () => {
         header.classList.remove("stage-header-hover");
       });
 
-      // Pass click events on the phantom header onto the project player, essentially making it click-through.
+      // Pass click events on the phantom header onto the project player,
+      // essentially making it click-through.
       [
         "mousedown",
         "mousemove",
@@ -156,6 +174,7 @@ export default async function ({ addon, console }) {
 
       if (header.parentElement.classList.contains("phantom-header")) {
         const phantom = header.parentElement;
+
         phantom.parentElement.appendChild(header);
         phantom.remove();
       }
@@ -182,7 +201,6 @@ export default async function ({ addon, console }) {
       "[class*=monitor-list_monitor-list-scaler]"
     );
 
-    // Fixed: matching single quotes at both ends.
     stage = await addon.tab.waitForElement(
       '[class*="stage-wrapper_full-screen"] [class*="stage_stage"] canvas'
     );
@@ -205,6 +223,7 @@ export default async function ({ addon, console }) {
       // Scratch uses the transform CSS property on a stage overlay element
       // to control the scaling of variable monitors.
       const scale = stageSize.width / vm.runtime.stageWidth;
+
       monitorScaler.style.transform = `scale(${scale}, ${scale})`;
     });
 
@@ -229,9 +248,12 @@ export default async function ({ addon, console }) {
     ) {
       const wasFullscreen = e.detail.action.isFullScreen;
 
-      // Capture the origin before Scratch changes editorMode to "fullscreen".
       if (wasFullscreen) {
-        updateFullscreenOrigin();
+        // Save the URL BEFORE Scratch switches to /fullscreen.
+        //
+        // This state change is triggered while Scratch is entering
+        // fullscreen, so capture the pathname immediately here.
+        saveFullscreenOrigin();
       }
 
       initScaler();
