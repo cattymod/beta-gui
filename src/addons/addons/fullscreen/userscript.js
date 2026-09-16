@@ -19,28 +19,83 @@ export default async function ({ addon, console }) {
   updateStageSize();
   vm.on("STAGE_SIZE_CHANGED", updateStageSize);
 
-  // In Electron, after running requestFullscreen() a resize event can be fired
-  // before document.fullscreenElement is updated. We want to ignore that event.
+  // In Electron, after running requestFullscreen() a resize event can be fired before
+  // document.fullscreenElement is updated. We want to ignore that event.
   let isEnteringFullscreen = false;
 
-  // The pathname that existed BEFORE Scratch changes the URL to /fullscreen.
-  // This intentionally contains no search parameters or hash.
+  // URL that existed immediately BEFORE Scratch changed the URL to /fullscreen.
+  // This only stores the pathname, so it never contains ?parameters or #hash.
   let fullscreenOrigin = null;
 
-  // Capture the current URL before Scratch changes it to /fullscreen.
-  function saveFullscreenOrigin() {
-    if (window.location.pathname !== "/fullscreen") {
-      fullscreenOrigin = window.location.pathname;
+  /*
+   * Scratch changes the URL to /fullscreen itself.
+   *
+   * There is no browser API such as history.previousURL, so intercept
+   * pushState() and replaceState() before Scratch gets to them.
+   *
+   * This lets us see the old URL while window.location still contains
+   * the URL from before fullscreen.
+   */
+  const originalPushState = window.history.pushState;
+  const originalReplaceState = window.history.replaceState;
+
+  function getNavigationURL(url) {
+    if (url == null) return null;
+
+    try {
+      return new URL(url, window.location.href);
+    } catch {
+      return null;
     }
   }
 
-  // When leaving fullscreen, return to the URL path we saved before entering.
-  // The current query parameters and hash are appended afterward.
+  function interceptHistoryChange(original, state, title, url) {
+    const nextURL = getNavigationURL(url);
+
+    // Scratch's fullscreen URL is /fullscreen.
+    if (
+      nextURL &&
+      nextURL.pathname === "/fullscreen" &&
+      window.location.pathname !== "/fullscreen"
+    ) {
+      // IMPORTANT:
+      // window.location is still the URL from BEFORE Scratch changes it.
+      //
+      // Only save the pathname. Search parameters and hash are intentionally
+      // not saved here because they will be taken from the fullscreen URL
+      // when fullscreen is exited.
+      fullscreenOrigin = window.location.pathname;
+    }
+
+    return original.call(window.history, state, title, url);
+  }
+
+  window.history.pushState = function (state, title, url) {
+    return interceptHistoryChange(
+      originalPushState,
+      state,
+      title,
+      url
+    );
+  };
+
+  window.history.replaceState = function (state, title, url) {
+    return interceptHistoryChange(
+      originalReplaceState,
+      state,
+      title,
+      url
+    );
+  };
+
+  // When leaving fullscreen, return to the pathname from before fullscreen.
+  // The current fullscreen URL's query parameters and hash are kept.
   function exitFullscreenPage() {
     if (window.location.pathname !== "/fullscreen") return;
     if (!fullscreenOrigin) return;
 
-    const { search, hash } = window.location;
+    const search = window.location.search;
+    const hash = window.location.hash;
 
     window.history.replaceState(
       null,
@@ -60,11 +115,6 @@ export default async function ({ addon, console }) {
         addon.tab.redux.state.scratchGui.mode.isFullScreen &&
         document.fullscreenElement === null
       ) {
-        // IMPORTANT:
-        // Save the URL BEFORE entering browser fullscreen.
-        // Scratch may change the URL to /fullscreen during this process.
-        saveFullscreenOrigin();
-
         isEnteringFullscreen = true;
 
         document.documentElement
@@ -238,7 +288,7 @@ export default async function ({ addon, console }) {
   updateBrowserFullscreen();
 
   // Changing to or from Scratch fullscreen is signified by a state change
-  // (URL change doesn't work when editing project without project page).
+  // (URL change doesn't work when editing project without project page)
   addon.tab.redux.initialize();
 
   addon.tab.redux.addEventListener("statechanged", (e) => {
@@ -246,23 +296,17 @@ export default async function ({ addon, console }) {
       e.detail.action.type ===
       "scratch-gui/mode/SET_FULL_SCREEN"
     ) {
-      const wasFullscreen = e.detail.action.isFullScreen;
-
-      if (wasFullscreen) {
-        // Save the URL BEFORE Scratch switches to /fullscreen.
-        //
-        // This state change is triggered while Scratch is entering
-        // fullscreen, so capture the pathname immediately here.
-        saveFullscreenOrigin();
-      }
-
       initScaler();
       updateBrowserFullscreen();
       setPageScrollbar();
       updatePhantomHeader();
 
-      // Only change the URL when fullscreen is being turned OFF.
-      if (!wasFullscreen) {
+      // Scratch has now exited fullscreen.
+      //
+      // At this point Scratch may already have changed the URL back from
+      // /fullscreen, so the history interception above is what captures
+      // the original URL when ENTERING fullscreen.
+      if (!e.detail.action.isFullScreen) {
         exitFullscreenPage();
       }
     }
