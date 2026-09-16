@@ -15,16 +15,29 @@ export default async function ({ addon, console }) {
   // document.fullscreenElement is updated. We want to ignore that event.
   let isEnteringFullscreen = false;
 
-  // Change the fullscreen page back to the correct Player or Editor page.
-  // addon.tab.editorMode tells us whether we are in the editor.
-  // search and hash are preserved.
+  // Remember whether fullscreen was entered from the editor or player.
+  // addon.tab.editorMode is "editor", "projectpage", "fullscreen", etc.
+  let fullscreenOrigin = null;
+
+  function updateFullscreenOrigin() {
+    if (addon.tab.editorMode === "editor") {
+      fullscreenOrigin = "editor";
+    } else if (addon.tab.editorMode === "projectpage") {
+      fullscreenOrigin = "player";
+    }
+  }
+
+  // When leaving fullscreen, return to the page we came from.
+  // Keep the existing query parameters and hash.
   function exitFullscreenPage() {
-    const targetPath = addon.tab.editorMode ? "/editor" : "/";
+    if (window.location.pathname !== "/fullscreen") return;
+
+    const targetPath = fullscreenOrigin === "editor" ? "/editor" : "/";
     const { search, hash } = window.location;
 
-    if (window.location.pathname === "/fullscreen") {
-      window.history.replaceState(null, "", targetPath + search + hash);
-    }
+    window.history.replaceState(null, "", targetPath + search + hash);
+
+    fullscreenOrigin = null;
   }
 
   // "Browser fullscreen" is defined as the mode that hides the browser UI.
@@ -33,6 +46,10 @@ export default async function ({ addon, console }) {
       // If Scratch fullscreen is enabled, then browser fullscreen should also
       // be enabled, and vice versa for disabling.
       if (addon.tab.redux.state.scratchGui.mode.isFullScreen && document.fullscreenElement === null) {
+        // Capture whether we're in the editor or player before Scratch changes
+        // editorMode to "fullscreen".
+        updateFullscreenOrigin();
+
         isEnteringFullscreen = true;
         document.documentElement.requestFullscreen()
           .then(() => {
@@ -108,7 +125,7 @@ export default async function ({ addon, console }) {
         });
       });
     } else {
-      const header = await addon.tab.waitForElement('[class*="stage-header_stage-header-wrapper"]');
+      const header = await addon.tab.waitForElement('[class^="stage-header_stage-header-wrapper"]');
       if (header.parentElement.classList.contains("phantom-header")) {
         const phantom = header.parentElement;
         phantom.parentElement.appendChild(header);
@@ -132,7 +149,7 @@ export default async function ({ addon, console }) {
   let monitorScaler, resizeObserver, stage;
   async function initScaler() {
     monitorScaler = await addon.tab.waitForElement("[class*=monitor-list_monitor-list-scaler]");
-    stage = await addon.tab.waitForElement('[class*="stage-wrapper_full-screen"] [class*="stage_stage"] canvas");
+    stage = await addon.tab.waitForElement('[class*="stage-wrapper_full-screen"] [class*="stage_stage"] canvas');
     resizeObserver = new ResizeObserver(() => {
       const stageSize = stage.getBoundingClientRect();
 
@@ -167,12 +184,17 @@ export default async function ({ addon, console }) {
     if (e.detail.action.type === "scratch-gui/mode/SET_FULL_SCREEN") {
       const wasFullscreen = e.detail.action.isFullScreen;
 
+      // Capture the origin before Scratch changes editorMode to "fullscreen".
+      if (wasFullscreen) {
+        updateFullscreenOrigin();
+      }
+
       initScaler();
       updateBrowserFullscreen();
       setPageScrollbar();
       updatePhantomHeader();
 
-      // Only change the URL when fullscreen is being turned off.
+      // Only change the URL when fullscreen is being turned OFF.
       if (!wasFullscreen) {
         exitFullscreenPage();
       }
