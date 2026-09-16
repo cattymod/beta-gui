@@ -234,7 +234,7 @@
     text-decoration: none;
 }
 
-/* Automatically style all inline SVG icons inside menu items */
+/* Automatically style inline SVG icons inside menu items */
 .menu-bar-menu svg {
     width: 1.25rem;
     height: 1.25rem;
@@ -246,7 +246,10 @@
     flex: 0 0 1.25rem;
     flex-shrink: 0;
 
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     box-sizing: border-box;
     overflow: visible;
 
@@ -257,26 +260,29 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 
-    margin-inline-end: 0.5rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
 }
 
-/* Keep menu icons and text aligned */
+/* Force menu items to keep icon + text on the same line */
 .menu-bar-menu button,
 .menu-bar-menu a,
 .menu-bar-menu .menu-item-link {
     display: flex;
     flex-direction: row;
     align-items: center;
-    min-width: 0;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
-/* Don't clip icons */
+/* Prevent the menu item from clipping the SVG */
 .menu-bar-menu .menu-bar-item {
     overflow: visible;
 }
 
-/* RTL support */
+/* RTL */
 [dir="rtl"] .menu-bar-menu svg {
-    margin-inline-end: 0;
-    margin-inline-start: 0.5rem;
+    margin-right: 0;
+    margin-left: 0.5rem;
 }
