@@ -234,36 +234,45 @@
     text-decoration: none;
 }
 
-/* Automatically style inline SVG icons inside menu items */
+/* Automatically style all inline SVG icons inside menu items */
 .menu-bar-menu svg {
     width: 1.25rem;
     height: 1.25rem;
     min-width: 1.25rem;
     min-height: 1.25rem;
-    flex: 0 0 auto;
-    display: inline-block;
-    vertical-align: middle;
-    margin-inline-end: 0.5rem;
+    max-width: 1.25rem;
+    max-height: 1.25rem;
+
+    flex: 0 0 1.25rem;
+    flex-shrink: 0;
+
+    display: block;
+    box-sizing: border-box;
+    overflow: visible;
+
     color: currentColor;
     stroke: currentColor;
     fill: none;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+
+    margin-inline-end: 0.5rem;
 }
 
-/* Automatically align menu contents containing SVG icons */
+/* Keep menu icons and text aligned */
 .menu-bar-menu button,
 .menu-bar-menu a,
 .menu-bar-menu .menu-item-link {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    min-width: 0;
 }
 
-/* Prevent SVGs from being affected by disabled menu items */
-.menu-bar-menu .disabled svg,
-.menu-bar-menu button:disabled svg {
-    opacity: 0.5;
+/* Don't clip icons */
+.menu-bar-menu .menu-bar-item {
+    overflow: visible;
 }
 
 /* RTL support */
