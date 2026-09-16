@@ -15,20 +15,27 @@ export default async function ({ addon, console }) {
   // document.fullscreenElement is updated. We want to ignore that event.
   let isEnteringFullscreen = false;
 
-  // Remember whether fullscreen was entered from the editor or player.
-  // addon.tab.editorMode is "editor", "projectpage", "fullscreen", etc.
+  // Keep track of where fullscreen was entered from.
+  // editorMode is:
+  //   "editor"      = project editor
+  //   "projectpage" = project player
+  //   "fullscreen"  = fullscreen
+  //   "embed"       = embedded player
   let fullscreenOrigin = null;
 
   function updateFullscreenOrigin() {
     if (addon.tab.editorMode === "editor") {
       fullscreenOrigin = "editor";
     } else if (addon.tab.editorMode === "projectpage") {
-      fullscreenOrigin = "player";
+      fullscreenOrigin = "projectpage";
     }
   }
 
-  // When leaving fullscreen, return to the page we came from.
-  // Keep the existing query parameters and hash.
+  // Initialize the origin while editorMode is still available.
+  updateFullscreenOrigin();
+
+  // Change the fullscreen URL back to the page it came from.
+  // Query parameters and hash are preserved.
   function exitFullscreenPage() {
     if (window.location.pathname !== "/fullscreen") return;
 
@@ -36,8 +43,6 @@ export default async function ({ addon, console }) {
     const { search, hash } = window.location;
 
     window.history.replaceState(null, "", targetPath + search + hash);
-
-    fullscreenOrigin = null;
   }
 
   // "Browser fullscreen" is defined as the mode that hides the browser UI.
@@ -46,10 +51,6 @@ export default async function ({ addon, console }) {
       // If Scratch fullscreen is enabled, then browser fullscreen should also
       // be enabled, and vice versa for disabling.
       if (addon.tab.redux.state.scratchGui.mode.isFullScreen && document.fullscreenElement === null) {
-        // Capture whether we're in the editor or player before Scratch changes
-        // editorMode to "fullscreen".
-        updateFullscreenOrigin();
-
         isEnteringFullscreen = true;
         document.documentElement.requestFullscreen()
           .then(() => {
@@ -69,7 +70,7 @@ export default async function ({ addon, console }) {
   // rightmost button above the stage.
   function updateScratchFullscreen() {
     if (addon.settings.get("browserFullscreen") && !addon.self.disabled) {
-      // If browser fullscreen is disabled, then Scratch fullscreen should also
+      // If browser fullscreen is disabled, then browser fullscreen should also
       // be disabled.
       if (document.fullscreenElement === null && addon.tab.redux.state.scratchGui.mode.isFullScreen) {
         addon.tab.redux.dispatch({
@@ -182,12 +183,12 @@ export default async function ({ addon, console }) {
   addon.tab.redux.initialize();
   addon.tab.redux.addEventListener("statechanged", (e) => {
     if (e.detail.action.type === "scratch-gui/mode/SET_FULL_SCREEN") {
-      const wasFullscreen = e.detail.action.isFullScreen;
+      const isFullscreen = e.detail.action.isFullScreen;
 
-      // Capture the origin before Scratch changes editorMode to "fullscreen".
-      if (wasFullscreen) {
-        updateFullscreenOrigin();
-      }
+      // IMPORTANT:
+      // editorMode becomes "fullscreen" during the transition, so don't
+      // try to determine the origin here. The origin was captured before
+      // fullscreen was entered.
 
       initScaler();
       updateBrowserFullscreen();
@@ -195,8 +196,11 @@ export default async function ({ addon, console }) {
       updatePhantomHeader();
 
       // Only change the URL when fullscreen is being turned OFF.
-      if (!wasFullscreen) {
+      if (!isFullscreen) {
         exitFullscreenPage();
+
+        // After leaving fullscreen, refresh the origin from the new mode.
+        updateFullscreenOrigin();
       }
     }
   });
@@ -225,7 +229,7 @@ export default async function ({ addon, console }) {
   });
 
   // These handle the case of the user already being in Scratch fullscreen
-  // (without being in browser fullscreen) when the addon or sync option
+  // (without being in browser full screen mode) when the addon or sync option
   // is dynamically enabled.
   addon.settings.addEventListener("change", () => {
     updateBrowserFullscreen();
