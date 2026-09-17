@@ -1009,8 +1009,7 @@ class MenuBar extends React.Component {
                                                 />
                                             </MenuItem>
                                         </MenuSection>
-                                    )}
-<MenuSection>
+                                    <MenuSection>
     <MenuItem
         onClick={this.handleClickRestorePoints}
     >
@@ -1035,8 +1034,10 @@ class MenuBar extends React.Component {
             id="tw.menuBar.restorePoints"
         />
     </MenuItem>
+</MenuSection>
 
-    {!isEmbeddedEditor && (
+{!isEmbeddedEditor && (
+    <MenuSection>
         <MenuItem
             isRtl={this.props.isRtl}
             onClick={this.handleClickGoHome}
@@ -1063,8 +1064,10 @@ class MenuBar extends React.Component {
                 id="tw.menuBar.goHome"
             />
         </MenuItem>
-    )}
-</MenuSection>
+    </MenuSection>
+)}
+                                    )}
+
 
                                 </MenuBarMenu>
                             </MenuLabel>
