@@ -968,7 +968,7 @@ class MenuBar extends React.Component {
                                                                 />
                                                             ) : (
                                                                 <FormattedMessage
-                                                                    defaultMessage="Save to your device"
+                                                                    defaultMessage="Save to your computer"
                                                                     description="Menu bar item for downloading a project to your computer"
                                                                     id="gui.menuBar.downloadToComputer"
                                                                 />
@@ -982,34 +982,36 @@ class MenuBar extends React.Component {
 
                                     </MenuSection>
 
-                                    {this.props.onClickPackager && (
-                                        <MenuSection>
-                                            <MenuItem
-                                                onClick={this.handleClickPackager}
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                >
-                                                    <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2" />
-                                                    <rect x="14" y="2" width="8" height="8" rx="1" />
-                                                </svg>
+                                   {this.props.onClickPackager && (
+    <MenuSection>
+        <MenuItem
+            onClick={this.handleClickPackager}
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2" />
+                <rect x="14" y="2" width="8" height="8" rx="1" />
+            </svg>
 
-                                                <FormattedMessage
-                                                    defaultMessage="Package project"
-                                                    description="Menu bar item to open the current project in the packager"
-                                                    id="tw.menuBar.package"
-                                                />
-                                            </MenuItem>
-                                        </MenuSection>
-                                    <MenuSection>
+            <FormattedMessage
+                defaultMessage="Package project"
+                description="Menu bar item to open the current project in the packager"
+                id="tw.menuBar.package"
+            />
+        </MenuItem>
+    </MenuSection>
+)}
+
+<MenuSection>
     <MenuItem
         onClick={this.handleClickRestorePoints}
     >
