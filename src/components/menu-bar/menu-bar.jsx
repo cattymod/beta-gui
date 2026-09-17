@@ -1068,7 +1068,7 @@ class MenuBar extends React.Component {
         </MenuItem>
     </MenuSection>
 )}
-                                    )}
+                                    
 
 
                                 </MenuBarMenu>
