@@ -27,7 +27,8 @@ import menuBarStyles from './menu-bar.css';
 import styles from './settings-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
-import settingsIcon from './icon--settings.svg';
+import settingsIconOriginal from './icon--settings.svg';
+import settingsIcon from './icon--settings-new.svg';
 
 const SettingsMenu = ({
     canChangeLanguage,
@@ -140,7 +141,7 @@ const SettingsMenu = ({
                                 }}
                             >
                                 <img
-                                    src={settingsIcon}
+                                    src={settingsIconOriginal}
                                     draggable={false}
                                     width={24}
                                     height={24}
