@@ -6,6 +6,10 @@ const manifest = {
     {
       "name": "lisa_wolfgang",
       "link": "https://scratch.mit.edu/users/lisa_wolfgang/"
+    },
+    {
+      "name": "Noahscratch493",
+      "link": "https://me.cattymod.app/"
     }
   ],
   "info": [
