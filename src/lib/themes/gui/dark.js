@@ -29,7 +29,7 @@ const guiColors = {
     'badge-border': '#203652',
 
     'fullscreen-background': '#000000',
-    'fullscreen-accent': '#111111',
+    'fullscreen-accent': '#000000',
 
     'page-background': '#111111',
     'page-foreground': '#eeeeee',
