@@ -28,7 +28,7 @@ const guiColors = {
     'badge-background': '#16202c',
     'badge-border': '#203652',
 
-    'fullscreen-background': '#111111',
+    'fullscreen-background': '#000000',
     'fullscreen-accent': '#111111',
 
     'page-background': '#111111',
