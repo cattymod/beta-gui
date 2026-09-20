@@ -36,7 +36,8 @@ Link.propTypes = {
 };
 
 const handleReload = () => {
-    window.location.reload();
+    const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+    window.location.href = cleanUrl;
 };
 
 const UnsharedMessage = () => (
