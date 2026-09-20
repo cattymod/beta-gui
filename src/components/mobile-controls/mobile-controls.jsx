@@ -715,7 +715,7 @@ class MobileControls extends React.Component {
             keyboardLayout
         } = this.state;
 
-        const isDark = theme.gui === GUI_DARK;
+        const isDark = theme.gui === GUI_DARK || theme.gui === GUI_MIDNIGHT;
         const isKeyboard = controlMode === 'keyboard';
 
         /*
