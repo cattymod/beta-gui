@@ -11,6 +11,7 @@ const MENU_MODE = 'modeMenu';
 const MENU_SETTINGS = 'settingsMenu';
 const MENU_ACCENT = 'accentMenu';
 const MENU_BLOCKS_THEME = 'blocksThemeMenu';
+const MENU_THEME = 'themeMenu';
 const MENU_GO_ICON = 'goIconMenu';
 const MENU_ERRORS = 'errorsMenu';
 
@@ -57,6 +58,7 @@ const rootMenu = new Menu('root')
             .addChild(new Menu(MENU_LANGUAGE))
             .addChild(new Menu(MENU_ACCENT))
             .addChild(new Menu(MENU_BLOCKS_THEME))
+            .addChild(new Menu(MENU_THEME))
             .addChild(new Menu(MENU_GO_ICON))
     )
     .addChild(new Menu(MENU_FILE))
@@ -77,6 +79,7 @@ const initialState = {
     [MENU_SETTINGS]: false,
     [MENU_ACCENT]: false,
     [MENU_BLOCKS_THEME]: false,
+    [MENU_THEME]: false,
     [MENU_GO_ICON]: false,
     [MENU_ERRORS]: false
 };
@@ -172,6 +175,10 @@ const openBlocksThemeMenu = () => openMenu(MENU_BLOCKS_THEME);
 const closeBlocksThemeMenu = () => closeMenu(MENU_BLOCKS_THEME);
 const blocksThemeMenuOpen = state => state.scratchGui.menus[MENU_BLOCKS_THEME];
 
+const openThemeMenu = () => openMenu(MENU_THEME);
+const closeThemeMenu = () => closeMenu(MENU_THEME);
+const themeMenuOpen = state => state.scratchGui.menus[MENU_THEME];
+
 const openGoIconMenu = () => openMenu(MENU_GO_ICON);
 const closeGoIconMenu = () => closeMenu(MENU_GO_ICON);
 const goIconMenuOpen = state => state.scratchGui.menus[MENU_GO_ICON];
@@ -213,6 +220,9 @@ export {
     openBlocksThemeMenu,
     closeBlocksThemeMenu,
     blocksThemeMenuOpen,
+    openThemeMenu,
+    closeThemeMenu,
+    themeMenuOpen,
     openGoIconMenu,
     closeGoIconMenu,
     goIconMenuOpen,
