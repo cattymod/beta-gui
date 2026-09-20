@@ -483,6 +483,22 @@ export default [
     incompatibleWithScratch: true,
     featured: true
 },
+{
+    name: 'DangoAI',
+    extensionId: 'dangoai',
+    extensionURL: 'https://cattymod.app/extensions/dangoai.js',
+    iconURL: 'https://cattymod.app/extensions/dangoai.svg',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
+    description: 'Add AI Chatbots to your CattyMod Projects!',
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
+    featured: true
+},
+
 ];
 
 export const galleryLoading = {
