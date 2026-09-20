@@ -14,6 +14,7 @@ import * as accentViolet from './accent/violet';
 
 import * as guiLight from './gui/light';
 import * as guiDark from './gui/dark';
+import * as guiMidnight from './gui/midnight';
 
 import * as blocksThree from './blocks/three';
 import * as blocksHighContrast from './blocks/high-contrast';
@@ -49,10 +50,12 @@ const ACCENT_DEFAULT = ACCENT_BLUE;
 
 const GUI_LIGHT = 'light';
 const GUI_DARK = 'dark';
+const GUI_MIDNIGHT = 'midnight';
 
 const GUI_MAP = {
     [GUI_LIGHT]: guiLight,
-    [GUI_DARK]: guiDark
+    [GUI_DARK]: guiDark,
+    [GUI_MIDNIGHT]: guiMidnight
 };
 
 const GUI_DEFAULT = GUI_LIGHT;
@@ -119,6 +122,7 @@ class Theme {
 
     static light = new Theme(ACCENT_DEFAULT, GUI_LIGHT, BLOCKS_DEFAULT);
     static dark = new Theme(ACCENT_DEFAULT, GUI_DARK, BLOCKS_DEFAULT);
+    static midnight = new Theme(ACCENT_DEFAULT, GUI_MIDNIGHT, BLOCKS_DEFAULT);
     static highContrast = new Theme(ACCENT_DEFAULT, GUI_DEFAULT, BLOCKS_HIGH_CONTRAST);
 
     set (what, to) {
@@ -191,6 +195,7 @@ export {
 
     GUI_LIGHT,
     GUI_DARK,
+    GUI_MIDNIGHT,
     GUI_MAP,
 
     BLOCKS_THREE,
