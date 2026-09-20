@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +33,18 @@ body.dark {
   --hover: #202c31;
   --input: #151b1e;
   --shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
+}
+
+body.midnight {
+  --bg: #05070d;
+  --sidebar: #080b12;
+  --card: #0d111a;
+  --text: #f1f5f7;
+  --muted: #8993a3;
+  --border: #1c2432;
+  --hover: #131b29;
+  --input: #090d15;
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
 }
 button, input, select { font: inherit; }
 .app { display: flex; width: 100%; height: 100vh; overflow: hidden; }
@@ -157,9 +170,13 @@ button, input, select { font: inherit; }
 <div class="setting-row">
 <div class="setting-info">
 <div class="setting-title">Dark Mode</div>
-<div class="setting-description">Use a darker interface that's easier on the eyes.</div>
+<div class="setting-description">Choose the interface theme CattyMod should use.</div>
 </div>
-<label class="switch"><input type="checkbox" id="dark-mode-toggle"><span class="slider"></span></label>
+<select id="dark-mode-select" class="setting-select" aria-label="Dark Mode">
+<option value="light">Light</option>
+<option value="dark">Dark</option>
+<option value="midnight">Midnight</option>
+</select>
 </div>
 <!-- Block Style -->
 <div class="setting-row">
@@ -273,46 +290,91 @@ const GO_ICON_KEY = "cattymod:goIcon";
 const MOBILE_TOUCH_CONTROLS_KEY = "cattymod:mobileTouchControls";
 
 /* -------------------------Theme------------------------- */
+const darkModeSelect = document.getElementById("dark-mode-select");
+
 function readTheme() {
   const raw = localStorage.getItem(THEME_KEY);
   if (!raw) { return null; }
+
   try {
     const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") { return parsed; }
-    if (typeof parsed === "string") { return {gui: parsed}; }
+
+    if (parsed && typeof parsed === "object") {
+      return parsed;
+    }
+
+    if (typeof parsed === "string") {
+      return { gui: parsed };
+    }
   } catch {
-    if (raw === "dark" || raw === "light") { return {gui: raw}; }
+    if (raw === "dark" || raw === "light" || raw === "midnight") {
+      return { gui: raw };
+    }
   }
+
   return null;
 }
 
-function systemIsDark() { return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); }
+function systemIsDark() {
+  return window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
 
 function getCurrentGuiTheme() {
   const theme = readTheme();
-  if (theme && (theme.gui === "dark" || theme.gui === "light")) { return theme.gui; }
+
+  if (
+    theme &&
+    (
+      theme.gui === "dark" ||
+      theme.gui === "light" ||
+      theme.gui === "midnight"
+    )
+  ) {
+    return theme.gui;
+  }
+
   return systemIsDark() ? "dark" : "light";
 }
 
 function applyTheme() {
   const theme = getCurrentGuiTheme();
+
   document.body.classList.toggle("dark", theme === "dark");
-  document.getElementById("dark-mode-toggle").checked = theme === "dark";
+  document.body.classList.toggle("midnight", theme === "midnight");
+
+  if (darkModeSelect) {
+    darkModeSelect.value = theme;
+  }
 }
 
 function updateTheme(updater) {
   const current = readTheme() || {};
-  const newTheme = {...current};
+  const newTheme = { ...current };
+
   updater(newTheme);
+
   localStorage.setItem(THEME_KEY, JSON.stringify(newTheme));
+
   applyTheme();
   applySettingsAccent();
   loadBlockStyle();
   loadAccent();
 }
 
-function setGuiTheme(gui) { updateTheme(theme => { theme.gui = gui; }); }
+function setGuiTheme(gui) {
+  if (
+    gui !== "light" &&
+    gui !== "dark" &&
+    gui !== "midnight"
+  ) {
+    gui = "light";
+  }
 
+  updateTheme(theme => {
+    theme.gui = gui;
+  });
+}
 /* -------------------------Accent------------------------- */
 const accentSelect = document.getElementById("accent-select");
 const ACCENT_COLORS = {red: "#e53935", orange: "#fb8c00", yellow: "#fbc02d", green: "#43a047", blue: "#009ccc", indigo: "#3949ab", violet: "#8e44ad", purple: "#9c27b0"};
@@ -361,9 +423,8 @@ accentSelect.addEventListener("change", () => {
 });
 
 /* -------------------------Dark Mode------------------------- */
-const darkModeToggle = document.getElementById("dark-mode-toggle");
-darkModeToggle.addEventListener("change", () => {
-  setGuiTheme(darkModeToggle.checked ? "dark" : "light");
+darkModeSelect.addEventListener("change", () => {
+  setGuiTheme(darkModeSelect.value);
 });
 
 const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
