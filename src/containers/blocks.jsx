@@ -192,7 +192,7 @@ class Blocks extends React.Component {
             }
         });
         toolboxWorkspace.registerButtonCallback('OPEN_RETURN_DOCS', () => {
-            window.open('https://docs.turbowarp.org/return', '_blank');
+            window.open('https://cattymod.app/docs/return', '_blank');
         });
 
         // Store the xml of the toolbox that is actually rendered.
