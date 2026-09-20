@@ -3,6 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import {GUI_DARK} from '../../lib/themes/index.js';
+import {GUI_MIDNIGHT} from '../../lib/themes/index.js';
 import styles from './mobile-controls.css';
 
 class MobileControls extends React.Component {
