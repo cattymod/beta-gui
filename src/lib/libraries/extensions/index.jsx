@@ -498,6 +498,21 @@ export default [
     incompatibleWithScratch: true,
     featured: true
 },
+{
+    name: 'Speech to Text',
+    extensionId: 'sst',
+    extensionURL: 'https://cattymod.app/extensions/sst.js',
+    iconURL: 'https://cattymod.app/extensions/sst.png',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
+    description: 'Speak to your projects!',
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
+    featured: true
+},
 
 ];
 
