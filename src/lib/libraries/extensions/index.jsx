@@ -500,9 +500,9 @@ export default [
 },
 {
     name: 'Speech to Text',
-    extensionId: 'sst',
-    extensionURL: 'https://cattymod.app/extensions/sst.js',
-    iconURL: 'https://cattymod.app/extensions/sst.png',
+    extensionId: 'speechtotext',
+    extensionURL: 'https://cattymod.app/extensions/stt.js',
+    iconURL: 'https://cattymod.app/extensions/stt.png',
     
     credits: [
         'Noahscratch493'
