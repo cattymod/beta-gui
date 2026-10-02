@@ -648,19 +648,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const from = params.get("from");
   const backButton = document.getElementById("back-to-cattymod");
-  if (!backButton) { return; }
 
-  let destination = "https://studio.cattymod.app/";
+  if (!backButton) {
+    return;
+  }
+
+  // Default fallback
+  let destination = "/";
 
   if (from) {
     try {
       const url = new URL(from);
-      const isCattyMod = url.hostname === "cattymod.app" || url.hostname.endsWith(".cattymod.app");
-      if (isCattyMod && (url.protocol === "https:" || url.protocol === "http:")) {
+
+      const isCattyMod =
+        url.hostname === "cattymod.app" ||
+        url.hostname.endsWith(".cattymod.app");
+
+      if (
+        isCattyMod &&
+        (url.protocol === "https:" || url.protocol === "http:")
+      ) {
         destination = url.href;
       }
     } catch {
-      // Invalid URL passed, keeps the default studio.cattymod.app destination
+      // Invalid URL, keep the fallback destination of "/"
     }
   }
 
