@@ -584,7 +584,7 @@ document.querySelectorAll(".preset-btn").forEach(btn => {
 /* -------------------------Navigation------------------------- */
 const betaButton = document.getElementById("beta-button");
 const betaButtonText = document.getElementById("beta-button-text");
-const isBeta = window.location.hostname !== "beta.cattymod.app";
+const isBeta = window.location.hostname === "beta.cattymod.app";
 
 if (isBeta) {
   const cardTitle = document.querySelector("#page-labs .card-title");
