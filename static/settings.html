@@ -73,6 +73,10 @@ button, input, select { font: inherit; }
 .main { flex: 1; min-width: 0; overflow-y: auto; }
 .content { max-width: 900px; margin: 0 auto; padding: 42px 34px 70px; }
 .page-header { margin-bottom: 26px; }
+.primary-button { border: 0; background: var(--accent); color: #fff; padding: 10px 14px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; font: inherit; font-weight: 600; transition: background 0.15s ease, transform 0.15s ease; margin-top: 14px; }
+.primary-button:hover { background: var(--accent-hover); }
+.primary-button:active { transform: translateY(1px); }
+.primary-button i { width: 17px; height: 17px; }
 .page-header h1 { margin: 0; font-size: 30px; letter-spacing: -0.5px; }
 .page-header p { margin: 7px 0 0; color: var(--muted); font-size: 14px; }
 .section { margin-bottom: 24px; }
@@ -118,7 +122,7 @@ button, input, select { font: inherit; }
   to { background-position: 200% 50%; }
 }
 
-/* About */
+/* About / Labs */
 .about-card { padding: 22px; }
 .about-header { display: flex; align-items: center; gap: 15px; }
 .about-logo { width: 58px; height: 58px; }
@@ -150,6 +154,7 @@ button, input, select { font: inherit; }
 <nav class="nav">
 <button class="nav-button active" data-page="general"><i data-lucide="settings"></i><span class="nav-text">General</span></button>
 <button class="nav-button" id="addons-button"><i data-lucide="box"></i><span class="nav-text">Addons</span><i class="external-icon" data-lucide="external-link"></i></button>
+<button class="nav-button" data-page="labs"><i data-lucide="flask-conical"></i><span class="nav-text">Labs</span></button>
 <button class="nav-button" data-page="about"><i data-lucide="info"></i><span class="nav-text">About</span></button>
 </nav>
 <div class="sidebar-bottom">
@@ -240,6 +245,22 @@ button, input, select { font: inherit; }
 </div>
 </div>
 </section>
+<!-- LABS -->
+<section id="page-labs" class="page" style="display: none;">
+<div class="page-header">
+<h1>Labs</h1>
+<p>Try upcoming CattyMod features and help shape the experience.</p>
+</div>
+<div class="section">
+<div class="section-title">CattyMod Beta</div>
+<div class="card about-card">
+<div class="setting-title card-title" style="font-size: 19px;">Would you like to help test upcoming CattyMod Features?</div>
+<div class="setting-description card-desc" style="font-size: 14px; margin-top: 6px;">Try experimental features and help shape what comes next.</div>
+<button class="primary-button" id="beta-button"><i data-lucide="flask-conical"></i><span id="beta-button-text">Try CattyMod Beta</span><i class="external-icon" data-lucide="external-link"></i></button>
+<div class="setting-description card-desc" style="font-size: 13px; margin-top: 14px;">You can click <strong>CattyMod Feedback</strong> in the navbar to provide feedback to the experience anytime!</div>
+</div>
+</div>
+</section>
 <!-- ABOUT -->
 <section id="page-about" class="page" style="display: none;">
 <div class="page-header">
@@ -256,10 +277,10 @@ button, input, select { font: inherit; }
 </div>
 <p class="about-description">Block-based coding with tons of capabilities.</p>
 </div>
-<p></p>
+<div style="height: 16px;"></div>
 <div class="card about-card">
 <div class="about-header">
-<img class="about-logo" src="https://cattymod.app/assets/turbowarp.svg" alt="CattyMod">
+<img class="about-logo" src="https://cattymod.app/assets/turbowarp.svg" alt="TurboWarp">
 <div>
 <div class="about-name">TurboWarp</div>
 <div class="about-version">By GarboMuffin</div>
@@ -267,10 +288,10 @@ button, input, select { font: inherit; }
 </div>
 <p class="about-description">Block-based programming language.</p>
 </div>
-<p></p>
+<div style="height: 16px;"></div>
 <div class="card about-card">
 <div class="about-header">
-<img class="about-logo" src="https://cattymod.app/assets/scratch.svg" alt="CattyMod">
+<img class="about-logo" src="https://cattymod.app/assets/scratch.svg" alt="Scratch">
 <div>
 <div class="about-name">Scratch</div>
 <div class="about-version">By Scratch Foundation</div>
@@ -561,6 +582,29 @@ document.querySelectorAll(".preset-btn").forEach(btn => {
 });
 
 /* -------------------------Navigation------------------------- */
+const betaButton = document.getElementById("beta-button");
+const betaButtonText = document.getElementById("beta-button-text");
+const isBeta = window.location.hostname !== "beta.cattymod.app";
+
+if (isBeta) {
+  const cardTitle = document.querySelector("#page-labs .card-title");
+  const cardDescriptions = document.querySelectorAll("#page-labs .card-desc");
+  if (cardTitle) cardTitle.textContent = "You're on beta.cattymod.app";
+  if (cardDescriptions[0]) cardDescriptions[0].textContent = "Is the page not working? Try going back to Studio.";
+  if (betaButtonText) betaButtonText.textContent = "Exit Beta";
+  if (betaButton) {
+    betaButton.addEventListener("click", () => {
+      window.location.href = "https://studio.cattymod.app/";
+    });
+    const betaExternalIcon = betaButton.querySelector(".external-icon");
+    if (betaExternalIcon) betaExternalIcon.remove();
+  }
+} else if (betaButton) {
+  betaButton.addEventListener("click", () => {
+    window.location.href = "https://beta.cattymod.app/";
+  });
+}
+
 const navButtons = document.querySelectorAll(".nav-button[data-page]");
 const pages = document.querySelectorAll(".page");
 
@@ -604,7 +648,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const from = params.get("from");
   const backButton = document.getElementById("back-to-cattymod");
-  
   if (!backButton) { return; }
 
   let destination = "https://studio.cattymod.app/";
