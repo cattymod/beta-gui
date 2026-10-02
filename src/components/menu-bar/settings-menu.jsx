@@ -136,7 +136,7 @@ const SettingsMenu = ({
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onClick={() => {
                                     window.location.href =
-                                        'https://studio.cattymod.app/settings';
+                                        '/settings';
                                     onRequestClose();
                                 }}
                             >
