@@ -590,7 +590,7 @@ if (isBeta) {
   const cardTitle = document.querySelector("#page-labs .card-title");
   const cardDescriptions = document.querySelectorAll("#page-labs .card-desc");
   if (cardTitle) cardTitle.textContent = "You're on beta.cattymod.app";
-  if (cardDescriptions[0]) cardDescriptions[0].textContent = "Is the page not working? Try going back to Studio.";
+  if (cardDescriptions[0]) cardDescriptions[0].textContent = "Is CattyMod not working for you? Try going back to Studio.";
   if (betaButtonText) betaButtonText.textContent = "Exit Beta";
   if (betaButton) {
     betaButton.addEventListener("click", () => {
@@ -622,7 +622,7 @@ navButtons.forEach(button => {
 
 /* -------------------------Addons------------------------- */
 document.getElementById("addons-button").addEventListener("click", () => {
-  window.open("https://studio.cattymod.app/addons.html", "_blank", "noopener,noreferrer");
+  window.open("/addons.html", "_blank", "noopener,noreferrer");
 });
 
 /* -------------------------Storage Sync------------------------- */
