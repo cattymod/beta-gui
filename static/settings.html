@@ -309,12 +309,12 @@ const CUSTOM_PROJECT_KEY = "cattymod:customDefaultProject";
 const GO_ICON_KEY = "cattymod:goIcon";
 const MOBILE_TOUCH_CONTROLS_KEY = "cattymod:mobileTouchControls";
 
-/* -------------------------Theme------------------------- */
+/* ------------------------- Theme ------------------------- */
 const darkModeSelect = document.getElementById("dark-mode-select");
 
 function readTheme() {
   const raw = localStorage.getItem(THEME_KEY);
-  if (!raw) { return null; }
+  if (!raw) return null;
 
   try {
     const parsed = JSON.parse(raw);
@@ -395,15 +395,47 @@ function setGuiTheme(gui) {
     theme.gui = gui;
   });
 }
-/* -------------------------Accent------------------------- */
+
+/* ------------------------- Accent ------------------------- */
 const accentSelect = document.getElementById("accent-select");
-const ACCENT_COLORS = {red: "#e53935", orange: "#fb8c00", yellow: "#fbc02d", green: "#43a047", blue: "#009ccc", indigo: "#3949ab", violet: "#8e44ad", purple: "#9c27b0"};
-const RAINBOW_GRADIENT = "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
-const ACCENT_OPTIONS = ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "purple", "rainbow"];
+
+const ACCENT_COLORS = {
+  red: "#e53935",
+  orange: "#fb8c00",
+  yellow: "#fbc02d",
+  green: "#43a047",
+  blue: "#009ccc",
+  indigo: "#3949ab",
+  violet: "#8e44ad",
+  purple: "#9c27b0"
+};
+
+const RAINBOW_GRADIENT =
+  "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
+
+const ACCENT_OPTIONS = [
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "rainbow"
+];
 
 function getCurrentAccent() {
   const theme = readTheme();
-  if (theme && typeof theme.accent === "string" && ACCENT_OPTIONS.includes(theme.accent.toLowerCase())) { return theme.accent.toLowerCase(); }
+
+  if (
+    theme &&
+    typeof theme.accent === "string" &&
+    ACCENT_OPTIONS.includes(theme.accent.toLowerCase())
+  ) {
+    return theme.accent.toLowerCase();
+  }
+
   return "blue";
 }
 
@@ -411,17 +443,31 @@ function applySettingsAccent() {
   const accent = getCurrentAccent();
   const root = document.documentElement;
 
-  document.querySelectorAll(".rainbow-accent").forEach(element => { element.classList.remove("rainbow-accent"); });
-  document.querySelectorAll(".rainbow-text").forEach(element => { element.classList.remove("rainbow-text"); });
+  document.querySelectorAll(".rainbow-accent").forEach(element => {
+    element.classList.remove("rainbow-accent");
+  });
+
+  document.querySelectorAll(".rainbow-text").forEach(element => {
+    element.classList.remove("rainbow-text");
+  });
 
   if (accent === "rainbow") {
     root.style.setProperty("--accent", "#009ccc");
     root.style.setProperty("--accent-hover", "#008db8");
     root.style.setProperty("--accent-gradient", RAINBOW_GRADIENT);
-    document.querySelectorAll(".nav-button.active").forEach(element => { element.classList.add("rainbow-accent"); });
-    document.querySelectorAll(".switch input:checked + .slider").forEach(element => { element.classList.add("rainbow-accent"); });
+
+    document.querySelectorAll(".nav-button.active").forEach(element => {
+      element.classList.add("rainbow-accent");
+    });
+
+    document.querySelectorAll(
+      ".switch input:checked + .slider"
+    ).forEach(element => {
+      element.classList.add("rainbow-accent");
+    });
   } else {
     const color = ACCENT_COLORS[accent] || ACCENT_COLORS.blue;
+
     root.style.setProperty("--accent", color);
     root.style.setProperty("--accent-hover", color);
     root.style.setProperty("--accent-gradient", color);
@@ -429,113 +475,196 @@ function applySettingsAccent() {
 }
 
 function setAccent(accent) {
-  if (!ACCENT_OPTIONS.includes(accent)) { return; }
-  updateTheme(theme => { theme.accent = accent; });
+  if (!ACCENT_OPTIONS.includes(accent)) return;
+
+  updateTheme(theme => {
+    theme.accent = accent;
+  });
 }
 
 function loadAccent() {
+  if (!accentSelect) return;
+
   accentSelect.value = getCurrentAccent();
   applySettingsAccent();
 }
 
-accentSelect.addEventListener("change", () => {
-  setAccent(accentSelect.value);
-});
+if (accentSelect) {
+  accentSelect.addEventListener("change", () => {
+    setAccent(accentSelect.value);
+  });
+}
 
-/* -------------------------Dark Mode------------------------- */
-darkModeSelect.addEventListener("change", () => {
-  setGuiTheme(darkModeSelect.value);
-});
+/* ------------------------- Dark Mode ------------------------- */
+if (darkModeSelect) {
+  darkModeSelect.addEventListener("change", () => {
+    setGuiTheme(darkModeSelect.value);
+  });
+}
 
-const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const mediaQuery = window.matchMedia(
+  "(prefers-color-scheme: dark)"
+);
+
 mediaQuery.addEventListener("change", () => {
-  if (!localStorage.getItem(THEME_KEY)) { applyTheme(); applySettingsAccent(); }
+  if (!localStorage.getItem(THEME_KEY)) {
+    applyTheme();
+    applySettingsAccent();
+  }
 });
 
-/* -------------------------Block Style------------------------- */
-const blockStyleSelect = document.getElementById("block-style-select");
+/* ------------------------- Block Style ------------------------- */
+const blockStyleSelect =
+  document.getElementById("block-style-select");
 
 function getBlockStyle() {
   const theme = readTheme();
-  if (!theme || typeof theme.blocks !== "string") { return "original"; }
-  if (theme.blocks === "high-contrast") { return "high-contrast"; }
-  if (theme.blocks === "dark") { return "dark"; }
+
+  if (!theme || typeof theme.blocks !== "string") {
+    return "original";
+  }
+
+  if (theme.blocks === "high-contrast") {
+    return "high-contrast";
+  }
+
+  if (theme.blocks === "dark") {
+    return "dark";
+  }
+
   return "original";
 }
 
 function setBlockStyle(style) {
   updateTheme(theme => {
-    if (style === "original") { delete theme.blocks; return; }
+    if (style === "original") {
+      delete theme.blocks;
+      return;
+    }
+
     theme.blocks = style;
   });
 }
 
 function loadBlockStyle() {
+  if (!blockStyleSelect) return;
+
   blockStyleSelect.value = getBlockStyle();
 }
 
-blockStyleSelect.addEventListener("change", () => {
-  setBlockStyle(blockStyleSelect.value);
-});
+if (blockStyleSelect) {
+  blockStyleSelect.addEventListener("change", () => {
+    setBlockStyle(blockStyleSelect.value);
+  });
+}
 
-/* -------------------------Go Icon------------------------- */
-const goIconSelect = document.getElementById("go-icon-select");
+/* ------------------------- Go Icon ------------------------- */
+const goIconSelect =
+  document.getElementById("go-icon-select");
 
 function getCurrentGoIcon() {
   const saved = localStorage.getItem(GO_ICON_KEY);
-  if (saved === "play" || saved === "greenflag" || saved === "blueflag" || saved === "purpleflag") { return saved; }
+
+  if (
+    saved === "play" ||
+    saved === "greenflag" ||
+    saved === "blueflag" ||
+    saved === "purpleflag"
+  ) {
+    return saved;
+  }
+
   return "play";
 }
 
 function loadGoIcon() {
-  if (!goIconSelect) { return; }
+  if (!goIconSelect) return;
+
   goIconSelect.value = getCurrentGoIcon();
 }
 
 function setGoIcon(icon) {
-  if (icon !== "play" && icon !== "greenflag" && icon !== "blueflag" && icon !== "purpleflag") { icon = "play"; }
+  if (
+    icon !== "play" &&
+    icon !== "greenflag" &&
+    icon !== "blueflag" &&
+    icon !== "purpleflag"
+  ) {
+    icon = "play";
+  }
+
   localStorage.setItem(GO_ICON_KEY, icon);
   loadGoIcon();
 }
 
-goIconSelect.addEventListener("change", () => {
-  setGoIcon(goIconSelect.value);
-});
+if (goIconSelect) {
+  goIconSelect.addEventListener("change", () => {
+    setGoIcon(goIconSelect.value);
+  });
+}
 
-/* -------------------------Mobile Touch Controls------------------------- */
-const mobileTouchControlsToggle = document.getElementById("mobile-touch-controls-toggle");
+/* ------------------------- Mobile Touch Controls ------------------------- */
+const mobileTouchControlsToggle =
+  document.getElementById("mobile-touch-controls-toggle");
 
 function getMobileTouchControlsEnabled() {
-  const saved = localStorage.getItem(MOBILE_TOUCH_CONTROLS_KEY);
+  const saved =
+    localStorage.getItem(MOBILE_TOUCH_CONTROLS_KEY);
+
   return saved !== "false";
 }
 
 function loadMobileTouchControls() {
-  if (!mobileTouchControlsToggle) { return; }
-  mobileTouchControlsToggle.checked = getMobileTouchControlsEnabled();
+  if (!mobileTouchControlsToggle) return;
+
+  mobileTouchControlsToggle.checked =
+    getMobileTouchControlsEnabled();
+
   applySettingsAccent();
 }
 
 function setMobileTouchControlsEnabled(enabled) {
-  localStorage.setItem(MOBILE_TOUCH_CONTROLS_KEY, enabled ? "true" : "false");
+  localStorage.setItem(
+    MOBILE_TOUCH_CONTROLS_KEY,
+    enabled ? "true" : "false"
+  );
+
   loadMobileTouchControls();
 }
 
-mobileTouchControlsToggle.addEventListener("change", () => {
-  setMobileTouchControlsEnabled(mobileTouchControlsToggle.checked);
-});
+if (mobileTouchControlsToggle) {
+  mobileTouchControlsToggle.addEventListener("change", () => {
+    setMobileTouchControlsEnabled(
+      mobileTouchControlsToggle.checked
+    );
+  });
+}
 
-/* -------------------------Custom Default Project------------------------- */
-const customProjectToggle = document.getElementById("custom-project-toggle");
-const customProjectOptions = document.getElementById("custom-project-options");
-const customProjectId = document.getElementById("custom-project-id");
+/* ------------------------- Custom Default Project ------------------------- */
+const customProjectToggle =
+  document.getElementById("custom-project-toggle");
+
+const customProjectOptions =
+  document.getElementById("custom-project-options");
+
+const customProjectId =
+  document.getElementById("custom-project-id");
 
 function updateCustomProjectVisibility() {
-  customProjectOptions.classList.toggle("collapsed", !customProjectToggle.checked);
+  if (!customProjectOptions || !customProjectToggle) return;
+
+  customProjectOptions.classList.toggle(
+    "collapsed",
+    !customProjectToggle.checked
+  );
 }
 
 function loadCustomProject() {
-  const saved = localStorage.getItem(CUSTOM_PROJECT_KEY);
+  if (!customProjectToggle || !customProjectId) return;
+
+  const saved =
+    localStorage.getItem(CUSTOM_PROJECT_KEY);
+
   if (saved) {
     customProjectToggle.checked = true;
     customProjectId.value = saved;
@@ -543,97 +672,220 @@ function loadCustomProject() {
     customProjectToggle.checked = false;
     customProjectId.value = "";
   }
+
   updateCustomProjectVisibility();
 }
 
-customProjectToggle.addEventListener("change", () => {
-  if (customProjectToggle.checked) {
-    if (customProjectId.value.trim()) {
-      localStorage.setItem(CUSTOM_PROJECT_KEY, customProjectId.value);
-    }
-  } else {
-    localStorage.removeItem(CUSTOM_PROJECT_KEY);
-  }
-  updateCustomProjectVisibility();
-  applySettingsAccent();
-});
-
-customProjectId.addEventListener("input", () => {
-  const numbersOnly = customProjectId.value.replace(/\D/g, "");
-  customProjectId.value = numbersOnly;
-  if (customProjectToggle.checked) {
-    if (numbersOnly) {
-      localStorage.setItem(CUSTOM_PROJECT_KEY, numbersOnly);
+if (customProjectToggle) {
+  customProjectToggle.addEventListener("change", () => {
+    if (customProjectToggle.checked) {
+      if (customProjectId.value.trim()) {
+        localStorage.setItem(
+          CUSTOM_PROJECT_KEY,
+          customProjectId.value
+        );
+      }
     } else {
       localStorage.removeItem(CUSTOM_PROJECT_KEY);
     }
-  }
-});
+
+    updateCustomProjectVisibility();
+    applySettingsAccent();
+  });
+}
+
+if (customProjectId) {
+  customProjectId.addEventListener("input", () => {
+    const numbersOnly =
+      customProjectId.value.replace(/\D/g, "");
+
+    customProjectId.value = numbersOnly;
+
+    if (customProjectToggle.checked) {
+      if (numbersOnly) {
+        localStorage.setItem(
+          CUSTOM_PROJECT_KEY,
+          numbersOnly
+        );
+      } else {
+        localStorage.removeItem(CUSTOM_PROJECT_KEY);
+      }
+    }
+  });
+}
 
 document.querySelectorAll(".preset-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const id = btn.dataset.id;
-    customProjectId.value = id;
-    customProjectToggle.checked = true;
+
+    if (customProjectId) {
+      customProjectId.value = id;
+    }
+
+    if (customProjectToggle) {
+      customProjectToggle.checked = true;
+    }
+
     localStorage.setItem(CUSTOM_PROJECT_KEY, id);
+
     updateCustomProjectVisibility();
     applySettingsAccent();
   });
 });
 
-/* -------------------------Navigation------------------------- */
-const betaButton = document.getElementById("beta-button");
-const betaButtonText = document.getElementById("beta-button-text");
-const isBeta = window.location.hostname === "beta.cattymod.app";
+/* ------------------------- Labs / Beta ------------------------- */
+const betaButton =
+  document.getElementById("beta-button");
+
+const betaButtonText =
+  document.getElementById("beta-button-text");
+
+const isBeta =
+  window.location.hostname === "beta.cattymod.app";
 
 if (isBeta) {
-  const cardTitle = document.querySelector("#page-labs .card-title");
-  const cardDescriptions = document.querySelectorAll("#page-labs .card-desc");
-  if (cardTitle) cardTitle.textContent = "You're on beta.cattymod.app";
-  if (cardDescriptions[0]) cardDescriptions[0].textContent = "Is CattyMod not working for you? Try going back to Studio.";
-  if (betaButtonText) betaButtonText.textContent = "Exit Beta";
+  const cardTitle =
+    document.querySelector("#page-labs .card-title");
+
+  const cardDescriptions =
+    document.querySelectorAll("#page-labs .card-desc");
+
+  if (cardTitle) {
+    cardTitle.textContent =
+      "You're on beta.cattymod.app";
+  }
+
+  if (cardDescriptions[0]) {
+    cardDescriptions[0].textContent =
+      "Is CattyMod not working for you? Try going back to Studio.";
+  }
+
+  if (betaButtonText) {
+    betaButtonText.textContent = "Exit Beta";
+  }
+
   if (betaButton) {
     betaButton.addEventListener("click", () => {
-      window.location.href = "https://studio.cattymod.app/";
+      window.location.href =
+        "https://studio.cattymod.app/settings#labs";
     });
-    const betaExternalIcon = betaButton.querySelector(".external-icon");
-    if (betaExternalIcon) betaExternalIcon.remove();
   }
 } else if (betaButton) {
   betaButton.addEventListener("click", () => {
-    window.location.href = "https://beta.cattymod.app/";
+    window.location.href =
+      "https://beta.cattymod.app/settings#labs";
   });
 }
 
-const navButtons = document.querySelectorAll(".nav-button[data-page]");
-const pages = document.querySelectorAll(".page");
+/* ------------------------- Navigation ------------------------- */
+const navButtons =
+  document.querySelectorAll(".nav-button[data-page]");
+
+const pages =
+  document.querySelectorAll(".page");
+
+function showPage(pageName, updateHash = true) {
+  const validPages = [
+    "general",
+    "labs",
+    "about"
+  ];
+
+  if (!validPages.includes(pageName)) {
+    pageName = "general";
+  }
+
+  navButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.page === pageName
+    );
+  });
+
+  pages.forEach(page => {
+    page.style.display =
+      page.id === "page-" + pageName
+        ? ""
+        : "none";
+  });
+
+  if (updateHash) {
+    history.replaceState(
+      null,
+      "",
+      "#" + pageName
+    );
+  }
+
+  applySettingsAccent();
+}
+
+function loadPageFromHash() {
+  const hash =
+    window.location.hash
+      .slice(1)
+      .toLowerCase();
+
+  if (
+    hash === "general" ||
+    hash === "labs" ||
+    hash === "about"
+  ) {
+    showPage(hash, false);
+  } else {
+    history.replaceState(null, "", "#general");
+    showPage("general", false);
+  }
+}
 
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
-    const pageName = button.dataset.page;
-    navButtons.forEach(item => { item.classList.remove("active"); });
-    button.classList.add("active");
-    pages.forEach(page => { page.style.display = "none"; });
-    const selectedPage = document.getElementById("page-" + pageName);
-    if (selectedPage) { selectedPage.style.display = ""; }
-    applySettingsAccent();
+    showPage(button.dataset.page);
   });
 });
 
-/* -------------------------Addons------------------------- */
-document.getElementById("addons-button").addEventListener("click", () => {
-  window.open("/addons.html", "_blank", "noopener,noreferrer");
-});
+window.addEventListener(
+  "hashchange",
+  loadPageFromHash
+);
 
-/* -------------------------Storage Sync------------------------- */
+/* ------------------------- Addons ------------------------- */
+const addonsButton =
+  document.getElementById("addons-button");
+
+if (addonsButton) {
+  addonsButton.addEventListener("click", () => {
+    window.open(
+      "/addons.html",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  });
+}
+
+/* ------------------------- Storage Sync ------------------------- */
 window.addEventListener("storage", event => {
-  if (event.key === THEME_KEY) { applyTheme(); applySettingsAccent(); loadBlockStyle(); loadAccent(); }
-  if (event.key === CUSTOM_PROJECT_KEY) { loadCustomProject(); }
-  if (event.key === GO_ICON_KEY) { loadGoIcon(); }
-  if (event.key === MOBILE_TOUCH_CONTROLS_KEY) { loadMobileTouchControls(); }
+  if (event.key === THEME_KEY) {
+    applyTheme();
+    applySettingsAccent();
+    loadBlockStyle();
+    loadAccent();
+  }
+
+  if (event.key === CUSTOM_PROJECT_KEY) {
+    loadCustomProject();
+  }
+
+  if (event.key === GO_ICON_KEY) {
+    loadGoIcon();
+  }
+
+  if (event.key === MOBILE_TOUCH_CONTROLS_KEY) {
+    loadMobileTouchControls();
+  }
 });
 
-/* -------------------------Start------------------------- */
+/* ------------------------- Start ------------------------- */
 applyTheme();
 applySettingsAccent();
 loadBlockStyle();
@@ -641,9 +893,10 @@ loadAccent();
 loadCustomProject();
 loadGoIcon();
 loadMobileTouchControls();
-lucide.createIcons();
+loadPageFromHash();
 </script>
 <script>
+lucide.createIcons();
 document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   const from = params.get("from");
