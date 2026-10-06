@@ -5,30 +5,10 @@ import VM from 'scratch-vm';
 import {getIsError} from '../reducers/project-state';
 import {ProjectUnsharedError, ProjectFetchError} from '../lib/tw-load-project-error';
 
-const ENDPOINT = 'https://windchimes.turbowarp.org/api/chime';
-const OPT_OUT_KEY = 'tw:windchime_opt_out';
+// Dummy implementation.
+// This intentionally does not make any network requests.
 const submittedViewsThisSession = new Set();
 const submittedErrorsThisSession = new Set();
-
-const isOptedOut = () => {
-    if (!process.env.ENABLE_WINDCHIMES) {
-        return true;
-    }
-
-    try {
-        const local = localStorage.getItem(OPT_OUT_KEY);
-        if (local !== null) {
-            return local === 'true';
-        }
-    } catch (e) {
-        // ignore
-    }
-
-    // These headers are really intended to be about third-parties so we don't need to follow them,
-    // but if someone has these set, it's good to assume that they would opt out if given the choice.
-    // So we'll just respect that preemptively.
-    return navigator.globalPrivacyControl || navigator.doNotTrack === '1';
-};
 
 const getErrorEvent = error => {
     if (error instanceof ProjectUnsharedError) {
@@ -40,26 +20,13 @@ const getErrorEvent = error => {
     return 'error/loading';
 };
 
+// Kept as a function so the existing event flow/API does not break.
+// It intentionally does nothing.
 const submitChime = async (resource, event) => {
-    if (isOptedOut()) {
-        return;
-    }
-
-    try {
-        await fetch(ENDPOINT, {
-            method: 'PUT',
-            body: JSON.stringify({
-                resource,
-                event
-            }),
-            headers: {
-                'content-type': 'application/json'
-            }
-        });
-        // safe to not check response - we don't do anything with it
-    } catch (e) {
-        // safe to just ignore - windchimes are not critical
-    }
+    // Dummy: no Windchimes request is made.
+    // Keep the arguments so callers do not need to change.
+    void resource;
+    void event;
 };
 
 const isEligible = projectId => projectId !== '0' && projectId !== null;
@@ -68,6 +35,7 @@ const submitOnce = (submitted, projectId, event) => {
     if (!isEligible(projectId) || submitted.has(projectId)) {
         return;
     }
+
     submitted.add(projectId);
     submitChime(`scratch/${projectId}`, event);
 };
@@ -81,7 +49,9 @@ class TWWindchimeSubmitter extends React.Component {
 
     componentDidMount () {
         const vm = this.props.vm;
+
         vm.on('COMPILE_ERROR', this.handleCompileError);
+
         if (vm.renderer) {
             vm.renderer.on('ContextLost', this.handleContextLost);
         }
@@ -97,28 +67,41 @@ class TWWindchimeSubmitter extends React.Component {
         }
 
         if (this.props.isError && !prevProps.isError) {
-            submitOnce(submittedErrorsThisSession, this.props.projectId, getErrorEvent(this.props.error));
+            submitOnce(
+                submittedErrorsThisSession,
+                this.props.projectId,
+                getErrorEvent(this.props.error)
+            );
         }
     }
 
     componentWillUnmount () {
         const vm = this.props.vm;
+
         vm.off('COMPILE_ERROR', this.handleCompileError);
+
         if (vm.renderer) {
             vm.renderer.off('ContextLost', this.handleContextLost);
         }
     }
 
     handleCompileError () {
-        submitOnce(submittedErrorsThisSession, this.props.projectId, 'error/compiler');
+        submitOnce(
+            submittedErrorsThisSession,
+            this.props.projectId,
+            'error/compiler'
+        );
     }
 
     handleContextLost () {
-        submitOnce(submittedErrorsThisSession, this.props.projectId, 'error/webgl');
+        submitOnce(
+            submittedErrorsThisSession,
+            this.props.projectId,
+            'error/webgl'
+        );
     }
 
     render () {
-        // No visible components and no functionality.
         return null;
     }
 }
