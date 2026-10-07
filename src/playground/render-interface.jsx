@@ -334,24 +334,16 @@ class Interface extends React.Component {
                             ) : null}
 <div className={styles.section}>
     <p>
-        <FormattedMessage
-            // eslint-disable-next-line max-len
-            defaultMessage="<cattymod>CattyMod</cattymod> is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below."
-            id="tw.home.description"
-            values={{
-                cattymod: chunks => (
-                    <a
-                        href="https://cattymod.app"
-                        style={{
-                            color: '#0098CC',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {chunks}
-                    </a>
-                )
+        <a
+            href="https://cattymod.app"
+            style={{
+                color: '#0098CC',
+                cursor: 'pointer'
             }}
-        />
+        >
+            CattyMod
+        </a>
+        {' is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below.'}
     </p>
 </div>
 <div className={styles.section}>
