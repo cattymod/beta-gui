@@ -1039,7 +1039,7 @@ class MenuBar extends React.Component {
                     <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
                 </svg>
 
-                Share and Explore
+                Share & Explore
             </MenuItem>
         )}
     </MenuSection>
