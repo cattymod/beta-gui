@@ -336,6 +336,8 @@ class Interface extends React.Component {
     <p>
         <a
             href="https://cattymod.app"
+            target={window.self !== window.top ? '_blank' : undefined}
+            rel={window.self !== window.top ? 'noopener noreferrer' : undefined}
             style={{
                 color: '#0098CC',
                 cursor: 'pointer'
