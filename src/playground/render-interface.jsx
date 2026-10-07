@@ -336,10 +336,10 @@ class Interface extends React.Component {
     <p>
         <FormattedMessage
             // eslint-disable-next-line max-len
-            defaultMessage="{APP_LINK} is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below."
+            defaultMessage="<cattymod>CattyMod</cattymod> is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below."
             id="tw.home.description"
             values={{
-                APP_LINK: chunks => (
+                cattymod: chunks => (
                     <a
                         href="https://cattymod.app"
                         style={{
@@ -347,7 +347,7 @@ class Interface extends React.Component {
                             cursor: 'pointer'
                         }}
                     >
-                        CattyMod
+                        {chunks}
                     </a>
                 )
             }}
