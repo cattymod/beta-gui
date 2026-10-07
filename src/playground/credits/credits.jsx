@@ -93,6 +93,9 @@ const Credits = () => (
                 <p>
                     The Blue Flag icon is from <a href="https://penguinmod.com/">PenguinMod</a> and the Purple Flag icon is from <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>.
                 </p>
+                <p>
+                    <a href="https://dinosaurmod.github.io/">DinosaurMod</a> inspired the links in the description of the editor homepage.
+                </p>
             </section>
         )}
 
