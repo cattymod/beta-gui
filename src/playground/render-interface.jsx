@@ -339,7 +339,7 @@ class Interface extends React.Component {
             target={window.self !== window.top ? '_blank' : undefined}
             rel={window.self !== window.top ? 'noopener noreferrer' : undefined}
             style={{
-                color: '#0098CC',
+                color: '#4C97FF',
                 cursor: 'pointer'
             }}
         >
