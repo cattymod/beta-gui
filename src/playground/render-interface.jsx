@@ -204,7 +204,7 @@ const Footer = () => (
                     </a>
 
                     <a
-                        href="https://github.com/CattyMod/"
+                        href="https://github.com/cattymod/"
                         target={isEmbedded ? '_blank' : undefined}
                         rel={isEmbedded ? 'noopener noreferrer' : undefined}
                     >
@@ -332,19 +332,29 @@ class Interface extends React.Component {
                                     />
                                 </div>
                             ) : null}
-                            <div className={styles.section}>
-                                <p>
-                                    <FormattedMessage
-                                        // eslint-disable-next-line max-len
-                                        defaultMessage="{APP_NAME} is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below."                                        description="Description of TurboWarp on the homepage"
-                                        id="tw.home.description"
-                                        values={{
-                                            APP_NAME
-                                        }}
-                                    />
-                                </p>
-                            </div>
-                            <div className={styles.section}>
+<div className={styles.section}>
+    <p>
+        <FormattedMessage
+            // eslint-disable-next-line max-len
+            defaultMessage="{APP_LINK} is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below."
+            id="tw.home.description"
+            values={{
+                APP_LINK: chunks => (
+                    <a
+                        href="https://cattymod.app"
+                        style={{
+                            color: '#0098CC',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        CattyMod
+                    </a>
+                )
+            }}
+        />
+    </p>
+</div>
+<div className={styles.section}>
                                 <FeaturedProjects studio="51500179" />
                             </div>
                         </React.Fragment>
