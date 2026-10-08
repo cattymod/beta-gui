@@ -192,7 +192,7 @@ const Footer = () => (
 
                 <div className={styles.footerSection}>
                     <a
-                        href="https://scratch.mit.edu/projects/1335032585/"
+                        href="https://cattymod.app/feedback/"
                         target={isEmbedded ? '_blank' : undefined}
                         rel={isEmbedded ? 'noopener noreferrer' : undefined}
                     >
