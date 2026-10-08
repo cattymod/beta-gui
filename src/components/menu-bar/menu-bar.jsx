@@ -1591,7 +1591,7 @@ class MenuBar extends React.Component {
                     <div className={styles.menuBarItem}>
                         <a
                             className={styles.feedbackLink}
-                            href="https://scratch.mit.edu/projects/1335032585/"
+                            href="https://cattymod.app/feedback/"
                             rel="noopener noreferrer"
                             target="_blank"
                         >
