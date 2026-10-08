@@ -35,7 +35,7 @@ const InvalidEmbed = () => (
         <p>
             {'If you are seeing this page even though you aren\'t embedding anything, let us know on '}
             <a
-                href="https://scratch.mit.edu/projects/1335032585/"
+                href="https://cattymod.app/feedback/"
                 target="_blank"
                 rel="noreferrer"
             >
