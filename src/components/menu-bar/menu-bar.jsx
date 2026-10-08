@@ -1014,7 +1014,7 @@ class MenuBar extends React.Component {
                 isRtl={this.props.isRtl}
                 onClick={() => {
                     window.open(
-                        'https://padlet.com/noahscratch493/cattymod',
+                        'https://cattymod.app/explore/',
                         '_blank',
                         'noopener,noreferrer'
                     );
