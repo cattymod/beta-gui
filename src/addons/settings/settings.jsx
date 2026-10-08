@@ -1104,7 +1104,7 @@ class AddonSettingsComponent extends React.Component {
                             />
                         </div>
                         <a
-                            href="https://scratch.mit.edu/projects/1335032585/"
+                            href="https://cattymod.app/feedback/"
                             target="_blank"
                             rel="noreferrer"
                             className={styles.feedbackButtonOuter}
