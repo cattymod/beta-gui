@@ -245,7 +245,7 @@ class MenuBar extends React.Component {
         document.removeEventListener('keydown', this.handleKeyPress);
     }
 
-    // Show GPT by default unless explicitly disabled.
+    // Show Copilot by default unless explicitly disabled.
     // Never show it inside an embedded editor.
     isGptButtonVisible () {
         if (window.parent !== window) {
@@ -1289,7 +1289,7 @@ class MenuBar extends React.Component {
                                                 <path d="M15 13v2" />
                                                 <path d="M9 13v2" />
                                             </svg>
-                                            Copilot
+                                            CattyMod Copilot
                                         </MenuItem>
                                     )}
 
