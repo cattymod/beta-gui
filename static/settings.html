@@ -244,6 +244,25 @@ button, input, select { font: inherit; }
 </div>
 </div>
 </div>
+
+<div class="section">
+  <div class="section-title">AI</div>
+  <div class="card">
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-title">Copilot</div>
+        <div class="setting-description">
+          The AI assistant for CattyMod.
+        </div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="gpt-enabled-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
 </section>
 <!-- LABS -->
 <section id="page-labs" class="page" style="display: none;">
@@ -308,6 +327,7 @@ const THEME_KEY = "tw:theme";
 const CUSTOM_PROJECT_KEY = "cattymod:customDefaultProject";
 const GO_ICON_KEY = "cattymod:goIcon";
 const MOBILE_TOUCH_CONTROLS_KEY = "cattymod:mobileTouchControls";
+const GPT_ENABLED_KEY = "cattymod:gptEnabled";
 
 /* ------------------------- Theme ------------------------- */
 const darkModeSelect = document.getElementById("dark-mode-select");
@@ -640,6 +660,39 @@ if (mobileTouchControlsToggle) {
   });
 }
 
+
+/* ------------------------- AI / Copilot ------------------------- */
+const gptEnabledToggle =
+  document.getElementById("gpt-enabled-toggle");
+
+function getGptEnabled() {
+  // Default to enabled if the setting does not exist.
+  return localStorage.getItem(GPT_ENABLED_KEY) !== "false";
+}
+
+function loadGptEnabled() {
+  if (!gptEnabledToggle) return;
+
+  gptEnabledToggle.checked = getGptEnabled();
+  applySettingsAccent();
+}
+
+function setGptEnabled(enabled) {
+  localStorage.setItem(
+    GPT_ENABLED_KEY,
+    enabled ? "true" : "false"
+  );
+
+  loadGptEnabled();
+}
+
+if (gptEnabledToggle) {
+  gptEnabledToggle.addEventListener("change", () => {
+    setGptEnabled(gptEnabledToggle.checked);
+  });
+}
+
+
 /* ------------------------- Custom Default Project ------------------------- */
 const customProjectToggle =
   document.getElementById("custom-project-toggle");
@@ -893,6 +946,7 @@ loadAccent();
 loadCustomProject();
 loadGoIcon();
 loadMobileTouchControls();
+loadGptEnabled();
 loadPageFromHash();
 </script>
 <script>
