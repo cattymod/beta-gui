@@ -232,7 +232,8 @@ class MenuBar extends React.Component {
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'restoreOptionMessage',
-            'handleClickGoHome'
+            'handleClickGoHome',
+            'handleClickGpt'
         ]);
     }
 
@@ -242,6 +243,33 @@ class MenuBar extends React.Component {
 
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
+    }
+
+    // Show GPT by default unless explicitly disabled.
+    // Never show it inside an embedded editor.
+    isGptButtonVisible () {
+        if (window.parent !== window) {
+            return false;
+        }
+
+        try {
+            const enabled = window.localStorage.getItem('cattymod:gptEnabled');
+            return enabled === null || enabled === 'true';
+        } catch (e) {
+            return false;
+        }
+    }
+
+    handleClickGpt () {
+        if (!this.isGptButtonVisible()) {
+            return;
+        }
+
+        window.open(
+            'https://cattymod.app/copilot',
+            '_blank',
+            'noopener,noreferrer'
+        );
     }
 
     handleClickNew () {
@@ -311,9 +339,9 @@ class MenuBar extends React.Component {
     }
 
     handleClickRestorePoints () {
-    this.props.onClickRestorePoints();
-    this.props.onRequestCloseFile();
-}
+        this.props.onClickRestorePoints();
+        this.props.onRequestCloseFile();
+    }
 
     handleClickGoHome () {
         window.location.href = 'https://cattymod.app';
@@ -567,7 +595,6 @@ class MenuBar extends React.Component {
             >
                 <div className={styles.mainMenu}>
                     <div className={styles.fileGroup}>
-
                         {this.props.errors.length > 0 && (
                             <div>
                                 <MenuLabel
@@ -616,10 +643,7 @@ class MenuBar extends React.Component {
                                                 <MenuItem key={id}>
                                                     {this.props.intl.formatMessage(
                                                         twMessages.compileError,
-                                                        {
-                                                            sprite,
-                                                            error
-                                                        }
+                                                        {sprite, error}
                                                     )}
                                                 </MenuItem>
                                             ))}
@@ -684,8 +708,6 @@ class MenuBar extends React.Component {
                                     open={this.props.fileMenuOpen}
                                     place={this.props.isRtl ? 'left' : 'right'}
                                 >
-
-                                    {/* New */}
                                     <MenuItem
                                         isRtl={this.props.isRtl}
                                         onClick={this.handleClickNew}
@@ -739,7 +761,6 @@ class MenuBar extends React.Component {
                                         </MenuItem>
                                     )}
 
-                                    {/* New Tab */}
                                     {!isEmbeddedEditor && (
                                         <MenuItem
                                             isRtl={this.props.isRtl}
@@ -771,7 +792,6 @@ class MenuBar extends React.Component {
                                         this.props.canCreateCopy ||
                                         this.props.canRemix) && (
                                         <MenuSection>
-
                                             {this.props.canSave && (
                                                 <MenuItem onClick={this.handleClickSave}>
                                                     <svg
@@ -827,20 +847,17 @@ class MenuBar extends React.Component {
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
                                                     >
-                                                        <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+                                                        <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
                                                         <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
                                                         <path d="M7 3v4a1 1 0 0 0 1 1h7" />
                                                     </svg>
                                                     {remixMessage}
                                                 </MenuItem>
                                             )}
-
                                         </MenuSection>
                                     )}
 
                                     <MenuSection>
-
-                                        {/* Load from computer */}
                                         <MenuItem
                                             onClick={this.props.onStartSelectingFileUpload}
                                         >
@@ -859,7 +876,6 @@ class MenuBar extends React.Component {
                                                 <path d="m17 8-5-5-5 5" />
                                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                             </svg>
-
                                             {this.props.intl.formatMessage(
                                                 sharedMessages.loadFromComputerTitle
                                             )}
@@ -870,10 +886,8 @@ class MenuBar extends React.Component {
                                         >
                                             {(_className, downloadProject, extended) => (
                                                 <React.Fragment>
-
                                                     {extended.available && (
                                                         <React.Fragment>
-
                                                             {extended.name !== null && (
                                                                 <MenuItem
                                                                     onClick={this.getSaveToComputerHandler(
@@ -895,14 +909,11 @@ class MenuBar extends React.Component {
                                                                         <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
                                                                         <path d="M7 3v4a1 1 0 0 0 1 1h7" />
                                                                     </svg>
-
                                                                     <FormattedMessage
                                                                         defaultMessage="Save to {file}"
                                                                         description="Menu bar item to save project to an existing file on the user's computer"
                                                                         id="tw.saveTo"
-                                                                        values={{
-                                                                            file: extended.name
-                                                                        }}
+                                                                        values={{file: extended.name}}
                                                                     />
                                                                 </MenuItem>
                                                             )}
@@ -927,22 +938,18 @@ class MenuBar extends React.Component {
                                                                     <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
                                                                     <path d="M7 3v4a1 1 0 0 0 1 1h7" />
                                                                 </svg>
-
                                                                 <FormattedMessage
                                                                     defaultMessage="Save as..."
                                                                     description="Menu bar item to select a new file to save the project as"
                                                                     id="tw.saveAs"
                                                                 />
                                                             </MenuItem>
-
                                                         </React.Fragment>
                                                     )}
 
                                                     {notScratchDesktop() && (
                                                         <MenuItem
-                                                            onClick={this.getSaveToComputerHandler(
-                                                                downloadProject
-                                                            )}
+                                                            onClick={this.getSaveToComputerHandler(downloadProject)}
                                                         >
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -959,7 +966,6 @@ class MenuBar extends React.Component {
                                                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                                                 <path d="m7 10 5 5 5-5" />
                                                             </svg>
-
                                                             {extended.available ? (
                                                                 <FormattedMessage
                                                                     defaultMessage="Save to separate file..."
@@ -975,119 +981,122 @@ class MenuBar extends React.Component {
                                                             )}
                                                         </MenuItem>
                                                     )}
-
                                                 </React.Fragment>
                                             )}
                                         </SB3Downloader>
-
                                     </MenuSection>
 
-                                   {this.props.onClickPackager && (
-    <MenuSection>
-        <MenuItem
-            onClick={this.handleClickPackager}
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            >
-                <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2" />
-                <rect x="14" y="2" width="8" height="8" rx="1" />
-            </svg>
+                                    {this.props.onClickPackager && (
+                                        <MenuSection>
+                                            <MenuItem onClick={this.handleClickPackager}>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                >
+                                                    <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2" />
+                                                    <rect x="14" y="2" width="8" height="8" rx="1" />
+                                                </svg>
+                                                <FormattedMessage
+                                                    defaultMessage="Package project"
+                                                    description="Menu bar item to open the current project in the packager"
+                                                    id="tw.menuBar.package"
+                                                />
+                                            </MenuItem>
 
-            <FormattedMessage
-                defaultMessage="Package project"
-                description="Menu bar item to open the current project in the packager"
-                id="tw.menuBar.package"
-            />
-        </MenuItem>
+                                            {!isEmbeddedEditor && (
+                                                <MenuItem
+                                                    isRtl={this.props.isRtl}
+                                                    onClick={() => {
+                                                        window.open(
+                                                            'https://cattymod.app/explore/',
+                                                            '_blank',
+                                                            'noopener,noreferrer'
+                                                        );
+                                                    }}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="lucide lucide-users preview-icon"
+                                                    >
+                                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                                        <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+                                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                                        <circle cx="9" cy="7" r="4" />
+                                                    </svg>
+                                                    Community
+                                                </MenuItem>
+                                            )}
+                                        </MenuSection>
+                                    )}
 
-        {!isEmbeddedEditor && (
-            <MenuItem
-                isRtl={this.props.isRtl}
-                onClick={() => {
-                    window.open(
-                        'https://cattymod.app/explore/',
-                        '_blank',
-                        'noopener,noreferrer'
-                    );
-                }}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users preview-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
+                                    <MenuSection>
+                                        <MenuItem onClick={this.handleClickRestorePoints}>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="24"
+                                                height="24"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            >
+                                                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                                                <path d="M21 3v5h-5" />
+                                            </svg>
+                                            <FormattedMessage
+                                                defaultMessage="Restore points"
+                                                description="Menu bar item to manage restore points"
+                                                id="tw.menuBar.restorePoints"
+                                            />
+                                        </MenuItem>
+                                    </MenuSection>
 
-                Community
-            </MenuItem>
-        )}
-    </MenuSection>
-)}
-
-<MenuSection>
-    <MenuItem
-        onClick={this.handleClickRestorePoints}
-    >
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-            <path d="M21 3v5h-5" />
-        </svg>
-
-        <FormattedMessage
-            defaultMessage="Restore points"
-            description="Menu bar item to manage restore points"
-            id="tw.menuBar.restorePoints"
-        />
-    </MenuItem>
-</MenuSection>
-
-{!isEmbeddedEditor && (
-    <MenuSection>
-        <MenuItem
-            isRtl={this.props.isRtl}
-            onClick={this.handleClickGoHome}
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-house"
-            >
-                <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-                <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            </svg>
-
-            <FormattedMessage
-                defaultMessage="Go Home"
-                description="Menu bar item for returning to the CattyMod home page"
-                id="tw.menuBar.goHome"
-            />
-        </MenuItem>
-    </MenuSection>
-)}
-                                    
-
-
+                                    {!isEmbeddedEditor && (
+                                        <MenuSection>
+                                            <MenuItem
+                                                isRtl={this.props.isRtl}
+                                                onClick={this.handleClickGoHome}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="24"
+                                                    height="24"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    className="lucide lucide-house"
+                                                >
+                                                    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+                                                    <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                                </svg>
+                                                <FormattedMessage
+                                                    defaultMessage="Go Home"
+                                                    description="Menu bar item for returning to the CattyMod home page"
+                                                    id="tw.menuBar.goHome"
+                                                />
+                                            </MenuItem>
+                                        </MenuSection>
+                                    )}
                                 </MenuBarMenu>
                             </MenuLabel>
                         )}
@@ -1124,7 +1133,6 @@ class MenuBar extends React.Component {
                                 open={this.props.editMenuOpen}
                                 place={this.props.isRtl ? 'left' : 'right'}
                             >
-
                                 {this.props.isPlayerOnly ? null : (
                                     <DeletionRestorer>
                                         {(handleRestore, {restorable, deletedItem}) => (
@@ -1155,8 +1163,6 @@ class MenuBar extends React.Component {
                                 )}
 
                                 <MenuSection>
-
-                                    {/* Turbo Mode */}
                                     <TurboMode>
                                         {(toggleTurboMode, {turboMode}) => (
                                             <MenuItem onClick={toggleTurboMode}>
@@ -1173,7 +1179,6 @@ class MenuBar extends React.Component {
                                                 >
                                                     <path d="M15.914 4a1.5 1.5 0 0 0-2.474-1.561l-9 9A1.5 1.5 0 0 0 5.5 14h4.002a.5.5 0 0 1 .471.666L8.086 20a1.5 1.5 0 0 0 2.475 1.56l9-9A1.5 1.5 0 0 0 18.5 10h-3.997a.5.5 0 0 1-.472-.667z" />
                                                 </svg>
-
                                                 {turboMode ? (
                                                     <FormattedMessage
                                                         defaultMessage="Turn off Turbo Mode"
@@ -1191,7 +1196,6 @@ class MenuBar extends React.Component {
                                         )}
                                     </TurboMode>
 
-                                    {/* 60 FPS */}
                                     <FramerateChanger>
                                         {(changeFramerate, {framerate}) => (
                                             <MenuItem onClick={changeFramerate}>
@@ -1209,7 +1213,6 @@ class MenuBar extends React.Component {
                                                     <path d="m12 14 4-4" />
                                                     <path d="M3.34 19a10 10 0 1 1 17.32 0" />
                                                 </svg>
-
                                                 {framerate === 60 ? (
                                                     <FormattedMessage
                                                         defaultMessage="Turn off 60 FPS Mode"
@@ -1246,7 +1249,6 @@ class MenuBar extends React.Component {
                                                     <path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
                                                     <circle cx="10" cy="7" r="4" />
                                                 </svg>
-
                                                 <FormattedMessage
                                                     defaultMessage="Change Username"
                                                     description="Menu bar item for changing the username"
@@ -1256,7 +1258,41 @@ class MenuBar extends React.Component {
                                         )}
                                     </ChangeUsername>
 
-                                    {/* Cloud Variables */}
+                                    {/* CattyMod GPT */}
+                                    {this.isGptButtonVisible() && (
+                                        <MenuItem
+                                            isRtl={this.props.isRtl}
+                                            onClick={this.handleClickGpt}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="24"
+                                                height="24"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="lucide lucide-bot"
+                                            >
+                                                <path d="M12 8V4H8" />
+                                                <rect
+                                                    width="16"
+                                                    height="12"
+                                                    x="4"
+                                                    y="8"
+                                                    rx="2"
+                                                />
+                                                <path d="M2 14h2" />
+                                                <path d="M20 14h2" />
+                                                <path d="M15 13v2" />
+                                                <path d="M9 13v2" />
+                                            </svg>
+                                            Copilot
+                                        </MenuItem>
+                                    )}
+
                                     <CloudVariablesToggler>
                                         {(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
                                             <MenuItem
@@ -1268,8 +1304,21 @@ class MenuBar extends React.Component {
                                                 {canUseCloudVariables ? (
                                                     enabled ? (
                                                         <React.Fragment>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-off"><path d="M10.94 5.274A7 7 0 0 1 15.71 10h1.79a4.5 4.5 0 0 1 4.222 6.057"/><path d="M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 0 1 5.79 5.78"/><path d="m2 2 20 20"/></svg>
-
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="24"
+                                                                height="24"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            >
+                                                                <path d="M10.94 5.274A7 7 0 0 1 15.71 10h1.79a4.5 4.5 0 0 1 4.222 6.057" />
+                                                                <path d="M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 0 1 5.79 5.78" />
+                                                                <path d="m2 2 20 20" />
+                                                            </svg>
                                                             <FormattedMessage
                                                                 defaultMessage="Disable Cloud Variables"
                                                                 description="Menu bar item for disabling cloud variables"
@@ -1291,7 +1340,6 @@ class MenuBar extends React.Component {
                                                             >
                                                                 <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
                                                             </svg>
-
                                                             <FormattedMessage
                                                                 defaultMessage="Enable Cloud Variables"
                                                                 description="Menu bar item for enabling cloud variables"
@@ -1316,7 +1364,6 @@ class MenuBar extends React.Component {
                                                             <path d="M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 1 1 5.79 5.78" />
                                                             <path d="m2 2 20 20" />
                                                         </svg>
-
                                                         <FormattedMessage
                                                             defaultMessage="Cloud Variables are not Available"
                                                             description="Menu bar item for when cloud variables are not available"
@@ -1327,7 +1374,6 @@ class MenuBar extends React.Component {
                                             </MenuItem>
                                         )}
                                     </CloudVariablesToggler>
-
                                 </MenuSection>
 
                                 <MenuSection>
@@ -1353,7 +1399,6 @@ class MenuBar extends React.Component {
                                             <path d="M8 10v4" />
                                             <path d="M8 12H3" />
                                         </svg>
-
                                         <FormattedMessage
                                             defaultMessage="Advanced Settings"
                                             description="Menu bar item for advanced settings"
@@ -1361,7 +1406,6 @@ class MenuBar extends React.Component {
                                         />
                                     </MenuItem>
                                 </MenuSection>
-
                             </MenuBarMenu>
                         </MenuLabel>
 
@@ -1392,7 +1436,6 @@ class MenuBar extends React.Component {
                                                 {'✓'}
                                             </span>
                                             {' '}
-
                                             <FormattedMessage
                                                 defaultMessage="Normal mode"
                                                 description="April fools: resets editor to not have any pranks"
@@ -1409,7 +1452,6 @@ class MenuBar extends React.Component {
                                                 {'✓'}
                                             </span>
                                             {' '}
-
                                             <FormattedMessage
                                                 defaultMessage="Caturday mode"
                                                 description="April fools: Cat blocks mode"
@@ -1435,7 +1477,6 @@ class MenuBar extends React.Component {
                                     width={20}
                                     height={20}
                                 />
-
                                 <span className={styles.collapsibleLabel}>
                                     <FormattedMessage
                                         defaultMessage="Addons"
@@ -1460,7 +1501,6 @@ class MenuBar extends React.Component {
                                     width={20}
                                     height={20}
                                 />
-
                                 <span className={styles.collapsibleLabel}>
                                     <FormattedMessage
                                         defaultMessage="Advanced"
@@ -1481,14 +1521,9 @@ class MenuBar extends React.Component {
                                 styles.growable
                             )}
                         >
-                            <MenuBarItemTooltip
-                                enable
-                                id="title-field"
-                            >
+                            <MenuBarItemTooltip enable id="title-field">
                                 <ProjectTitleInput
-                                    className={classNames(
-                                        styles.titleFieldGrowable
-                                    )}
+                                    className={classNames(styles.titleFieldGrowable)}
                                 />
                             </MenuBarItemTooltip>
                         </div>
@@ -1510,9 +1545,7 @@ class MenuBar extends React.Component {
                         (this.props.isShowingProject ||
                             this.props.isUpdating) && (
                             <div className={classNames(styles.menuBarItem)}>
-                                <ProjectWatcher
-                                    onDoneUpdating={this.props.onSeeCommunity}
-                                >
+                                <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
                                     {waitForUpdate => (
                                         <ShareButton
                                             className={styles.menuBarButton}
@@ -1528,9 +1561,7 @@ class MenuBar extends React.Component {
                     ) : this.props.showComingSoon ? (
                         <div className={classNames(styles.menuBarItem)}>
                             <MenuBarItemTooltip id="share-button">
-                                <ShareButton
-                                    className={styles.menuBarButton}
-                                />
+                                <ShareButton className={styles.menuBarButton} />
                             </MenuBarItemTooltip>
                         </div>
                     ) : null}
@@ -1542,9 +1573,7 @@ class MenuBar extends React.Component {
                     )}
 
                     {!(window.parent !== window &&
-                        !new URLSearchParams(window.location.search).has(
-                            'showprojectpage'
-                        )) && (
+                        !new URLSearchParams(window.location.search).has('showprojectpage')) && (
                         <div
                             className={classNames(
                                 styles.menuBarItem,
@@ -1554,16 +1583,12 @@ class MenuBar extends React.Component {
                             {this.props.enableCommunity ? (
                                 (this.props.isShowingProject ||
                                     this.props.isUpdating) && (
-                                    <ProjectWatcher
-                                        onDoneUpdating={this.props.onSeeCommunity}
-                                    >
+                                    <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
                                         {waitForUpdate => (
                                             <CommunityButton
                                                 className={styles.menuBarButton}
                                                 onClick={() => {
-                                                    this.handleClickSeeCommunity(
-                                                        waitForUpdate
-                                                    );
+                                                    this.handleClickSeeCommunity(waitForUpdate);
                                                 }}
                                             />
                                         )}
@@ -1572,9 +1597,7 @@ class MenuBar extends React.Component {
                             ) : (
                                 this.props.showComingSoon ? (
                                     <MenuBarItemTooltip id="community-button">
-                                        <CommunityButton
-                                            className={styles.menuBarButton}
-                                        />
+                                        <CommunityButton className={styles.menuBarButton} />
                                     </MenuBarItemTooltip>
                                 ) : (
                                     this.props.enableSeeInside ? (
@@ -1600,9 +1623,7 @@ class MenuBar extends React.Component {
                                     defaultMessage="{APP_NAME} Feedback"
                                     description="Button to give feedback in the menu bar"
                                     id="tw.feedbackButton"
-                                    values={{
-                                        APP_NAME
-                                    }}
+                                    values={{APP_NAME}}
                                 />
                             </Button>
                         </a>
