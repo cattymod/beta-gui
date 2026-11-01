@@ -11,8 +11,7 @@ import rainbowIcon from './tw-accent-rainbow.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 
 import {
-    ACCENT_MAP,
-    Theme
+    ACCENT_MAP
 } from '../../lib/themes/index.js';
 
 import {
@@ -27,7 +26,7 @@ import {persistTheme} from '../../lib/themes/themePersistance.js';
 import styles from './settings-menu.css';
 
 
-// 🌈 ORDER CONTROL (this is the important part)
+// 🌈 ORDER CONTROL
 const ACCENT_ORDER = [
     'red',
     'orange',
@@ -191,18 +190,20 @@ const AccentThemeMenu = ({
         </div>
 
         <Submenu place={isRtl ? 'left' : 'right'}>
-            {ACCENT_ORDER
-                .filter(id => ACCENT_MAP[id])
-                .map(item => (
-                    <AccentMenuItem
-                        key={item}
-                        id={item}
-                        isSelected={theme.accent === item}
-                        onClick={() =>
-                            onChangeTheme(theme.set('accent', item))
-                        }
-                    />
-                ))}
+            <div className={styles.accentGrid}>
+                {ACCENT_ORDER
+                    .filter(id => ACCENT_MAP[id])
+                    .map(item => (
+                        <AccentMenuItem
+                            key={item}
+                            id={item}
+                            isSelected={theme.accent === item}
+                            onClick={() =>
+                                onChangeTheme(theme.set('accent', item))
+                            }
+                        />
+                    ))}
+            </div>
         </Submenu>
     </MenuItem>
 );
