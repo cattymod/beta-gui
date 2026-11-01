@@ -25,12 +25,18 @@ const ToggleButtons = ({buttons, className, disabled}) => (
                 onClick={button.handleClick}
                 disabled={disabled}
             >
-                <TWRenderRecoloredImage
-                    src={button.icon}
-                    aria-hidden="true"
-                    className={button.iconClassName}
-                    draggable={false}
-                />
+                {React.isValidElement(button.icon) ? (
+                    <span className={button.iconClassName}>
+                        {button.icon}
+                    </span>
+                ) : (
+                    <TWRenderRecoloredImage
+                        src={button.icon}
+                        aria-hidden="true"
+                        className={button.iconClassName}
+                        draggable={false}
+                    />
+                )}
             </button>
         ))}
     </div>
@@ -40,7 +46,11 @@ ToggleButtons.propTypes = {
     buttons: PropTypes.arrayOf(PropTypes.shape({
         title: PropTypes.string.isRequired,
         handleClick: PropTypes.func.isRequired,
-        icon: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+        icon: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.func,
+            PropTypes.element
+        ]),
         iconClassName: PropTypes.string,
         isSelected: PropTypes.bool
     })),
