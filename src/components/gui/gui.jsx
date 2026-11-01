@@ -348,7 +348,7 @@ const GUIComponent = props => {
     className={styles.tabIcon}
 />
                                         <FormattedMessage
-                                            defaultMessage="Code"
+                                            defaultMessage="Scripts"
                                             description="Button to get to the code panel"
                                             id="gui.gui.codeTab"
                                         />
@@ -364,13 +364,13 @@ const GUIComponent = props => {
 />
                                         {targetIsStage ? (
                                             <FormattedMessage
-                                                defaultMessage="Backdrops"
+                                                defaultMessage="Assets"
                                                 description="Button to get to the backdrops panel"
                                                 id="gui.gui.backdropsTab"
                                             />
                                         ) : (
                                             <FormattedMessage
-                                                defaultMessage="Costumes"
+                                                defaultMessage="Assets"
                                                 description="Button to get to the costumes panel"
                                                 id="gui.gui.costumesTab"
                                             />
