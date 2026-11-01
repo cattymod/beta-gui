@@ -48,9 +48,11 @@ import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
-import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
-import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
-import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
+import {
+    Blocks as BlocksIcon,
+    PaintbrushVertical,
+    Volume2
+} from 'lucide-react';
 
 const messages = defineMessages({
     addExtension: {
@@ -340,10 +342,11 @@ const GUIComponent = props => {
                             >
                                 <TabList className={tabClassNames.tabList}>
                                     <Tab className={tabClassNames.tab}>
-                                        <img
-                                            draggable={false}
-                                            src={codeIcon()}
-                                        />
+                                        <BlocksIcon
+    size={20}
+    strokeWidth={2}
+    className={styles.tabIcon}
+/>
                                         <FormattedMessage
                                             defaultMessage="Code"
                                             description="Button to get to the code panel"
@@ -354,10 +357,11 @@ const GUIComponent = props => {
                                         className={tabClassNames.tab}
                                         onClick={onActivateCostumesTab}
                                     >
-                                        <img
-                                            draggable={false}
-                                            src={costumesIcon()}
-                                        />
+                                        <PaintbrushVertical
+    size={20}
+    strokeWidth={2}
+    className={styles.tabIcon}
+/>
                                         {targetIsStage ? (
                                             <FormattedMessage
                                                 defaultMessage="Backdrops"
@@ -376,10 +380,11 @@ const GUIComponent = props => {
                                         className={tabClassNames.tab}
                                         onClick={onActivateSoundsTab}
                                     >
-                                        <img
-                                            draggable={false}
-                                            src={soundsIcon()}
-                                        />
+                                        <Volume2
+    size={20}
+    strokeWidth={2}
+    className={styles.tabIcon}
+/>
                                         <FormattedMessage
                                             defaultMessage="Sounds"
                                             description="Button to get to the sounds panel"
