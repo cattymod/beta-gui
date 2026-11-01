@@ -11,7 +11,10 @@ import rainbowIcon from './tw-accent-rainbow.svg';
 
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 
-import {ACCENT_MAP} from '../../lib/themes/index.js';
+import {
+    ACCENT_MAP,
+    Theme
+} from '../../lib/themes/index.js';
 
 import {
     openAccentMenu,
@@ -24,7 +27,7 @@ import {persistTheme} from '../../lib/themes/themePersistance.js';
 
 import styles from './settings-menu.css';
 
-// All available accents, in display order
+// Accent order
 const ACCENT_ORDER = [
     'red',
     'orange',
@@ -62,7 +65,7 @@ const ACCENT_ORDER = [
     'metal'
 ];
 
-// Display names
+// Accent names
 const ACCENT_NAMES = {
     red: 'Red',
     orange: 'Orange',
@@ -72,6 +75,7 @@ const ACCENT_NAMES = {
     indigo: 'Indigo',
     violet: 'Violet',
     purple: 'Purple',
+    mist: 'Pink',
     rainbow: 'Rainbow',
 
     ace: 'Ace',
@@ -100,50 +104,43 @@ const ACCENT_NAMES = {
     metal: 'Metal'
 };
 
-// Generate localization descriptors
-const getAccentMessage = id => {
-    const name = ACCENT_NAMES[id] || id;
-
-    return {
-        defaultMessage: name,
-        description: `${name} accent theme`,
-        id: id === 'metal'
-            ? 'tw.accent.metal'
-            : `tw.accent.${id}`
-    };
-};
-
-// Special icons
+// Rainbow icon
 const icons = {
     rainbow: rainbowIcon
 };
 
-// Accent color icon
+// Color preview
 const ColorIcon = ({id}) => {
     const accent = ACCENT_MAP[id];
 
-    const guiColors = accent && accent.guiColors
-        ? accent.guiColors
-        : {};
+    if (!accent) {
+        return (
+            <div
+                className={styles.accentIconOuter}
+                style={{backgroundColor: '#999'}}
+            />
+        );
+    }
 
-    const color = guiColors['looks-secondary'] || '#999';
+    if (icons[id]) {
+        return (
+            <img
+                className={styles.accentIconOuter}
+                src={icons[id]}
+                draggable={false}
+                alt=""
+            />
+        );
+    }
 
-    const backgroundImage =
-        guiColors['menu-bar-background-image'];
-
-    return icons[id] ? (
-        <img
-            className={styles.accentIconOuter}
-            src={icons[id]}
-            draggable={false}
-            alt=""
-        />
-    ) : (
+    return (
         <div
             className={styles.accentIconOuter}
             style={{
-                backgroundColor: color,
-                backgroundImage: backgroundImage || 'none'
+                backgroundColor:
+                    accent.guiColors['looks-secondary'] || '#999',
+                backgroundImage:
+                    accent.guiColors['menu-bar-background-image'] || 'none'
             }}
         />
     );
@@ -153,7 +150,7 @@ ColorIcon.propTypes = {
     id: PropTypes.string.isRequired
 };
 
-// Individual accent menu item
+// Individual accent item
 const AccentMenuItem = ({
     id,
     isSelected,
@@ -174,8 +171,8 @@ const AccentMenuItem = ({
 
             <ColorIcon id={id} />
 
-            <span className={styles.accentName}>
-                <FormattedMessage {...getAccentMessage(id)} />
+            <span className={styles.accentLabel}>
+                {ACCENT_NAMES[id] || id}
             </span>
         </div>
     </MenuItem>
@@ -223,21 +220,18 @@ const AccentThemeMenu = ({
                 />
             </div>
 
-            <Submenu place={isRtl ? 'left' : 'right'}>
-                <div className={styles.accentGrid}>
-                    {availableAccents.map(id => (
-                        <AccentMenuItem
-                            key={id}
-                            id={id}
-                            isSelected={theme.accent === id}
-                            onClick={() => {
-                                onChangeTheme(
-                                    theme.set('accent', id)
-                                );
-                            }}
-                        />
-                    ))}
-                </div>
+            <Submenu
+                place={isRtl ? 'left' : 'right'}
+                className={styles.accentSubmenu}
+            >
+                {availableAccents.map(id => (
+                    <AccentMenuItem
+                        key={id}
+                        id={id}
+                        isSelected={theme.accent === id}
+                        onClick={() => onChangeTheme(theme.set('accent', id))}
+                    />
+                ))}
             </Submenu>
         </MenuItem>
     );
@@ -248,7 +242,7 @@ AccentThemeMenu.propTypes = {
     isRtl: PropTypes.bool,
     onChangeTheme: PropTypes.func,
     onOpen: PropTypes.func,
-    theme: PropTypes.object
+    theme: PropTypes.instanceOf(Theme)
 };
 
 // Redux
