@@ -341,58 +341,39 @@ const GUIComponent = props => {
                                 onSelect={onActivateTab}
                             >
                                 <TabList className={tabClassNames.tabList}>
-                                    <Tab className={tabClassNames.tab}>
-                                        <BlocksIcon
-    size={20}
-    strokeWidth={2}
-    className={styles.tabIcon}
-/>
-                                        <FormattedMessage
-                                            defaultMessage="Scripts"
-                                            description="Button to get to the code panel"
-                                            id="gui.gui.codeTab"
-                                        />
-                                    </Tab>
-                                    <Tab
-                                        className={tabClassNames.tab}
-                                        onClick={onActivateCostumesTab}
-                                    >
-                                        <PaintbrushVertical
-    size={20}
-    strokeWidth={2}
-    className={styles.tabIcon}
-/>
-                                        {targetIsStage ? (
-                                            <FormattedMessage
-                                                defaultMessage="Assets"
-                                                description="Button to get to the backdrops panel"
-                                                id="gui.gui.backdropsTab"
-                                            />
-                                        ) : (
-                                            <FormattedMessage
-                                                defaultMessage="Assets"
-                                                description="Button to get to the costumes panel"
-                                                id="gui.gui.costumesTab"
-                                            />
-                                        )}
-                                    </Tab>
-                                    <Tab
-                                        className={tabClassNames.tab}
-                                        onClick={onActivateSoundsTab}
-                                    >
-                                        <Volume2
-    size={20}
-    strokeWidth={2}
-    className={styles.tabIcon}
-/>
-                                        <FormattedMessage
-                                            defaultMessage="Sounds"
-                                            description="Button to get to the sounds panel"
-                                            id="gui.gui.soundsTab"
-                                        />
-                                    </Tab>
-                                </TabList>
-                                <TabPanel className={tabClassNames.tabPanel}>
+    <Tab className={tabClassNames.tab}>
+        <BlocksIcon
+            size={20}
+            strokeWidth={2}
+            className={styles.tabIcon}
+        />
+        <span>Scripts</span>
+    </Tab>
+
+    <Tab
+        className={tabClassNames.tab}
+        onClick={onActivateCostumesTab}
+    >
+        <PaintbrushVertical
+            size={20}
+            strokeWidth={2}
+            className={styles.tabIcon}
+        />
+        <span>Assets</span>
+    </Tab>
+
+    <Tab
+        className={tabClassNames.tab}
+        onClick={onActivateSoundsTab}
+    >
+        <Volume2
+            size={20}
+            strokeWidth={2}
+            className={styles.tabIcon}
+        />
+        <span>Audio</span>
+    </Tab>
+</TabList><TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
                                             key={`${blocksId}/${theme.id}`}
