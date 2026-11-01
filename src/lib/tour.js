@@ -67,12 +67,6 @@ function startTourNow(onComplete) {
         },
         {
             type: 'target',
-            sel: '.gui_extension-button-container_b4rCs',
-            position: 'below',
-            desc: 'Click here to add extensions to your project and unlock even more blocks!'
-        },
-        {
-            type: 'target',
             sel: '.stage_stage_1fD7k',
             position: 'below',
             desc: 'Here is the Stage, where your project comes to life!'
