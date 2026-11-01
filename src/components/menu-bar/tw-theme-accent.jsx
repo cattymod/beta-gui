@@ -37,6 +37,7 @@ const ACCENT_ORDER = [
     'indigo',
     'violet',
     'purple',
+    'mist',
     'rainbow'
 ];
 
@@ -82,6 +83,11 @@ const ACCENT_LABELS = {
         defaultMessage: 'Purple',
         description: 'Purple accent theme',
         id: 'tw.accent.purple'
+    },
+    mist: {
+        defaultMessage: 'Mist Pink',
+        description: 'Pink accent theme',
+        id: 'tw.accent.mist'
     },
     rainbow: {
         defaultMessage: 'Rainbow',
