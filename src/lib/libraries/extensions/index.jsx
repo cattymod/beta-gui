@@ -513,6 +513,21 @@ export default [
     incompatibleWithScratch: true,
     featured: true
 },
+{
+    name: 'Audio Recorder',
+    extensionId: 'dangoaudio',
+    extensionURL: 'https://cattymod.app/extensions/dangoaudio.js',
+    iconURL: 'https://cattymod.app/extensions/none.svg',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
+    description: 'Record your voice in CattyMod!',
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
+    featured: true
+},
 
 ];
 
