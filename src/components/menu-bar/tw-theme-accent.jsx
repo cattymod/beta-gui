@@ -1,4 +1,3 @@
-
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -164,11 +163,12 @@ const AccentMenuItem = ({
             })}
         >
             <img
-                className={styles.check}
-                src={check}
-                draggable={false}
-                alt=""
-            />
+    className={styles.check}
+    src={check}
+    draggable={false}
+    alt=""
+    style={{filter: 'brightness(0)'}}
+/>
         </div>
 
             <ColorIcon id={id} />
