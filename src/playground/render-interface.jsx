@@ -384,10 +384,12 @@ class Interface extends React.Component {
         >
             CattyMod
         </a>
-        {' is a Scratch mod that supercharges projects with powerful features to make them run faster and better. Try it out by inputting a project ID or URL above or choosing a featured project below.'}
+        {' is a Scratch mod that supercharges projects with powerful features to make them run faster and better.'}
+
+        {localStorage.getItem('cattymod:removeScratch') !== 'true' &&
+            ' Try it out by inputting a project ID or URL above or choosing a featured project below.'}
     </p>
-</div>
-<div className={styles.section}>
+</div><div className={styles.section}>
                                 <FeaturedProjects studio="51500179" />
                             </div>
                         </React.Fragment>
