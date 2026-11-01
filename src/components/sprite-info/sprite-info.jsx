@@ -15,10 +15,7 @@ import {isWideLocale} from '../../lib/locale-utils.js';
 
 import styles from './sprite-info.css';
 
-import xIcon from './icon--x.svg';
-import yIcon from './icon--y.svg';
-import showIcon from '!../../lib/tw-recolor/build!./icon--show.svg';
-import hideIcon from '!../../lib/tw-recolor/build!./icon--hide.svg';
+import {Eye, EyeClosed, ChevronsLeftRight, ChevronsUpDown} from 'lucide-react';
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
 
 const BufferedInput = BufferedInputHOC(Input);
@@ -107,12 +104,11 @@ class SpriteInfo extends React.Component {
                 {
                     (stageSize === STAGE_DISPLAY_SIZES.full || stageSize === STAGE_DISPLAY_SIZES.large) ?
                         <div className={styles.iconWrapper}>
-                            <img
-                                aria-hidden="true"
-                                className={classNames(styles.xIcon, styles.icon)}
-                                src={xIcon}
-                                draggable={false}
-                            />
+                            <ChevronsLeftRight
+    aria-hidden="true"
+    className={classNames(styles.xIcon, styles.icon)}
+    size={20}
+/>
                         </div> :
                         null
                 }
@@ -135,12 +131,11 @@ class SpriteInfo extends React.Component {
                 {
                     (stageSize === STAGE_DISPLAY_SIZES.full || stageSize === STAGE_DISPLAY_SIZES.large) ?
                         <div className={styles.iconWrapper}>
-                            <img
-                                aria-hidden="true"
-                                className={classNames(styles.yIcon, styles.icon)}
-                                src={yIcon}
-                                draggable={false}
-                            />
+                            <ChevronsUpDown
+    aria-hidden="true"
+    className={classNames(styles.yIcon, styles.icon)}
+    size={20}
+/>
                         </div> :
                         null
                 }
@@ -202,13 +197,13 @@ class SpriteInfo extends React.Component {
                             buttons={[
                                 {
                                     handleClick: this.props.onClickVisible,
-                                    icon: showIcon,
+                                    icon: <Eye size={20} />,
                                     isSelected: this.props.visible && !this.props.disabled,
                                     title: this.props.intl.formatMessage(messages.showSpriteAction)
                                 },
                                 {
                                     handleClick: this.props.onClickNotVisible,
-                                    icon: hideIcon,
+                                    icon: <EyeClosed size={20} />,
                                     isSelected: !this.props.visible && !this.props.disabled,
                                     title: this.props.intl.formatMessage(messages.hideSpriteAction)
                                 }
