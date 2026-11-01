@@ -88,3 +88,46 @@
 .open-link {
     margin-left: 0.5rem;
 }
+
+
+/* Accent theme grid */
+.accentGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    padding: 8px;
+    width: 300px;
+    box-sizing: border-box;
+}
+
+/* Keep grid items from overflowing */
+.accentGrid > * {
+    min-width: 0;
+}
+
+/* Accent options */
+.accentGrid .option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px;
+}
+
+/* Prevent long names from breaking the grid */
+.accentName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Accent color preview */
+.accentIconOuter {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    object-fit: cover;
+}
