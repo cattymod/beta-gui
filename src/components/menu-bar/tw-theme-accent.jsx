@@ -11,7 +11,8 @@ import rainbowIcon from './tw-accent-rainbow.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 
 import {
-    ACCENT_MAP
+    ACCENT_MAP,
+    Theme
 } from '../../lib/themes/index.js';
 
 import {
@@ -25,8 +26,7 @@ import {persistTheme} from '../../lib/themes/themePersistance.js';
 
 import styles from './settings-menu.css';
 
-
-// 🌈 ORDER CONTROL
+// Accent order
 const ACCENT_ORDER = [
     'red',
     'orange',
@@ -36,178 +36,216 @@ const ACCENT_ORDER = [
     'indigo',
     'violet',
     'purple',
-    'mist',
-    'rainbow'
+    'pink',
+    'rainbow',
+
+    'ace',
+    'aurora',
+    'bi',
+    'cherry',
+    'coral',
+    'cosmic',
+    'fire',
+    'forest',
+    'gay',
+    'honey',
+    'lavender',
+    'lesbian',
+    'matrix',
+    'mint',
+    'nebula',
+    'nonbinary',
+    'ocean',
+    'pan',
+    'sky',
+    'sunset',
+    'trans',
+    'vaporwave',
+    'metal'
 ];
 
+// Accent names
+const ACCENT_NAMES = {
+    red: 'Red',
+    orange: 'Orange',
+    yellow: 'Yellow',
+    green: 'Green',
+    blue: 'Blue',
+    indigo: 'Indigo',
+    violet: 'Violet',
+    purple: 'Purple',
+    mist: 'Pink',
+    rainbow: 'Rainbow',
 
-// 🌈 Labels
-const ACCENT_LABELS = {
-    red: {
-        defaultMessage: 'Red',
-        description: 'Red accent theme',
-        id: 'tw.accent.red'
-    },
-    orange: {
-        defaultMessage: 'Orange',
-        description: 'Orange accent theme',
-        id: 'tw.accent.orange'
-    },
-    yellow: {
-        defaultMessage: 'Yellow',
-        description: 'Yellow accent theme',
-        id: 'tw.accent.yellow'
-    },
-    green: {
-        defaultMessage: 'Green',
-        description: 'Green accent theme',
-        id: 'tw.accent.green'
-    },
-    blue: {
-        defaultMessage: 'Blue',
-        description: 'Blue accent theme',
-        id: 'tw.accent.blue'
-    },
-    indigo: {
-        defaultMessage: 'Indigo',
-        description: 'Indigo accent theme',
-        id: 'tw.accent.indigo'
-    },
-    violet: {
-        defaultMessage: 'Violet',
-        description: 'Violet accent theme',
-        id: 'tw.accent.violet'
-    },
-    purple: {
-        defaultMessage: 'Purple',
-        description: 'Purple accent theme',
-        id: 'tw.accent.purple'
-    },
-    mist: {
-        defaultMessage: 'Mist Pink',
-        description: 'Pink accent theme',
-        id: 'tw.accent.mist'
-    },
-    rainbow: {
-        defaultMessage: 'Rainbow',
-        description: 'Rainbow accent theme',
-        id: 'tw.accent.rainbow'
-    }
+    ace: 'Ace',
+    aurora: 'Aurora',
+    bi: 'Bi',
+    cherry: 'Cherry',
+    coral: 'Coral',
+    cosmic: 'Cosmic',
+    fire: 'Fire',
+    forest: 'Forest',
+    gay: 'Gay',
+    honey: 'Honey',
+    lavender: 'Lavender',
+    lesbian: 'Lesbian',
+    matrix: 'Matrix',
+    mint: 'Mint',
+    nebula: 'Nebula',
+    nonbinary: 'Nonbinary',
+    ocean: 'Ocean',
+    pan: 'Pan',
+    pink: 'Pink',
+    sky: 'Sky',
+    sunset: 'Sunset',
+    trans: 'Trans',
+    vaporwave: 'Vaporwave',
+    metal: 'Metal'
 };
 
-
-// Icons
+// Rainbow icon
 const icons = {
     rainbow: rainbowIcon
 };
 
+// Color preview
+const ColorIcon = ({id}) => {
+    const accent = ACCENT_MAP[id];
 
-// 🎨 Color icon
-const ColorIcon = props => (
-    icons[props.id] ? (
-        <img
-            className={styles.accentIconOuter}
-            src={icons[props.id]}
-            draggable={false}
-            alt=""
-        />
-    ) : (
+    if (!accent) {
+        return (
+            <div
+                className={styles.accentIconOuter}
+                style={{backgroundColor: '#999'}}
+            />
+        );
+    }
+
+    if (icons[id]) {
+        return (
+            <img
+                className={styles.accentIconOuter}
+                src={icons[id]}
+                draggable={false}
+                alt=""
+            />
+        );
+    }
+
+    return (
         <div
             className={styles.accentIconOuter}
             style={{
                 backgroundColor:
-                    ACCENT_MAP[props.id]?.guiColors?.['looks-secondary'] || '#999',
+                    accent.guiColors['looks-secondary'] || '#999',
                 backgroundImage:
-                    ACCENT_MAP[props.id]?.guiColors?.['menu-bar-background-image']
+                    accent.guiColors['menu-bar-background-image'] || 'none'
             }}
         />
-    )
-);
-
-ColorIcon.propTypes = {
-    id: PropTypes.string
+    );
 };
 
+ColorIcon.propTypes = {
+    id: PropTypes.string.isRequired
+};
 
-// 🧩 Menu item
-const AccentMenuItem = props => (
-    <MenuItem onClick={props.onClick}>
-        <div className={styles.option}>
+// Individual accent item
+const AccentMenuItem = ({
+    id,
+    isSelected,
+    onClick
+}) => (
+    <MenuItem onClick={onClick}>
+    <div className={styles.option}>
+        <div
+            className={classNames(styles.checkCircle, {
+                [styles.selected]: isSelected
+            })}
+        >
             <img
-                className={classNames(styles.check, {
-                    [styles.selected]: props.isSelected
-                })}
-                width={15}
-                height={12}
-                src={check}
-                draggable={false}
-                alt=""
-            />
+    className={styles.check}
+    src={check}
+    draggable={false}
+    alt=""
+    style={{filter: 'brightness(0)'}}
+/>
+        </div>
 
-            <ColorIcon id={props.id} />
+            <ColorIcon id={id} />
 
-            <FormattedMessage {...ACCENT_LABELS[props.id]} />
+            <span className={styles.accentLabel}>
+                {ACCENT_NAMES[id] || id}
+            </span>
         </div>
     </MenuItem>
 );
 
 AccentMenuItem.propTypes = {
-    id: PropTypes.string,
+    id: PropTypes.string.isRequired,
     isSelected: PropTypes.bool,
-    onClick: PropTypes.func
+    onClick: PropTypes.func.isRequired
 };
 
-
-// 📌 Main menu
+// Main accent menu
 const AccentThemeMenu = ({
     isOpen,
     isRtl,
     onChangeTheme,
     onOpen,
     theme
-}) => (
-    <MenuItem expanded={isOpen}>
-        <div
-            className={styles.option}
-            onClick={onOpen}
-        >
-            <ColorIcon id={theme.accent} />
+}) => {
+    const availableAccents = ACCENT_ORDER.filter(
+        id => Object.prototype.hasOwnProperty.call(ACCENT_MAP, id)
+    );
 
-            <span className={styles.submenuLabel}>
-                <FormattedMessage
-                    defaultMessage="Accent"
-                    description="Label for accent theme menu"
-                    id="tw.menuBar.accent"
+    return (
+        <MenuItem expanded={isOpen}>
+            <div
+                className={styles.option}
+                onClick={onOpen}
+            >
+                <ColorIcon id={theme.accent} />
+
+                <span className={styles.submenuLabel}>
+                    <FormattedMessage
+                        defaultMessage="Accent"
+                        description="Label for accent theme menu"
+                        id="tw.menuBar.accent"
+                    />
+                </span>
+
+                <img
+                    className={styles.expandCaret}
+                    src={dropdownCaret}
+                    draggable={false}
+                    alt=""
                 />
-            </span>
-
-            <img
-                className={styles.expandCaret}
-                src={dropdownCaret}
-                draggable={false}
-                alt=""
-            />
-        </div>
-
-        <Submenu place={isRtl ? 'left' : 'right'}>
-            <div className={styles.accentGrid}>
-                {ACCENT_ORDER
-                    .filter(id => ACCENT_MAP[id])
-                    .map(item => (
-                        <AccentMenuItem
-                            key={item}
-                            id={item}
-                            isSelected={theme.accent === item}
-                            onClick={() =>
-                                onChangeTheme(theme.set('accent', item))
-                            }
-                        />
-                    ))}
             </div>
-        </Submenu>
-    </MenuItem>
-);
 
+            <Submenu
+                place={isRtl ? 'left' : 'right'}
+                className={styles.accentSubmenu}
+            >
+                {availableAccents.map(id => (
+                    <AccentMenuItem
+                        key={id}
+                        id={id}
+                        isSelected={theme.accent === id}
+                        onClick={() => onChangeTheme(theme.set('accent', id))}
+                    />
+                ))}
+            </Submenu>
+        </MenuItem>
+    );
+};
+
+AccentThemeMenu.propTypes = {
+    isOpen: PropTypes.bool,
+    isRtl: PropTypes.bool,
+    onChangeTheme: PropTypes.func,
+    onOpen: PropTypes.func,
+    theme: PropTypes.instanceOf(Theme)
+};
 
 // Redux
 const mapStateToProps = state => ({
@@ -222,6 +260,7 @@ const mapDispatchToProps = dispatch => ({
         dispatch(closeSettingsMenu());
         persistTheme(theme);
     },
+
     onOpen: () => dispatch(openAccentMenu())
 });
 

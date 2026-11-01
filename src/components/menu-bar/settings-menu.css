@@ -88,3 +88,159 @@
 .open-link {
     margin-left: 0.5rem;
 }
+
+
+
+/* Accent submenu */
+.accent-submenu {
+    padding: 0;
+    max-height: calc(100vh - 5rem);
+    max-height: calc(100dvh - 5rem);
+    overflow: hidden;
+}
+
+/* Actual menu list */
+.accent-submenu > ul {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.4rem;
+    padding: 0.75rem;
+    margin: 0;
+    width: 340px;
+    min-width: 0;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 5rem);
+    max-height: calc(100dvh - 5rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    overscroll-behavior: contain;
+}
+
+/* Grid items */
+.accent-submenu > ul > li {
+    min-width: 0;
+    width: 100%;
+    min-height: 76px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+
+/* Individual accent */
+.accent-submenu .menu-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 76px;
+    padding: 0.4rem;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: background-color 0.15s ease;
+}
+
+.accent-submenu .menu-item:hover {
+    background-color: hsla(0, 0%, 0%, 0.12);
+}
+
+/* Accent content */
+.accent-submenu .option {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Circular color preview */
+.accent-submenu .accent-icon-outer {
+    display: block;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid $menu-bar-foreground;
+    border-radius: 50%;
+    box-sizing: border-box;
+    object-fit: cover;
+    transform: none;
+}
+
+/* Accent name */
+.accent-label {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    color: $text-primary;
+}
+
+/* Selected accent checkmark */
+.accent-submenu .check {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 15px !important;
+    height: 12px;
+    margin: 0;
+    padding: 2px;
+    visibility: hidden;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+    filter: brightness(0) invert(1);
+}
+
+[dir="rtl"] .accent-submenu .check {
+    right: auto;
+    left: 4px;
+}
+
+.accent-submenu .check.selected {
+    visibility: visible;
+}
+
+/* Smaller screens */
+@media only screen and (max-width: 600px) {
+    .accent-submenu > ul {
+        width: min(300px, calc(100vw - 2rem));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.checkCircle {
+    display: none;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
+    border-radius: 50%;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    box-sizing: border-box;
+}
+
+.checkCircle.selected {
+    display: flex;
+}

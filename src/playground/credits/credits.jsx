@@ -90,7 +90,7 @@ const Credits = () => (
                      Several icons are provided by <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide Icons</a>.
                 </p>
                 <p>
-                    Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a> which also is where the "Scratch, Supercharged" quote and Mist Pink accent comes from.
+                    Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a> which also is where the "Scratch, Supercharged" quote and accents come from.
                 </p>
                 <p>
                     The homepage quote, “Try it out” icon, happy face icon, and “Dango with blocks” artwork are sourced from or originally by <a href="https://penguinmod.com/">PenguinMod</a>.</p>
@@ -99,6 +99,9 @@ const Credits = () => (
                 </p>
                 <p>
                     The Blue Flag icon is from <a href="https://penguinmod.com/">PenguinMod</a> and the Purple Flag icon is from <a href="https://snail-ide.js.org/" target="_blank" rel="noreferrer">Snail IDE</a>.
+                </p>
+                <p>
+                    The accent grid is from <a href="https://potentiamod.github.io/">PotentiaMod</a>.
                 </p>
                 <p>
                     <a href="https://dinosaurmod.github.io/">DinosaurMod</a> inspired the links in the description of the editor homepage.

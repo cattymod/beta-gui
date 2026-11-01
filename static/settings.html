@@ -142,17 +142,7 @@
         font-weight: 600;
       }
 
-      .nav-button.active.rainbow-accent {
-        background: color-mix(in srgb, #e53935 14%, transparent) !important;
-        color: #e53935 !important;
-        -webkit-text-fill-color: #e53935;
-      }
-
-      .nav-button.active.rainbow-accent svg {
-        color: #e53935 !important;
-        stroke: #e53935 !important;
-      }
-
+      
       .nav-button i {
         width: 19px;
         height: 19px;
@@ -320,12 +310,6 @@
         background: var(--accent);
       }
 
-      .switch input:checked+.slider.rainbow-accent {
-        background: var(--accent-gradient) !important;
-        background-size: 200% 100%;
-        animation: rainbow-shift 4s linear infinite;
-      }
-
       .switch input:checked+.slider::before {
         transform: translateX(20px);
       }
@@ -333,26 +317,6 @@
       .switch input:focus-visible+.slider {
         outline: 2px solid var(--accent);
         outline-offset: 3px;
-      }
-
-      /* Rainbow */
-      .rainbow-text {
-        background: var(--accent-gradient);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-size: 200% 100%;
-        animation: rainbow-shift 4s linear infinite;
-      }
-
-      @keyframes rainbow-shift {
-        from {
-          background-position: 0% 50%;
-        }
-
-        to {
-          background-position: 200% 50%;
-        }
       }
 
       /* Custom project */
@@ -929,6 +893,80 @@
           margin-left: auto;
         }
       }
+      
+      
+/* Gradient Accent Support */
+
+body.gradient-accent {
+  --accent-hover: var(--accent);
+}
+
+/* Active navigation */
+body.gradient-accent .nav-button.active {
+  background: var(--accent-gradient);
+  color: white;
+  font-weight: 600;
+  background-size: 200% 100%;
+  animation: rainbow-shift 4s linear infinite;
+}
+
+/* Active navigation icons */
+body.gradient-accent .nav-button.active svg {
+  color: white;
+  stroke: white;
+}
+
+/* Enabled switches */
+body.gradient-accent .switch input:checked + .slider {
+  background: var(--accent-gradient);
+  background-size: 200% 100%;
+  animation: rainbow-shift 4s linear infinite;
+}
+
+/* Primary buttons */
+body.gradient-accent .primary-button {
+  background: var(--accent-gradient);
+  background-size: 200% 100%;
+  animation: rainbow-shift 4s linear infinite;
+  color: white;
+}
+
+body.gradient-accent .primary-button:hover {
+  filter: brightness(.92);
+}
+
+/* Accent-colored links */
+body.gradient-accent a[style*="--accent"],
+body.gradient-accent .commit-version a {
+  background: var(--accent-gradient);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-shift 4s linear infinite;
+}
+
+/* Focus indicators */
+body.gradient-accent .setting-select:focus,
+body.gradient-accent .text-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* Hover borders */
+body.gradient-accent .preset-btn:hover {
+  border-color: var(--accent);
+}
+
+/* Keep gradients visible on the whole interface */
+body.gradient-accent .danger-zone-card {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+body.gradient-accent .setting-title a {
+  color: var(--accent);
+}
+
     </style>
   </head>
   <body>
@@ -1070,17 +1108,46 @@
                     <div class="setting-title">Accent</div>
                     <div class="setting-description"> Choose the accent color for CattyMod to use. </div>
                   </div>
-                  <select id="accent-select" class="setting-select" aria-label="Accent">
-                    <option value="red">Red</option>
-                    <option value="orange">Orange</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="green">Green</option>
-                    <option value="blue">Blue</option>
-                    <option value="indigo">Indigo</option>
-                    <option value="violet">Violet</option>
-                    <option value="purple">Purple</option>
-                    <option value="rainbow">Rainbow</option>
-                  </select>
+                  
+<select id="accent-select" class="setting-select" aria-label="Accent">
+  <optgroup label="Solid Colors">
+    <option value="red">Red</option>
+    <option value="orange">Orange</option>
+    <option value="yellow">Yellow</option>
+    <option value="green">Green</option>
+    <option value="blue">Blue</option>
+    <option value="indigo">Indigo</option>
+    <option value="violet">Violet</option>
+    <option value="purple">Purple</option>
+    <option value="pink">Pink</option>
+  </optgroup>
+  <optgroup label="Gradients">
+    <option value="ace">Ace</option>
+    <option value="aurora">Aurora</option>
+    <option value="bi">Bi</option>
+    <option value="cherry">Cherry</option>
+    <option value="coral">Coral</option>
+    <option value="cosmic">Cosmic</option>
+    <option value="fire">Fire</option>
+    <option value="forest">Forest</option>
+    <option value="gay">Gay</option>
+    <option value="honey">Honey</option>
+    <option value="lavender">Lavender</option>
+    <option value="lesbian">Lesbian</option>
+    <option value="matrix">Matrix</option>
+    <option value="mint">Mint</option>
+    <option value="nebula">Nebula</option>
+    <option value="nonbinary">Nonbinary</option>
+    <option value="ocean">Ocean</option>
+    <option value="pan">Pan</option>
+    <option value="sky">Sky</option>
+    <option value="sunset">Sunset</option>
+    <option value="trans">Trans</option>
+    <option value="vaporwave">Vaporwave</option>
+    <option value="rainbow">Rainbow</option>
+  </optgroup>
+</select>
+
                 </div>
               </div>
             </div>
@@ -1460,73 +1527,232 @@
         commitLink.textContent = shortCommit;
         commitLink.href = `https://github.com/${repo}/commit/${commitVersion}`;
       }
-      /* ------------------------- Accent ------------------------- */
-      const accentSelect = document.getElementById("accent-select");
-      const ACCENT_COLORS = {
-        red: "#e53935",
-        orange: "#fb8c00",
-        yellow: "#fbc02d",
-        green: "#43a047",
-        blue: "#009ccc",
-        indigo: "#3949ab",
-        violet: "#8e44ad",
-        purple: "#9c27b0"
-      };
-      const RAINBOW_GRADIENT = "linear-gradient(90deg, #e53935, #fb8c00, #fbc02d, #43a047, #009ccc, #3949ab, #8e44ad)";
-      const ACCENT_OPTIONS = ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "purple", "rainbow"];
+      
+/* ------------------------- Accent ------------------------- */
 
-      function getCurrentAccent() {
-        const theme = readTheme();
-        if (theme && typeof theme.accent === "string" && ACCENT_OPTIONS.includes(theme.accent.toLowerCase())) {
-          return theme.accent.toLowerCase();
-        }
-        return "blue";
-      }
+const accentSelect = document.getElementById("accent-select");
 
-      function applySettingsAccent() {
-        const accent = getCurrentAccent();
-        const root = document.documentElement;
-        document.querySelectorAll(".rainbow-accent").forEach(element => {
-          element.classList.remove("rainbow-accent");
-        });
-        document.querySelectorAll(".rainbow-text").forEach(element => {
-          element.classList.remove("rainbow-text");
-        });
-        if (accent === "rainbow") {
-          root.style.setProperty("--accent", "#009ccc");
-          root.style.setProperty("--accent-hover", "#008db8");
-          root.style.setProperty("--accent-gradient", RAINBOW_GRADIENT);
-          document.querySelectorAll(".nav-button.active").forEach(element => {
-            element.classList.add("rainbow-accent");
-          });
-          document.querySelectorAll(".switch input:checked + .slider").forEach(element => {
-            element.classList.add("rainbow-accent");
-          });
-        } else {
-          const color = ACCENT_COLORS[accent] || ACCENT_COLORS.blue;
-          root.style.setProperty("--accent", color);
-          root.style.setProperty("--accent-hover", color);
-          root.style.setProperty("--accent-gradient", color);
-        }
-      }
+const ACCENT_COLORS = {
+  red: "#e53935",
+  orange: "#fb8c00",
+  yellow: "#fbc02d",
+  green: "#43a047",
+  blue: "#009ccc",
+  indigo: "#3949ab",
+  violet: "#8e44ad",
+  purple: "#9c27b0",
+  pink: "#ff69b4"
+};
 
-      function setAccent(accent) {
-        if (!ACCENT_OPTIONS.includes(accent)) return;
-        updateTheme(theme => {
-          theme.accent = accent;
-        });
-      }
+const ACCENT_GRADIENTS = {
+  ace: [
+    "#000000",
+    "#ffffff",
+    "#800080"
+  ],
 
-      function loadAccent() {
-        if (!accentSelect) return;
-        accentSelect.value = getCurrentAccent();
-        applySettingsAccent();
-      }
-      if (accentSelect) {
-        accentSelect.addEventListener("change", () => {
-          setAccent(accentSelect.value);
-        });
-      }
+  aurora: [
+    "#00a86b",
+    "#009ccc",
+    "#8000a8"
+  ],
+
+  bi: [
+    "#d60270",
+    "#9b4f96",
+    "#0038a8"
+  ],
+
+  cherry: [
+    "#e53935",
+    "#ff7777"
+  ],
+
+  coral: [
+    "#ff7777",
+    "#ffb3a7"
+  ],
+
+  cosmic: [
+    "#8000ff",
+    "#ff69b4",
+    "#8000ff"
+  ],
+
+  fire: [
+    "#c62828",
+    "#ef5350"
+  ],
+
+  forest: [
+    "#228b22",
+    "#90ee90"
+  ],
+
+  gay: [
+    "#008026",
+    "#ffffff",
+    "#004dff"
+  ],
+
+  honey: [
+    "#ffd700",
+    "#cc9900"
+  ],
+
+  lavender: [
+    "#c8a2c8",
+    "#ffdab9"
+  ],
+
+  lesbian: [
+    "#d52d00",
+    "#ffffff",
+    "#a30262"
+  ],
+
+  matrix: [
+    "#000000",
+    "#00ff41"
+  ],
+
+  mint: [
+    "#98ff98",
+    "#add8e6"
+  ],
+
+  nebula: [
+    "#000000",
+    "#e60026",
+    "#ffd700"
+  ],
+
+  nonbinary: [
+    "#f5c49a",
+    "#9b59b6"
+  ],
+
+  ocean: [
+    "#006994",
+    "#87ceeb"
+  ],
+
+  pan: [
+    "#ff218c",
+    "#ffd800",
+    "#21b1ff"
+  ],
+
+  sky: [
+    "#87ceeb",
+    "#c5f3ff"
+  ],
+
+  sunset: [
+    "#ff8c00",
+    "#800080"
+  ],
+
+  trans: [
+    "#5bcffa",
+    "#f5abb9",
+    "#ffffff"
+  ],
+
+  vaporwave: [
+    "#ff71ce",
+    "#b967ff",
+    "#01cdfe"
+  ],
+
+  rainbow: [
+    "#e53935",
+    "#fb8c00",
+    "#fbc02d",
+    "#43a047",
+    "#009ccc",
+    "#3949ab",
+    "#8e44ad",
+    "#e53935"
+  ]
+};
+
+const ACCENT_OPTIONS = [
+  ...Object.keys(ACCENT_COLORS),
+  ...Object.keys(ACCENT_GRADIENTS)
+];
+
+function getCurrentAccent() {
+  const theme = readTheme();
+
+  if (
+    theme &&
+    typeof theme.accent === "string" &&
+    ACCENT_OPTIONS.includes(theme.accent.toLowerCase())
+  ) {
+    return theme.accent.toLowerCase();
+  }
+
+  return "blue";
+}
+
+function applySettingsAccent() {
+  const accent = getCurrentAccent();
+  const root = document.documentElement;
+  const body = document.body;
+
+  const gradientColors = ACCENT_GRADIENTS[accent];
+  const isGradient = Boolean(gradientColors);
+
+  body.classList.toggle("gradient-accent", isGradient);
+
+  if (isGradient) {
+    const gradient = `linear-gradient(90deg, ${gradientColors.join(", ")})`;
+
+    root.style.setProperty(
+      "--accent",
+      gradientColors[0]
+    );
+
+    root.style.setProperty(
+      "--accent-hover",
+      gradientColors[1] || gradientColors[0]
+    );
+
+    root.style.setProperty(
+      "--accent-gradient",
+      gradient
+    );
+  } else {
+    const color = ACCENT_COLORS[accent] || ACCENT_COLORS.blue;
+
+    root.style.setProperty("--accent", color);
+    root.style.setProperty("--accent-hover", color);
+    root.style.setProperty("--accent-gradient", color);
+  }
+}
+
+function setAccent(accent) {
+  if (!ACCENT_OPTIONS.includes(accent)) return;
+
+  updateTheme(theme => {
+    theme.accent = accent;
+  });
+}
+
+function loadAccent() {
+  if (!accentSelect) return;
+
+  accentSelect.value = getCurrentAccent();
+  applySettingsAccent();
+}
+
+if (accentSelect) {
+  accentSelect.addEventListener("change", () => {
+    setAccent(accentSelect.value);
+  });
+}
+
       /* ------------------------- Block Style ------------------------- */
       const blockStyleSelect = document.getElementById("block-style-select");
 

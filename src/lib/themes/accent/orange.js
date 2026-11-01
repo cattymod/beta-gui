@@ -1,24 +1,24 @@
 const guiColors = {
-    'motion-primary': 'hsla(30, 100%, 60%, 1)',
-    'motion-primary-transparent': 'hsla(30, 100%, 60%, 0.9)',
-    'motion-tertiary': 'hsla(30, 100%, 45%, 1)',
+    'motion-primary': '#ff7f2a', // bright orange
+    'motion-primary-transparent': '#ff7f2ae6', // semi-transparent orange
+    'motion-tertiary': '#e65c00', // darker orange
 
-    'looks-secondary': 'hsla(30, 100%, 60%, 1)',
-    'looks-transparent': 'hsla(30, 100%, 60%, 0.35)',
-    'looks-light-transparent': 'hsla(30, 100%, 60%, 0.15)',
-    'looks-secondary-dark': 'hsla(30, 60%, 45%, 1)',
+    'looks-secondary': '#ff7f2a', // bright orange
+    'looks-transparent': '#ff7f2a59', // more transparent orange
+    'looks-light-transparent': '#ff7f2a26', // very transparent orange
+    'looks-secondary-dark': 'hsla(25, 100%, 45%, 1)', // dark orange
 
-    'extensions-primary': 'hsla(30, 100%, 60%, 1)',
-    'extensions-tertiary': 'hsla(30, 100%, 40%, 1)',
-    'extensions-transparent': 'hsla(30, 100%, 60%, 0.35)',
-    'extensions-light': 'hsla(30, 57%, 85%, 1)',
+    'extensions-primary': 'hsla(30, 100%, 65%, 1)', // light orange
+    'extensions-tertiary': 'hsla(30, 90%, 45%, 1)', // medium orange
+    'extensions-transparent': 'hsla(30, 90%, 65%, 0.35)', // semi-transparent orange
+    'extensions-light': 'hsla(30, 100%, 85%, 1)', // very light orange
 
-    'drop-highlight': 'hsla(30, 100%, 75%, 1)'
+    'drop-highlight': '#ffad66' // light orange
 };
 
 const blockColors = {
-    checkboxActiveBackground: 'hsla(30, 100%, 60%, 1)',
-    checkboxActiveBorder: 'hsla(30, 100%, 45%, 1)'
+    checkboxActiveBackground: '#ff7f2a', // bright orange
+    checkboxActiveBorder: '#e65c00' // darker orange
 };
 
 export {
