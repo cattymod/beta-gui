@@ -90,7 +90,7 @@ const Credits = () => (
                      Several icons are provided by <a href="https://lucide.dev/" target="_blank" rel="noreferrer">Lucide Icons</a>.
                 </p>
                 <p>
-                    Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a> which also is where the "Scratch, Supercharged" quote and Mist Pink accent comes from.
+                    Scratch Paint is forked from <a href="https://warp.mistium.com/">MistWarp</a> which also is where the "Scratch, Supercharged" quote and accents comes from.
                 </p>
                 <p>
                     The homepage quote, “Try it out” icon, happy face icon, and “Dango with blocks” artwork are sourced from or originally by <a href="https://penguinmod.com/">PenguinMod</a>.</p>
