@@ -45,7 +45,7 @@ const ACCENT_MAP = {
     [ACCENT_YELLOW]: accentYellow,
     [ACCENT_GREEN]: accentGreen,
     [ACCENT_INDIGO]: accentIndigo,
-    [ACCENT_VIOLET]: accentViolet
+    [ACCENT_VIOLET]: accentViolet,
     [ACCENT_MIST]: accentMist
 };
 
