@@ -34,7 +34,7 @@
     "@turbowarp/jszip": "^3.11.1",
     "lucide-react": "^0.562.0",
     "@turbowarp/nanolog": "^1.0.1",
-    "scratch-l10n": "github:cattymod/scratch-l10n"    
+    "@turbowarp/scratch-l10n": "github:cattymod/scratch-l10n",
     "@turbowarp/scratch-storage": "^2.0.0",
     "@turbowarp/scratch-svg-renderer": "^1.1.0",
     "@turbowarp/startaudiocontext": "^1.0.0",
