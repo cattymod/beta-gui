@@ -157,17 +157,19 @@ const AccentMenuItem = ({
     onClick
 }) => (
     <MenuItem onClick={onClick}>
-        <div className={styles.option}>
+    <div className={styles.option}>
+        <div
+            className={classNames(styles.checkCircle, {
+                [styles.selected]: isSelected
+            })}
+        >
             <img
-                className={classNames(styles.check, {
-                    [styles.selected]: isSelected
-                })}
-                width={15}
-                height={12}
+                className={styles.check}
                 src={check}
                 draggable={false}
                 alt=""
             />
+        </div>
 
             <ColorIcon id={id} />
 
