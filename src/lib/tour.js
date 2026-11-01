@@ -1,121 +1,199 @@
-
 export function startTour(onComplete) {
-  if (window.__cattyModTour) return;
+    if (window.__cattyModTour) return;
 
-  setTimeout(() => {
-    startTourNow(onComplete);
-  }, 500);
+    setTimeout(() => {
+        startTourNow(onComplete);
+    }, 500);
 }
 
 function startTourNow(onComplete) {
-  function getTarget(step) {
-    if (step.sel) return document.querySelector(step.sel);
+    function getTarget(step) {
+        if (step.sel) return document.querySelector(step.sel);
 
-    if (step.text) {
-      var spans = document.querySelectorAll('span');
+        if (step.text) {
+            var spans = document.querySelectorAll('span');
 
-      for (var i = 0; i < spans.length; i++) {
-        if (
-          spans[i].textContent.trim().toLowerCase() ===
-          step.text.toLowerCase()
-        ) {
-          return spans[i].closest('.menu-bar_menu-bar-item_oLDa-') || spans[i];
+            for (var i = 0; i < spans.length; i++) {
+                if (
+                    spans[i].textContent.trim().toLowerCase() ===
+                    step.text.toLowerCase()
+                ) {
+                    return spans[i].closest('.menu-bar_menu-bar-item_oLDa-') || spans[i];
+                }
+            }
         }
+
+        return null;
+    }
+
+    function markTourCompleted() {
+        localStorage.setItem('cattymod:tourCompleted', 'true');
+    }
+
+    var steps = [{
+            type: 'welcome',
+            title: 'Welcome to CattyMod!',
+            desc: "Hey! Let's take a quick look around!"
+        },
+        {
+            type: 'target',
+            text: 'Settings',
+            position: 'below',
+            desc: 'Here you can configure CattyMod.'
+        },
+        {
+            type: 'target',
+            text: 'File',
+            position: 'below',
+            desc: 'Open, save, and create new projects here.'
+        },
+        {
+            type: 'target',
+            text: 'Edit',
+            position: 'below',
+            desc: 'Here you can configure your project and undo changes.'
+        },
+        {
+            type: 'target',
+            sel: '.sa-find-wrapper',
+            position: 'below',
+            desc: 'This is the Find Box! Search for blocks in your project by typing their names.'
+        },
+        {
+            type: 'target',
+            sel: '.gui_blocks-wrapper_1ccgf, .blocklySvg, .scratchCategoryMenu',
+            position: 'middle',
+            desc: 'This is where you can code using blocks!'
+        },
+        {
+            type: 'target',
+            sel: '.gui_extension-button-container_b4rCs',
+            position: 'below',
+            desc: 'Click here to add extensions to your project and unlock even more blocks!'
+        },
+        {
+            type: 'target',
+            sel: '.stage_stage_1fD7k',
+            position: 'below',
+            desc: 'Here is the Stage, where your project comes to life!'
+        },
+        {
+            type: 'target',
+            sel: '.controls_controls-container_2xinB',
+            position: 'below',
+            desc: 'Use these controls to start, pause, and stop your project.'
+        },
+        {
+            type: 'end',
+            title: 'Tour Complete',
+            desc: "That's it for the tour! Have fun!"
+        }
+    ];
+
+    var currentStep = 0;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'cm-tour-overlay';
+    overlay.style.cssText =
+        'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;pointer-events:none;font-family:sans-serif;';
+
+    document.body.appendChild(overlay);
+
+    var style = document.createElement('style');
+    style.id = 'cm-tour-styles';
+
+    style.textContent = `
+    @keyframes cmPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76,151,255,0.8),
+                    0 0 12px rgba(76,151,255,0.3);
+      }
+      50% {
+        box-shadow: 0 0 0 9px rgba(76,151,255,0.15),
+                    0 0 25px rgba(76,151,255,0.65);
+      }
+      100% {
+        box-shadow: 0 0 0 15px rgba(76,151,255,0),
+                    0 0 12px rgba(76,151,255,0.3);
       }
     }
 
-    return null;
-  }
-
-  function markTourCompleted() {
-    localStorage.setItem('cattymod:tourCompleted', 'true');
-  }
-
-  var steps = [
-    {
-      type: 'welcome',
-      title: 'Welcome to CattyMod!',
-      desc: 'Hey! Let\'s take a quick look around!'
-    },
-    {
-      type: 'target',
-      text: 'Settings',
-      desc: 'Here you can configure CattyMod.'
-    },
-    {
-      type: 'target',
-      text: 'File',
-      desc: 'Open, save, and create new projects here.'
-    },
-    {
-      type: 'target',
-      text: 'Edit',
-      desc: 'Here you can configure your project and undo changes.'
-    },
-    {
-      type: 'target',
-      sel: '.gui_blocks-wrapper_1ccgf, .blocklySvg, .scratchCategoryMenu',
-      desc: 'This is where you can code using blocks!'
-    },
-    {
-      type: 'target',
-      sel: '.stage_stage_1fD7k',
-      desc: 'Here is the Stage, where your project comes to life!'
-    },
-    {
-      type: 'target',
-      sel: '.controls_controls-container_2xinB',
-      desc: 'Use these controls to start, pause, and stop your project.'
-    },
-    {
-      type: 'end',
-      title: 'Tour Complete',
-      desc: "That's it for the tour! Have Fun!"
+    @keyframes cmOpen {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -46%) scale(0.75);
+      }
+      65% {
+        opacity: 1;
+        transform: translate(-50%, -52%) scale(1.04);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
     }
-  ];
 
-  var currentStep = 0;
+    @keyframes cmClose {
+      from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translate(-50%, -46%) scale(0.8);
+      }
+    }
 
-  var overlay = document.createElement('div');
-  overlay.id = 'cm-tour-overlay';
-  overlay.style.cssText =
-    'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;pointer-events:none;font-family:sans-serif;';
+    @keyframes cmStepIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
 
-  document.body.appendChild(overlay);
-
-  var style = document.createElement('style');
-  style.id = 'cm-tour-styles';
-
-  style.textContent = `
-    @keyframes cmPulse {
-      0% { box-shadow: 0 0 0 0px rgba(76, 151, 255, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(76, 151, 255, 0); }
-      100% { box-shadow: 0 0 0 0px rgba(76, 151, 255, 0); }
+    @keyframes cmEndIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -45%) scale(0.7) rotate(-3deg);
+      }
+      65% {
+        opacity: 1;
+        transform: translate(-50%, -52%) scale(1.05) rotate(1deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0);
+      }
     }
 
     .cm-highlight {
-      outline: 3px solid #4C97FF !important;
-      outline-offset: 2px !important;
-      border-radius: 4px;
-      animation: cmPulse 2s infinite;
-      z-index: 999998;
+      outline: 4px solid #4C97FF !important;
+      outline-offset: 3px !important;
+      border-radius: 5px !important;
+      background-color: rgba(76,151,255,0.12) !important;
+      animation: cmPulse 1.8s infinite !important;
       position: relative;
+      z-index: 999998 !important;
     }
 
     .cm-box {
       position: fixed;
-      background: #ffffff;
+      background: #fff;
       border-radius: 16px;
       padding: 32px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      box-shadow: 0 15px 45px rgba(0,0,0,0.3);
       border: 1px solid #e0e0e0;
       width: 420px;
       pointer-events: auto;
       color: #333;
       font-family: system-ui, -apple-system, sans-serif;
       box-sizing: border-box;
-      transition: all 0.2s ease-out;
       text-align: center;
+      opacity: 0;
     }
 
     .cm-box-small {
@@ -135,10 +213,11 @@ function startTourNow(onComplete) {
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px auto;
+      animation: cmStepIn 0.5s ease both;
     }
 
     .cm-box h3 {
-      margin: 0 0 10px 0;
+      margin: 0 0 10px;
       font-size: 22px;
       color: #111;
       display: flex;
@@ -153,7 +232,7 @@ function startTourNow(onComplete) {
     }
 
     .cm-box p {
-      margin: 0 0 24px 0;
+      margin: 0 0 24px;
       font-size: 15px;
       color: #555;
       line-height: 1.5;
@@ -203,10 +282,14 @@ function startTourNow(onComplete) {
       cursor: pointer;
       font-weight: 600;
       font-size: 14px;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.2s;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .cm-btn:hover {
+      transform: translateY(-2px);
     }
 
     .cm-btn-primary {
@@ -228,79 +311,90 @@ function startTourNow(onComplete) {
     }
   `;
 
-  document.head.appendChild(style);
+    document.head.appendChild(style);
 
-  var box = document.createElement('div');
-  box.className = 'cm-box';
-  overlay.appendChild(box);
+    var box = document.createElement('div');
+    box.className = 'cm-box';
+    overlay.appendChild(box);
 
-  window.__cattyModTour = true;
+    window.__cattyModTour = true;
 
-  var originalPushState = history.pushState;
-  var originalReplaceState = history.replaceState;
+    var originalPushState = history.pushState;
+    var originalReplaceState = history.replaceState;
 
-  function checkTourURL() {
-    if (
-      window.location.pathname === '/' ||
-      window.location.pathname === '/fullscreen'
-    ) {
-      cleanup();
-    }
-  }
-
-  function cleanup() {
-    var hl = document.querySelectorAll('.cm-highlight');
-
-    hl.forEach(el => el.classList.remove('cm-highlight'));
-
-    if (overlay) overlay.remove();
-    if (style) style.remove();
-
-    window.removeEventListener('popstate', checkTourURL);
-
-    if (history.pushState === wrappedPushState) {
-      history.pushState = originalPushState;
+    function checkTourURL() {
+        if (
+            window.location.pathname === '/' ||
+            window.location.pathname === '/fullscreen'
+        ) {
+            cleanup();
+        }
     }
 
-    if (history.replaceState === wrappedReplaceState) {
-      history.replaceState = originalReplaceState;
+    function cleanup() {
+        document.querySelectorAll('.cm-highlight').forEach(el => {
+            el.classList.remove('cm-highlight');
+        });
+
+        if (overlay) overlay.remove();
+        if (style) style.remove();
+
+        window.removeEventListener('popstate', checkTourURL);
+
+        if (history.pushState === wrappedPushState) {
+            history.pushState = originalPushState;
+        }
+
+        if (history.replaceState === wrappedReplaceState) {
+            history.replaceState = originalReplaceState;
+        }
+
+        delete window.__cattyModTour;
     }
 
-    delete window.__cattyModTour;
-  }
+    var wrappedPushState = function(...args) {
+        originalPushState.apply(this, args);
+        checkTourURL();
+    };
 
-  var wrappedPushState = function (...args) {
-    originalPushState.apply(this, args);
+    var wrappedReplaceState = function(...args) {
+        originalReplaceState.apply(this, args);
+        checkTourURL();
+    };
+
+    history.pushState = wrappedPushState;
+    history.replaceState = wrappedReplaceState;
+
+    window.addEventListener('popstate', checkTourURL);
+
     checkTourURL();
-  };
 
-  var wrappedReplaceState = function (...args) {
-    originalReplaceState.apply(this, args);
-    checkTourURL();
-  };
+    function closeTour() {
+        markTourCompleted();
+        box.style.animation = 'cmClose 0.3s ease forwards';
 
-  history.pushState = wrappedPushState;
-  history.replaceState = wrappedReplaceState;
+        setTimeout(() => {
+            cleanup();
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+        }, 300);
+    }
 
-  window.addEventListener('popstate', checkTourURL);
+    function render() {
+        if (!window.__cattyModTour) return;
 
-  checkTourURL();
+        document.querySelectorAll('.cm-highlight').forEach(el => {
+            el.classList.remove('cm-highlight');
+        });
 
-  function render() {
-    if (!window.__cattyModTour) return;
+        var step = steps[currentStep];
+        box.innerHTML = '';
+        box.style.animation = 'none';
 
-    document.querySelectorAll('.cm-highlight').forEach(el => {
-      el.classList.remove('cm-highlight');
-    });
-
-    var step = steps[currentStep];
-    box.innerHTML = '';
-
-    // Close button
-    var closeBtn = document.createElement('button');
-    closeBtn.className = 'cm-close';
-
-    closeBtn.innerHTML = `
+        var closeBtn = document.createElement('button');
+        closeBtn.className = 'cm-close';
+        closeBtn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2.5"
         stroke-linecap="round" stroke-linejoin="round">
@@ -309,103 +403,99 @@ function startTourNow(onComplete) {
       </svg>
     `;
 
-    closeBtn.onclick = function () {
-      markTourCompleted();
-      cleanup();
-    };
+        closeBtn.onclick = closeTour;
+        box.appendChild(closeBtn);
 
-    box.appendChild(closeBtn);
+        if (step.type === 'welcome' || step.type === 'end') {
+            box.classList.remove('cm-box-small');
+            box.style.top = '50%';
+            box.style.left = '50%';
+            box.style.transform = 'translate(-50%, -50%)';
 
-    // Welcome and end screens
-    if (step.type === 'welcome' || step.type === 'end') {
-      box.classList.remove('cm-box-small');
+            var iconBox = document.createElement('div');
+            iconBox.className = 'cm-icon-box';
 
-      box.style.top = '50%';
-      box.style.left = '50%';
-      box.style.transform = 'translate(-50%, -50%)';
+            iconBox.innerHTML = step.type === 'welcome' ? `
+        <svg width="28" height="28" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+          <line x1="4" y1="22" x2="4" y2="15"></line>
+        </svg>
+      ` : `
+        <svg width="28" height="28" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
 
-      var iconBox = document.createElement('div');
-      iconBox.className = 'cm-icon-box';
+            box.appendChild(iconBox);
+        } else {
+            box.classList.add('cm-box-small');
 
-      if (step.type === 'welcome') {
-        iconBox.innerHTML = `
-          <svg width="28" height="28" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-            <line x1="4" y1="22" x2="4" y2="15"></line>
-          </svg>
-        `;
-      } else {
-        iconBox.innerHTML = `
-          <svg width="28" height="28" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
-      }
+            var target = getTarget(step);
 
-      box.appendChild(iconBox);
-    } else {
-      box.classList.add('cm-box-small');
-      box.style.transform = 'none';
+            if (target) {
+                target.classList.add('cm-highlight');
 
-      var target = getTarget(step);
+                var rect = target.getBoundingClientRect();
+                var top;
+                var left = rect.left;
 
-      if (target) {
-        target.classList.add('cm-highlight');
+                if (step.position === 'below') {
+                    top = rect.bottom + 14;
 
-        var rect = target.getBoundingClientRect();
-        var top = rect.bottom + 10;
-        var left = rect.left;
+                    if (top + 190 > window.innerHeight) {
+                        top = rect.top - 200;
+                    }
+                } else if (step.position === 'middle') {
+                    top = rect.top + (rect.height - 150) / 2;
+                    left = rect.left + (rect.width - 290) / 2;
+                } else {
+                    top = rect.top + rect.height / 2 - 75;
+                }
 
-        if (top + 150 > window.innerHeight) {
-          top = rect.top - 160;
+                if (left + 290 > window.innerWidth) {
+                    left = window.innerWidth - 310;
+                }
+
+                left = Math.max(10, left);
+                top = Math.max(10, top);
+
+                box.style.top = Math.max(10, top) + 'px';
+                box.style.left = Math.max(10, left) + 'px';
+                box.style.transform = 'none';
+            } else {
+                box.style.top = '50%';
+                box.style.left = '50%';
+                box.style.transform = 'translate(-50%, -50%)';
+            }
         }
 
-        if (left + 290 > window.innerWidth) {
-          left = window.innerWidth - 310;
-        }
+        var title = document.createElement('h3');
+        title.textContent =
+            step.title || (step.text ? step.text : 'Step ' + currentStep);
 
-        box.style.top = Math.max(10, top) + 'px';
-        box.style.left = Math.max(10, left) + 'px';
-      } else {
-        box.style.top = '50%';
-        box.style.left = '50%';
-        box.style.transform = 'translate(-50%, -50%)';
-      }
-    }
+        box.appendChild(title);
 
-    var title = document.createElement('h3');
-    title.textContent =
-      step.title || (step.text ? step.text : 'Step ' + currentStep);
+        var desc = document.createElement('p');
+        desc.textContent = step.desc;
+        box.appendChild(desc);
 
-    box.appendChild(title);
+        var btnGroup = document.createElement('div');
+        btnGroup.className = 'cm-btn-group';
 
-    var desc = document.createElement('p');
-    desc.textContent = step.desc;
-    box.appendChild(desc);
+        if (step.type === 'welcome') {
+            var skipBtn = document.createElement('button');
+            skipBtn.className = 'cm-btn cm-btn-sec';
+            skipBtn.textContent = 'Skip';
+            skipBtn.onclick = closeTour;
+            btnGroup.appendChild(skipBtn);
 
-    var btnGroup = document.createElement('div');
-    btnGroup.className = 'cm-btn-group';
-
-    if (step.type === 'welcome') {
-      var skipBtn = document.createElement('button');
-      skipBtn.className = 'cm-btn cm-btn-sec';
-      skipBtn.textContent = 'Skip';
-
-      skipBtn.onclick = function () {
-        markTourCompleted();
-        cleanup();
-      };
-
-      btnGroup.appendChild(skipBtn);
-
-      var startBtn = document.createElement('button');
-      startBtn.className = 'cm-btn cm-btn-primary';
-
-      startBtn.innerHTML = `
+            var startBtn = document.createElement('button');
+            startBtn.className = 'cm-btn cm-btn-primary';
+            startBtn.innerHTML = `
         Let's go!
         <svg width="15" height="15" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2"
@@ -415,32 +505,22 @@ function startTourNow(onComplete) {
         </svg>
       `;
 
-      startBtn.onclick = function () {
-        currentStep++;
-        render();
-      };
+            startBtn.onclick = function() {
+                currentStep++;
+                render();
+            };
 
-      btnGroup.appendChild(startBtn);
-    } else if (step.type === 'end') {
-      var endBtn = document.createElement('button');
-      endBtn.className = 'cm-btn cm-btn-primary';
-      endBtn.textContent = 'End Tour';
-
-      endBtn.onclick = function () {
-        markTourCompleted();
-        cleanup();
-
-        if (typeof onComplete === 'function') {
-          onComplete();
-        }
-      };
-
-      btnGroup.appendChild(endBtn);
-    } else {
-      var nextBtn = document.createElement('button');
-      nextBtn.className = 'cm-btn cm-btn-primary';
-
-      nextBtn.innerHTML = `
+            btnGroup.appendChild(startBtn);
+        } else if (step.type === 'end') {
+            var endBtn = document.createElement('button');
+            endBtn.className = 'cm-btn cm-btn-primary';
+            endBtn.textContent = 'End Tour';
+            endBtn.onclick = closeTour;
+            btnGroup.appendChild(endBtn);
+        } else {
+            var nextBtn = document.createElement('button');
+            nextBtn.className = 'cm-btn cm-btn-primary';
+            nextBtn.innerHTML = `
         Next
         <svg width="14" height="14" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2"
@@ -450,16 +530,25 @@ function startTourNow(onComplete) {
         </svg>
       `;
 
-      nextBtn.onclick = function () {
-        currentStep++;
-        render();
-      };
+            nextBtn.onclick = function() {
+                currentStep++;
+                render();
+            };
 
-      btnGroup.appendChild(nextBtn);
+            btnGroup.appendChild(nextBtn);
+        }
+
+        box.appendChild(btnGroup);
+
+        // Animate each new step.
+        if (step.type === 'welcome') {
+            box.style.animation = 'cmOpen 0.55s cubic-bezier(.2,.8,.2,1) forwards';
+        } else if (step.type === 'end') {
+            box.style.animation = 'cmEndIn 0.65s cubic-bezier(.2,.8,.2,1) forwards';
+        } else {
+            box.style.animation = 'cmStepIn 0.3s ease forwards';
+        }
     }
 
-    box.appendChild(btnGroup);
-  }
-
-  render();
+    render();
 }
