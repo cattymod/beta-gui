@@ -48,9 +48,11 @@ import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
-import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
-import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
-import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
+import {
+    Blocks as BlocksIcon,
+    PaintbrushVertical,
+    Volume2
+} from 'lucide-react';
 
 const messages = defineMessages({
     addExtension: {
@@ -339,55 +341,39 @@ const GUIComponent = props => {
                                 onSelect={onActivateTab}
                             >
                                 <TabList className={tabClassNames.tabList}>
-                                    <Tab className={tabClassNames.tab}>
-                                        <img
-                                            draggable={false}
-                                            src={codeIcon()}
-                                        />
-                                        <FormattedMessage
-                                            defaultMessage="Code"
-                                            description="Button to get to the code panel"
-                                            id="gui.gui.codeTab"
-                                        />
-                                    </Tab>
-                                    <Tab
-                                        className={tabClassNames.tab}
-                                        onClick={onActivateCostumesTab}
-                                    >
-                                        <img
-                                            draggable={false}
-                                            src={costumesIcon()}
-                                        />
-                                        {targetIsStage ? (
-                                            <FormattedMessage
-                                                defaultMessage="Backdrops"
-                                                description="Button to get to the backdrops panel"
-                                                id="gui.gui.backdropsTab"
-                                            />
-                                        ) : (
-                                            <FormattedMessage
-                                                defaultMessage="Costumes"
-                                                description="Button to get to the costumes panel"
-                                                id="gui.gui.costumesTab"
-                                            />
-                                        )}
-                                    </Tab>
-                                    <Tab
-                                        className={tabClassNames.tab}
-                                        onClick={onActivateSoundsTab}
-                                    >
-                                        <img
-                                            draggable={false}
-                                            src={soundsIcon()}
-                                        />
-                                        <FormattedMessage
-                                            defaultMessage="Sounds"
-                                            description="Button to get to the sounds panel"
-                                            id="gui.gui.soundsTab"
-                                        />
-                                    </Tab>
-                                </TabList>
-                                <TabPanel className={tabClassNames.tabPanel}>
+    <Tab className={tabClassNames.tab}>
+        <BlocksIcon
+            size={20}
+            strokeWidth={2}
+            className={styles.tabIcon}
+        />
+        <span>Scripts</span>
+    </Tab>
+
+    <Tab
+        className={tabClassNames.tab}
+        onClick={onActivateCostumesTab}
+    >
+        <PaintbrushVertical
+            size={20}
+            strokeWidth={2}
+            className={styles.tabIcon}
+        />
+        <span>Assets</span>
+    </Tab>
+
+    <Tab
+        className={tabClassNames.tab}
+        onClick={onActivateSoundsTab}
+    >
+        <Volume2
+            size={20}
+            strokeWidth={2}
+            className={styles.tabIcon}
+        />
+        <span>Audio</span>
+    </Tab>
+</TabList><TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
                                             key={`${blocksId}/${theme.id}`}
