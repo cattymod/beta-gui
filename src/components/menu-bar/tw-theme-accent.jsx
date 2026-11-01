@@ -37,6 +37,7 @@ const ACCENT_ORDER = [
     'indigo',
     'violet',
     'purple',
+    'pink',
     'rainbow',
 
     'ace',
@@ -57,7 +58,6 @@ const ACCENT_ORDER = [
     'nonbinary',
     'ocean',
     'pan',
-    'pink',
     'sky',
     'sunset',
     'trans',
