@@ -11,6 +11,7 @@ import * as accentYellow from './accent/yellow';
 import * as accentGreen from './accent/green';
 import * as accentIndigo from './accent/indigo';
 import * as accentViolet from './accent/violet';
+import * as accentMist from './accent/mist';
 
 import * as guiLight from './gui/light';
 import * as guiDark from './gui/dark';
@@ -31,6 +32,7 @@ const ACCENT_YELLOW = 'yellow';
 const ACCENT_GREEN = 'green';
 const ACCENT_INDIGO = 'indigo';
 const ACCENT_VIOLET = 'violet';
+const ACCENT_MIST = 'mist';
 
 const ACCENT_MAP = {
     [ACCENT_PURPLE]: accentPurple,
@@ -44,6 +46,7 @@ const ACCENT_MAP = {
     [ACCENT_GREEN]: accentGreen,
     [ACCENT_INDIGO]: accentIndigo,
     [ACCENT_VIOLET]: accentViolet
+    [ACCENT_MIST]: accentMist
 };
 
 const ACCENT_DEFAULT = ACCENT_BLUE;
@@ -190,6 +193,7 @@ export {
     ACCENT_INDIGO,
     ACCENT_VIOLET,
     ACCENT_PURPLE,
+    ACCENT_MIST,
     ACCENT_RAINBOW,
     ACCENT_MAP,
 
