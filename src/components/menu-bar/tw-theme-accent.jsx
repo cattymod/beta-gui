@@ -173,9 +173,12 @@ const AccentMenuItem = ({
 
             <ColorIcon id={id} />
 
-            <span className={styles.accentLabel}>
-                {ACCENT_NAMES[id] || id}
-            </span>
+            <span
+    className={styles.accentLabel}
+    style={{color: '#fff'}}
+>
+    {ACCENT_NAMES[id] || id}
+</span>
         </div>
     </MenuItem>
 );
