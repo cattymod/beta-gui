@@ -11,16 +11,31 @@ import middleBlock from './middle-block.svg';
 import bottomBlock from './bottom-block.svg';
 
 const tips = [
-    'Tip: Never Give Up!',
-    'Fact: CattyMod was originally called Automate.',
-    'Fact: CattyMod is edited by only 1 Developer!',
-    'Tip: Go to the bottom of the page to see cool projects!',
-    'Fact: CattyMod has 100+ preset blocks!',
-    'Tip: Use Extensions to add abilities to your project!',
-    'Fact: CattyMod was created on July 6th 2025!',
-    'Tip: Share your projects on CattyMod Community!',
-    'Fact: Dango has the colors Pink, Red and Blue!',
-    'Fact: There are exactly 10 Facts and Tips including this one!'
+    "Tip: Never Give Up!",
+    "Fact: CattyMod was originally called Automate.",
+    "Fact: CattyMod is edited by only 1 Developer!",
+    "Tip: Go to the bottom of the page to see cool projects!",
+    "Fact: CattyMod has 100+ preset blocks!",
+    "Tip: Use Extensions to add abilities to your project!",
+    "Fact: CattyMod was created on July 6th 2025!",
+    "Tip: Share your projects on CattyMod Community!",
+    "Fact: Dango has the colors Pink, Red and Blue!",
+    "Tip: Every great project starts with an idea!",
+    "Tip: Don't be afraid to experiment with new things!",
+    "Tip: Mistakes are just opportunities to learn!",
+    "Tip: Keep creating, even when things get difficult!",
+    "Tip: Your creativity has no limits!",
+    "Tip: Take inspiration from other projects, but make them your own!",
+    "Tip: Small improvements can lead to amazing results!",
+    "Tip: Challenge yourself to learn something new every day!",
+    "Tip: Don't compare your progress to others. Focus on improving!",
+    "Tip: Believe in your ideas, even if they seem impossible!",
+    "Tip: The best way to improve is to keep practicing!",
+    "Tip: Make projects that YOU enjoy creating!",
+    "Tip: Don't let a lack of experience stop you from trying!",
+    "Tip: Turn your imagination into something real!",
+
+    "Fact: There are exactly 24 Facts and Tips including this one!"
 ];
 
 let usedTips = [];
