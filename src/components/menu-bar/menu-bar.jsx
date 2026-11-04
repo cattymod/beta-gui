@@ -1639,7 +1639,9 @@ const menuBar = (
                                     styles.menuBarItem,
                                     styles.hoverable
                                 )}
-                                onClick={this.props.onClickAddonSettings}
+                                onClick={() => {
+    window.location.href = '/settings.html#mods';
+}}
                             >
                                 <img
                                     src={addonsIcon}
