@@ -142,7 +142,6 @@
         font-weight: 600;
       }
 
-      
       .nav-button i {
         width: 19px;
         height: 19px;
@@ -753,6 +752,215 @@
         overflow: hidden;
       }
 
+      /* General Dashboard */
+      .dashboard-welcome {
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dashboard-welcome h2 {
+        font-size: 22px;
+        margin: 0;
+        letter-spacing: -.4px;
+      }
+
+      .dashboard-welcome p {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 9px 0 0;
+        max-width: 550px;
+      }
+
+      .dashboard-welcome .welcome-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .dashboard-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 9px;
+        border: 1px solid var(--border);
+        background: var(--input);
+        color: var(--text);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .15s ease;
+      }
+
+      .dashboard-button:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+
+      .dashboard-button.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .dashboard-button.primary:hover {
+        background: var(--accent-hover);
+      }
+
+      .dashboard-button i {
+        width: 16px;
+        height: 16px;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .dashboard-link {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 17px;
+        min-width: 0;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text);
+        text-decoration: none;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: .15s ease;
+      }
+
+      .dashboard-link:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .dashboard-link-icon {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+        color: var(--accent);
+      }
+
+      .dashboard-link-icon i {
+        width: 21px;
+        height: 21px;
+      }
+
+      .dashboard-link-info {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .dashboard-link-title {
+        font-size: 14px;
+        font-weight: 650;
+      }
+
+      .dashboard-link-description {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.4;
+        margin-top: 4px;
+      }
+
+      .dashboard-link-arrow {
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+        color: var(--muted);
+      }
+
+      .dashboard-quick-links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-quick-links a {
+        padding: 15px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 550;
+        transition: background .15s ease;
+      }
+
+      .dashboard-quick-links a:hover {
+        background: var(--hover);
+      }
+
+      .dashboard-quick-links a i {
+        width: 18px;
+        height: 18px;
+        color: var(--accent);
+      }
+
+      .dashboard-quick-links a:nth-child(n+3) {
+        border-top: 1px solid var(--border);
+      }
+
+      .dashboard-status {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .dashboard-status-item {
+        flex: 1 1 130px;
+        padding: 15px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+
+      .dashboard-status-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .dashboard-status-value {
+        font-size: 15px;
+        font-weight: 650;
+        margin-top: 6px;
+        text-transform: capitalize;
+      }
+
+      @media (max-width: 600px) {
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .dashboard-quick-links {
+          grid-template-columns: 1fr;
+        }
+
+        .dashboard-quick-links a:nth-child(n+2) {
+          border-top: 1px solid var(--border);
+        }
+
+        .dashboard-welcome {
+          padding: 19px;
+        }
+      }
+
       /* Mobile */
       @media (max-width: 700px) {
         .sidebar {
@@ -893,80 +1101,77 @@
           margin-left: auto;
         }
       }
-      
-      
-/* Gradient Accent Support */
 
-body.gradient-accent {
-  --accent-hover: var(--accent);
-}
+      /* Gradient Accent Support */
+      body.gradient-accent {
+        --accent-hover: var(--accent);
+      }
 
-/* Active navigation */
-body.gradient-accent .nav-button.active {
-  background: var(--accent-gradient);
-  color: white;
-  font-weight: 600;
-  background-size: 200% 100%;
-  animation: rainbow-shift 4s linear infinite;
-}
+      /* Active navigation */
+      body.gradient-accent .nav-button.active {
+        background: var(--accent-gradient);
+        color: white;
+        font-weight: 600;
+        background-size: 200% 100%;
+        animation: rainbow-shift 4s linear infinite;
+      }
 
-/* Active navigation icons */
-body.gradient-accent .nav-button.active svg {
-  color: white;
-  stroke: white;
-}
+      /* Active navigation icons */
+      body.gradient-accent .nav-button.active svg {
+        color: white;
+        stroke: white;
+      }
 
-/* Enabled switches */
-body.gradient-accent .switch input:checked + .slider {
-  background: var(--accent-gradient);
-  background-size: 200% 100%;
-  animation: rainbow-shift 4s linear infinite;
-}
+      /* Enabled switches */
+      body.gradient-accent .switch input:checked+.slider {
+        background: var(--accent-gradient);
+        background-size: 200% 100%;
+        animation: rainbow-shift 4s linear infinite;
+      }
 
-/* Primary buttons */
-body.gradient-accent .primary-button {
-  background: var(--accent-gradient);
-  background-size: 200% 100%;
-  animation: rainbow-shift 4s linear infinite;
-  color: white;
-}
+      /* Primary buttons */
+      body.gradient-accent .primary-button {
+        background: var(--accent-gradient);
+        background-size: 200% 100%;
+        animation: rainbow-shift 4s linear infinite;
+        color: white;
+      }
 
-body.gradient-accent .primary-button:hover {
-  filter: brightness(.92);
-}
+      body.gradient-accent .primary-button:hover {
+        filter: brightness(.92);
+      }
 
-/* Accent-colored links */
-body.gradient-accent a[style*="--accent"],
-body.gradient-accent .commit-version a {
-  background: var(--accent-gradient);
-  background-size: 200% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: rainbow-shift 4s linear infinite;
-}
+      /* Accent-colored links */
+      body.gradient-accent a[style*="--accent"],
+      body.gradient-accent .commit-version a {
+        background: var(--accent-gradient);
+        background-size: 200% 100%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: rainbow-shift 4s linear infinite;
+      }
 
-/* Focus indicators */
-body.gradient-accent .setting-select:focus,
-body.gradient-accent .text-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
-}
+      /* Focus indicators */
+      body.gradient-accent .setting-select:focus,
+      body.gradient-accent .text-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+      }
 
-/* Hover borders */
-body.gradient-accent .preset-btn:hover {
-  border-color: var(--accent);
-}
+      /* Hover borders */
+      body.gradient-accent .preset-btn:hover {
+        border-color: var(--accent);
+      }
 
-/* Keep gradients visible on the whole interface */
-body.gradient-accent .danger-zone-card {
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
-}
+      /* Keep gradients visible on the whole interface */
+      body.gradient-accent .danger-zone-card {
+        border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+      }
 
-body.gradient-accent .setting-title a {
-  color: var(--accent);
-}
-
+      body.gradient-accent .setting-title a {
+        color: var(--accent);
+      }
     </style>
   </head>
   <body>
@@ -1029,20 +1234,106 @@ body.gradient-accent .setting-title a {
           <section id="page-general" class="page">
             <div class="page-header">
               <h1>General</h1>
-              <p>Manage your CattyMod settings and preferences.</p>
+              <p>Your CattyMod settings dashboard.</p>
             </div>
+            <!-- Welcome -->
             <div class="section">
-              <div class="section-title">Information</div>
-              <div class="card">
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <div class="setting-title">Welcome to CattyMod Settings</div>
-                    <div class="setting-description"> Use the sidebar to explore and customize different parts of CattyMod. </div>
-                  </div>
+              <div class="card dashboard-welcome">
+                <h2>Welcome to CattyMod Settings!</h2>
+                <p> Make CattyMod yours. Customize your editor, manage projects, discover new features and explore everything CattyMod has to offer. </p>
+                <div class="welcome-links">
+                  <button class="dashboard-button primary" onclick="showPage('appearance')">
+                    <i data-lucide="palette"></i> Customize Appearance </button>
                 </div>
               </div>
             </div>
-            <!-- DANGER ZONE -->
+            <!-- Settings Navigation -->
+            <div class="section">
+              <div class="section-title">Explore Settings</div>
+              <div class="dashboard-grid">
+                <button class="dashboard-link" onclick="showPage('appearance')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="palette"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">Appearance</div>
+                    <div class="dashboard-link-description"> Themes, accents, block styles and more. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+                <button class="dashboard-link" onclick="showPage('projects')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="folder"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">Projects</div>
+                    <div class="dashboard-link-description"> Default projects, saving and Picture in Picture. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+                <button class="dashboard-link" onclick="showPage('navbar')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="panel-top"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">Navbar</div>
+                    <div class="dashboard-link-description"> Customize your editor navigation bar. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+                <button class="dashboard-link" onclick="showPage('features')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="sliders-horizontal"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">Features</div>
+                    <div class="dashboard-link-description"> Manage additional CattyMod functionality. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+                <button class="dashboard-link" onclick="showPage('mods')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="box"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">Mods</div>
+                    <div class="dashboard-link-description"> Browse and manage available mods. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+                <button class="dashboard-link" onclick="showPage('labs')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="flask-conical"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">Labs</div>
+                    <div class="dashboard-link-description"> Try experimental and upcoming features. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+                <button class="dashboard-link" onclick="showPage('about')">
+                  <div class="dashboard-link-icon">
+                    <i data-lucide="info"></i>
+                  </div>
+                  <div class="dashboard-link-info">
+                    <div class="dashboard-link-title">About</div>
+                    <div class="dashboard-link-description"> Learn about CattyMod and its technologies. </div>
+                  </div>
+                  <i class="dashboard-link-arrow" data-lucide="chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            <!-- Useful Links -->
+            <div class="section">
+              <div class="section-title">Useful Links</div>
+              <div class="card dashboard-quick-links">
+                <a href="https://cattymod.app" target="_blank" rel="noopener noreferrer">
+                  <i data-lucide="globe"></i> CattyMod Home </a>
+                <a href="https://github.com/cattymod" target="_blank" rel="noopener noreferrer">
+                  <i data-lucide="code-2"></i> CattyMod Source Code </a>
+              </div>
+            </div>
+            <!-- Danger Zone -->
             <div class="section danger-zone">
               <div class="section-title">Danger Zone</div>
               <div class="card danger-zone-card">
@@ -1108,45 +1399,43 @@ body.gradient-accent .setting-title a {
                     <div class="setting-title">Accent</div>
                     <div class="setting-description"> Choose the accent color for CattyMod to use. </div>
                   </div>
-                  
-<select id="accent-select" class="setting-select" aria-label="Accent">
-  <optgroup label="Solid Colors">
-    <option value="red">Red</option>
-    <option value="orange">Orange</option>
-    <option value="yellow">Yellow</option>
-    <option value="green">Green</option>
-    <option value="blue">Blue</option>
-    <option value="violet">Violet</option>
-    <option value="purple">Purple</option>
-    <option value="pink">Pink</option>
-  </optgroup>
-  <optgroup label="Gradients">
-    <option value="ace">Ace</option>
-    <option value="aurora">Aurora</option>
-    <option value="bi">Bi</option>
-    <option value="cherry">Cherry</option>
-    <option value="coral">Coral</option>
-    <option value="cosmic">Cosmic</option>
-    <option value="fire">Fire</option>
-    <option value="forest">Forest</option>
-    <option value="gay">Gay</option>
-    <option value="honey">Honey</option>
-    <option value="lavender">Lavender</option>
-    <option value="lesbian">Lesbian</option>
-    <option value="matrix">Matrix</option>
-    <option value="mint">Mint</option>
-    <option value="nebula">Nebula</option>
-    <option value="nonbinary">Nonbinary</option>
-    <option value="ocean">Ocean</option>
-    <option value="pan">Pan</option>
-    <option value="sky">Sky</option>
-    <option value="sunset">Sunset</option>
-    <option value="trans">Trans</option>
-    <option value="vaporwave">Vaporwave</option>
-    <option value="rainbow">Rainbow</option>
-  </optgroup>
-</select>
-
+                  <select id="accent-select" class="setting-select" aria-label="Accent">
+                    <optgroup label="Solid Colors">
+                      <option value="red">Red</option>
+                      <option value="orange">Orange</option>
+                      <option value="yellow">Yellow</option>
+                      <option value="green">Green</option>
+                      <option value="blue">Blue</option>
+                      <option value="violet">Violet</option>
+                      <option value="purple">Purple</option>
+                      <option value="pink">Pink</option>
+                    </optgroup>
+                    <optgroup label="Gradients">
+                      <option value="ace">Ace</option>
+                      <option value="aurora">Aurora</option>
+                      <option value="bi">Bi</option>
+                      <option value="cherry">Cherry</option>
+                      <option value="coral">Coral</option>
+                      <option value="cosmic">Cosmic</option>
+                      <option value="fire">Fire</option>
+                      <option value="forest">Forest</option>
+                      <option value="gay">Gay</option>
+                      <option value="honey">Honey</option>
+                      <option value="lavender">Lavender</option>
+                      <option value="lesbian">Lesbian</option>
+                      <option value="matrix">Matrix</option>
+                      <option value="mint">Mint</option>
+                      <option value="nebula">Nebula</option>
+                      <option value="nonbinary">Nonbinary</option>
+                      <option value="ocean">Ocean</option>
+                      <option value="pan">Pan</option>
+                      <option value="sky">Sky</option>
+                      <option value="sunset">Sunset</option>
+                      <option value="trans">Trans</option>
+                      <option value="vaporwave">Vaporwave</option>
+                      <option value="rainbow">Rainbow</option>
+                    </optgroup>
+                  </select>
                 </div>
               </div>
             </div>
@@ -1526,231 +1815,90 @@ body.gradient-accent .setting-title a {
         commitLink.textContent = shortCommit;
         commitLink.href = `https://github.com/${repo}/commit/${commitVersion}`;
       }
-      
-/* ------------------------- Accent ------------------------- */
+      /* ------------------------- Accent ------------------------- */
+      const accentSelect = document.getElementById("accent-select");
+      const ACCENT_COLORS = {
+        red: "#e53935",
+        orange: "#fb8c00",
+        yellow: "#fbc02d",
+        green: "#43a047",
+        blue: "#009ccc",
+        violet: "#8e44ad",
+        purple: "#9c27b0",
+        pink: "#b660be"
+      };
+      const ACCENT_GRADIENTS = {
+        ace: ["#000000", "#ffffff", "#800080"],
+        aurora: ["#00a86b", "#009ccc", "#8000a8"],
+        bi: ["#d60270", "#9b4f96", "#0038a8"],
+        cherry: ["#e53935", "#ff7777"],
+        coral: ["#ff7777", "#ffb3a7"],
+        cosmic: ["#8000ff", "#ff69b4", "#8000ff"],
+        fire: ["#c62828", "#ef5350"],
+        forest: ["#228b22", "#90ee90"],
+        gay: ["#008026", "#ffffff", "#004dff"],
+        honey: ["#ffd700", "#cc9900"],
+        lavender: ["#c8a2c8", "#ffdab9"],
+        lesbian: ["#d52d00", "#ffffff", "#a30262"],
+        matrix: ["#000000", "#00ff41"],
+        mint: ["#98ff98", "#add8e6"],
+        nebula: ["#000000", "#e60026", "#ffd700"],
+        nonbinary: ["#f5c49a", "#9b59b6"],
+        ocean: ["#006994", "#87ceeb"],
+        pan: ["#ff218c", "#ffd800", "#21b1ff"],
+        sky: ["#87ceeb", "#c5f3ff"],
+        sunset: ["#ff8c00", "#800080"],
+        trans: ["#5bcffa", "#f5abb9", "#ffffff"],
+        vaporwave: ["#ff71ce", "#b967ff", "#01cdfe"],
+        rainbow: ["#e53935", "#fb8c00", "#fbc02d", "#43a047", "#009ccc", "#3949ab", "#8e44ad", "#e53935"]
+      };
+      const ACCENT_OPTIONS = [...Object.keys(ACCENT_COLORS), ...Object.keys(ACCENT_GRADIENTS)];
 
-const accentSelect = document.getElementById("accent-select");
+      function getCurrentAccent() {
+        const theme = readTheme();
+        if (theme && typeof theme.accent === "string" && ACCENT_OPTIONS.includes(theme.accent.toLowerCase())) {
+          return theme.accent.toLowerCase();
+        }
+        return "blue";
+      }
 
-const ACCENT_COLORS = {
-  red: "#e53935",
-  orange: "#fb8c00",
-  yellow: "#fbc02d",
-  green: "#43a047",
-  blue: "#009ccc",
-  violet: "#8e44ad",
-  purple: "#9c27b0",
-  pink: "#b660be"
-};
+      function applySettingsAccent() {
+        const accent = getCurrentAccent();
+        const root = document.documentElement;
+        const body = document.body;
+        const gradientColors = ACCENT_GRADIENTS[accent];
+        const isGradient = Boolean(gradientColors);
+        body.classList.toggle("gradient-accent", isGradient);
+        if (isGradient) {
+          const gradient = `linear-gradient(90deg, ${gradientColors.join(", ")})`;
+          root.style.setProperty("--accent", gradientColors[0]);
+          root.style.setProperty("--accent-hover", gradientColors[1] || gradientColors[0]);
+          root.style.setProperty("--accent-gradient", gradient);
+        } else {
+          const color = ACCENT_COLORS[accent] || ACCENT_COLORS.blue;
+          root.style.setProperty("--accent", color);
+          root.style.setProperty("--accent-hover", color);
+          root.style.setProperty("--accent-gradient", color);
+        }
+      }
 
-const ACCENT_GRADIENTS = {
-  ace: [
-    "#000000",
-    "#ffffff",
-    "#800080"
-  ],
+      function setAccent(accent) {
+        if (!ACCENT_OPTIONS.includes(accent)) return;
+        updateTheme(theme => {
+          theme.accent = accent;
+        });
+      }
 
-  aurora: [
-    "#00a86b",
-    "#009ccc",
-    "#8000a8"
-  ],
-
-  bi: [
-    "#d60270",
-    "#9b4f96",
-    "#0038a8"
-  ],
-
-  cherry: [
-    "#e53935",
-    "#ff7777"
-  ],
-
-  coral: [
-    "#ff7777",
-    "#ffb3a7"
-  ],
-
-  cosmic: [
-    "#8000ff",
-    "#ff69b4",
-    "#8000ff"
-  ],
-
-  fire: [
-    "#c62828",
-    "#ef5350"
-  ],
-
-  forest: [
-    "#228b22",
-    "#90ee90"
-  ],
-
-  gay: [
-    "#008026",
-    "#ffffff",
-    "#004dff"
-  ],
-
-  honey: [
-    "#ffd700",
-    "#cc9900"
-  ],
-
-  lavender: [
-    "#c8a2c8",
-    "#ffdab9"
-  ],
-
-  lesbian: [
-    "#d52d00",
-    "#ffffff",
-    "#a30262"
-  ],
-
-  matrix: [
-    "#000000",
-    "#00ff41"
-  ],
-
-  mint: [
-    "#98ff98",
-    "#add8e6"
-  ],
-
-  nebula: [
-    "#000000",
-    "#e60026",
-    "#ffd700"
-  ],
-
-  nonbinary: [
-    "#f5c49a",
-    "#9b59b6"
-  ],
-
-  ocean: [
-    "#006994",
-    "#87ceeb"
-  ],
-
-  pan: [
-    "#ff218c",
-    "#ffd800",
-    "#21b1ff"
-  ],
-
-  sky: [
-    "#87ceeb",
-    "#c5f3ff"
-  ],
-
-  sunset: [
-    "#ff8c00",
-    "#800080"
-  ],
-
-  trans: [
-    "#5bcffa",
-    "#f5abb9",
-    "#ffffff"
-  ],
-
-  vaporwave: [
-    "#ff71ce",
-    "#b967ff",
-    "#01cdfe"
-  ],
-
-  rainbow: [
-    "#e53935",
-    "#fb8c00",
-    "#fbc02d",
-    "#43a047",
-    "#009ccc",
-    "#3949ab",
-    "#8e44ad",
-    "#e53935"
-  ]
-};
-
-const ACCENT_OPTIONS = [
-  ...Object.keys(ACCENT_COLORS),
-  ...Object.keys(ACCENT_GRADIENTS)
-];
-
-function getCurrentAccent() {
-  const theme = readTheme();
-
-  if (
-    theme &&
-    typeof theme.accent === "string" &&
-    ACCENT_OPTIONS.includes(theme.accent.toLowerCase())
-  ) {
-    return theme.accent.toLowerCase();
-  }
-
-  return "blue";
-}
-
-function applySettingsAccent() {
-  const accent = getCurrentAccent();
-  const root = document.documentElement;
-  const body = document.body;
-
-  const gradientColors = ACCENT_GRADIENTS[accent];
-  const isGradient = Boolean(gradientColors);
-
-  body.classList.toggle("gradient-accent", isGradient);
-
-  if (isGradient) {
-    const gradient = `linear-gradient(90deg, ${gradientColors.join(", ")})`;
-
-    root.style.setProperty(
-      "--accent",
-      gradientColors[0]
-    );
-
-    root.style.setProperty(
-      "--accent-hover",
-      gradientColors[1] || gradientColors[0]
-    );
-
-    root.style.setProperty(
-      "--accent-gradient",
-      gradient
-    );
-  } else {
-    const color = ACCENT_COLORS[accent] || ACCENT_COLORS.blue;
-
-    root.style.setProperty("--accent", color);
-    root.style.setProperty("--accent-hover", color);
-    root.style.setProperty("--accent-gradient", color);
-  }
-}
-
-function setAccent(accent) {
-  if (!ACCENT_OPTIONS.includes(accent)) return;
-
-  updateTheme(theme => {
-    theme.accent = accent;
-  });
-}
-
-function loadAccent() {
-  if (!accentSelect) return;
-
-  accentSelect.value = getCurrentAccent();
-  applySettingsAccent();
-}
-
-if (accentSelect) {
-  accentSelect.addEventListener("change", () => {
-    setAccent(accentSelect.value);
-  });
-}
-
+      function loadAccent() {
+        if (!accentSelect) return;
+        accentSelect.value = getCurrentAccent();
+        applySettingsAccent();
+      }
+      if (accentSelect) {
+        accentSelect.addEventListener("change", () => {
+          setAccent(accentSelect.value);
+        });
+      }
       /* ------------------------- Block Style ------------------------- */
       const blockStyleSelect = document.getElementById("block-style-select");
 
@@ -1878,34 +2026,30 @@ if (accentSelect) {
         });
       }
       /* ------------------------- Scratch Elements ------------------------- */
-const scratchElementsToggle = document.getElementById("scratch-elements-toggle");
-const SCRATCH_REMOVE_KEY = "cattymod:removeScratch";
+      const scratchElementsToggle = document.getElementById("scratch-elements-toggle");
+      const SCRATCH_REMOVE_KEY = "cattymod:removeScratch";
 
-function getScratchElementsEnabled() {
-    const value = localStorage.getItem(SCRATCH_REMOVE_KEY);
+      function getScratchElementsEnabled() {
+        const value = localStorage.getItem(SCRATCH_REMOVE_KEY);
+        if (value === null) return true;
+        return value !== "true";
+      }
 
-    if (value === null) return true;
+      function setScratchElementsEnabled(enabled) {
+        localStorage.setItem(SCRATCH_REMOVE_KEY, String(!enabled));
+        loadScratchElements();
+      }
 
-    return value !== "true";
-}
-
-function setScratchElementsEnabled(enabled) {
-    localStorage.setItem(SCRATCH_REMOVE_KEY, String(!enabled));
-    loadScratchElements();
-}
-
-function loadScratchElements() {
-    if (!scratchElementsToggle) return;
-
-    scratchElementsToggle.checked = getScratchElementsEnabled();
-    applySettingsAccent();
-}
-
-if (scratchElementsToggle) {
-    scratchElementsToggle.addEventListener("change", () => {
-        setScratchElementsEnabled(scratchElementsToggle.checked);
-    });
-}
+      function loadScratchElements() {
+        if (!scratchElementsToggle) return;
+        scratchElementsToggle.checked = getScratchElementsEnabled();
+        applySettingsAccent();
+      }
+      if (scratchElementsToggle) {
+        scratchElementsToggle.addEventListener("change", () => {
+          setScratchElementsEnabled(scratchElementsToggle.checked);
+        });
+      }
       /* ------------------------- Navbar Logo Visibility ------------------------- */
       const logoVisibleToggle = document.getElementById("logo-visible-toggle");
 
