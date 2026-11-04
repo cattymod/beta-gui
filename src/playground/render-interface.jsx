@@ -87,8 +87,16 @@ if (AddonChannels.changeChannel) {
     });
 }
 
-runAddons();
+// Initialize CattyMod settings before loading the GUI
+if (localStorage.getItem('cattymod:advancedShow') === null) {
+    localStorage.setItem('cattymod:advancedShow', 'false');
+}
 
+if (localStorage.getItem('cattymod:addonsShow') === null) {
+    localStorage.setItem('cattymod:addonsShow', 'false');
+}
+
+runAddons();
 const Footer = () => (
     <footer className={styles.footer}>
         <div className={styles.footerContent}>
