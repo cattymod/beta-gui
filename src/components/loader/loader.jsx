@@ -13,7 +13,7 @@ import bottomBlock from './bottom-block.svg';
 const tips = [
     "Tip: Never Give Up!",
     "Fact: CattyMod was originally called Automate.",
-    "Fact: CattyMod is maintained by only 1 Developer!",
+    "Fact: CattyMod is maintained by only 1 developer!",
     "Tip: Go to the bottom of the page to see cool projects!",
     "Fact: CattyMod has 100+ preset blocks!",
     "Tip: Use Extensions to add abilities to your project!",
