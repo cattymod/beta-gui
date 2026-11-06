@@ -528,6 +528,21 @@ export default [
     incompatibleWithScratch: true,
     featured: true
 },
+{
+    name: 'I\'m not a robot',
+    extensionId: 'imnotarobot',
+    extensionURL: 'https://cattymod.app/extensions/captcha.js',
+    iconURL: 'https://cattymod.app/extensions/captcha.svg',
+    
+    credits: [
+        'Noahscratch493'
+    ],
+    
+    description: 'Use Captcha tests in CattyMod, powered by hCaptcha!',
+    tags: ['cattymod'],        
+    incompatibleWithScratch: true,
+    featured: true
+},
 
 ];
 
