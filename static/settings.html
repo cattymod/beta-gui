@@ -1568,6 +1568,21 @@
               </div>
             </div>
             <div class="section">
+              <div class="section-title">Tabs</div>
+              <div class="card">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <div class="setting-title">Vertical Tabs</div>
+                    <div class="setting-description"> Enable or disable vertical tabs when using Tabs mode. </div>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="vertical-tabs-toggle" aria-label="Enable vertical tabs">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="section">
               <div class="section-title">AI</div>
               <div class="card">
                 <div class="setting-row">
@@ -1718,6 +1733,7 @@
       const CUSTOM_PROJECT_KEY = "cattymod:customDefaultProject";
       const GO_ICON_KEY = "cattymod:goIcon";
       const MOBILE_TOUCH_CONTROLS_KEY = "cattymod:mobileTouchControls";
+      const TABS_MODE_KEY = "cattymod:tabsMode";
       const GPT_ENABLED_KEY = "cattymod:gptEnabled";
       const LOGO_VISIBLE_KEY = "cattymod:logoVisible";
       const PIP_ENABLED_KEY = "cattymod:pipEnabled";
@@ -1979,6 +1995,28 @@
       if (mobileTouchControlsToggle) {
         mobileTouchControlsToggle.addEventListener("change", () => {
           setMobileTouchControlsEnabled(mobileTouchControlsToggle.checked);
+        });
+      }
+      /* ------------------------- Vertical Tabs ------------------------- */
+      const verticalTabsToggle = document.getElementById("vertical-tabs-toggle");
+
+      function getVerticalTabsEnabled() {
+        return localStorage.getItem(TABS_MODE_KEY) === "vertical";
+      }
+
+      function loadVerticalTabs() {
+        if (!verticalTabsToggle) return;
+        verticalTabsToggle.checked = getVerticalTabsEnabled();
+      }
+
+      function setVerticalTabsEnabled(enabled) {
+        localStorage.setItem(TABS_MODE_KEY, enabled ? "vertical" : "horizontal");
+        loadVerticalTabs();
+      }
+
+      if (verticalTabsToggle) {
+        verticalTabsToggle.addEventListener("change", () => {
+          setVerticalTabsEnabled(verticalTabsToggle.checked);
         });
       }
       /* ------------------------- AI / Copilot ------------------------- */
@@ -2320,6 +2358,9 @@
         if (event.key === MOBILE_TOUCH_CONTROLS_KEY) {
           loadMobileTouchControls();
         }
+        if (event.key === TABS_MODE_KEY || event.key === null) {
+          loadVerticalTabs();
+        }
         if (event.key === GPT_ENABLED_KEY) {
           loadGptEnabled();
         }
@@ -2450,6 +2491,7 @@
       loadCustomProject();
       loadGoIcon();
       loadMobileTouchControls();
+      loadVerticalTabs();
       loadGptEnabled();
       loadCommunityEnabled();
       loadLogoVisible();
