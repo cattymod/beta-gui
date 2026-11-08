@@ -321,9 +321,7 @@ SB3Downloader.propTypes = {
 
 SB3Downloader.defaultProps = {
     className: '',
-    showSaveFilePicker: typeof showSaveFilePicker === 'function' && !navigator.userAgent.includes('Android') ?
-        window.showSaveFilePicker.bind(window) :
-        null
+    showSaveFilePicker: null
 };
 
 const mapStateToProps = state => ({
