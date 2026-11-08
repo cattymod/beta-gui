@@ -29,6 +29,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
     class SBFileUploaderComponent extends React.Component {
         constructor (props) {
             super(props);
+
             bindAll(this, [
                 'createFileObjects',
                 'getProjectTitleFromFilename',
@@ -80,59 +81,80 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             this.fileReader.onload = this.onload;
 
             if (this.props.showOpenFilePicker) {
-                (async () => {
-                    try {
-                        const [handle] = await this.props.showOpenFilePicker({
-                            multiple: false,
-                            ...(isAppleDevice ? {} : {
-                                types: [
-                                    {
-                                        description: 'CattyMod Project',
-                                        accept: {
-                                            '*/*': [
-                                                '.cmp',
-                                                '.pmp',
-                                                '.snail',
-                                                '.zip',
-                                                '.sb',
-                                                '.sb2',
-                                                '.sb3'
-                                            ]
-                                        }
+                try {
+                    // Call immediately during the user's click event.
+                    const pickerPromise = this.props.showOpenFilePicker({
+                        multiple: false,
+                        ...(isAppleDevice ? {} : {
+                            types: [
+                                {
+                                    description: 'CattyMod Project',
+                                    accept: {
+                                        '*/*': [
+                                            '.cmp',
+                                            '.pmp',
+                                            '.snail',
+                                            '.zip',
+                                            '.sb',
+                                            '.sb2',
+                                            '.sb3'
+                                        ]
                                     }
-                                ]
-                            })
-                        });
+                                }
+                            ]
+                        })
+                    });
 
-                        const file = await handle.getFile();
+                    pickerPromise.then(async handles => {
+                        try {
+                            const handle = handles[0];
 
-                        this.handleChange({
-                            target: {
-                                files: [file],
-                                handle: handle
+                            if (!handle) {
+                                this.expectingFileUploadFinish = false;
+                                this.removeFileObjects();
+                                return;
                             }
-                        });
-                    } catch (err) {
-                        if (err && err.name === 'AbortError') {
-                            return;
+
+                            const file = await handle.getFile();
+
+                            this.handleChange({
+                                target: {
+                                    files: [file],
+                                    handle: handle
+                                }
+                            });
+                        } catch (err) {
+                            this.expectingFileUploadFinish = false;
+                            this.removeFileObjects();
+                            log.error(err);
                         }
+                    }).catch(err => {
+                        this.expectingFileUploadFinish = false;
+                        this.removeFileObjects();
 
-                        log.error(err);
-                    }
-                })();
-            } else {
-                this.inputElement = document.createElement('input');
+                        if (err && err.name !== 'AbortError') {
+                            log.error(err);
+                        }
+                    });
+                } catch (err) {
+                    this.expectingFileUploadFinish = false;
+                    this.removeFileObjects();
+                    log.error(err);
+                }
 
-                this.inputElement.accept =
-                    '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
-
-                this.inputElement.style = 'display: none;';
-                this.inputElement.type = 'file';
-                this.inputElement.onchange = this.handleChange;
-
-                document.body.appendChild(this.inputElement);
-                this.inputElement.click();
+                return;
             }
+
+            // Android and unsupported-browser fallback.
+            this.inputElement = document.createElement('input');
+            this.inputElement.accept =
+                '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
+            this.inputElement.style.display = 'none';
+            this.inputElement.type = 'file';
+            this.inputElement.onchange = this.handleChange;
+
+            document.body.appendChild(this.inputElement);
+            this.inputElement.click();
         }
 
         handleChange (e) {
@@ -146,7 +168,10 @@ const SBFileUploaderHOC = function (WrappedComponent) {
 
             const thisFileInput = e.target;
 
-            if (thisFileInput.files && thisFileInput.files.length > 0) {
+            if (
+                thisFileInput.files &&
+                thisFileInput.files.length > 0
+            ) {
                 this.fileToUpload = thisFileInput.files[0];
 
                 let uploadAllowed = true;
@@ -172,6 +197,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
 
                     this.props.requestProjectUpload(loadingState);
                 } else {
+                    this.expectingFileUploadFinish = false;
                     this.removeFileObjects();
                 }
 
