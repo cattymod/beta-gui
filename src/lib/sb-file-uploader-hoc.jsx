@@ -170,13 +170,11 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 if (uploadAllowed) {
                     const handle = thisFileInput.handle;
 
-                    if (handle) {
-                        if (this.fileToUpload.name.endsWith('.sb3')) {
-                            this.props.onSetFileHandle(handle);
-                        } else {
-                            this.props.onSetFileHandle(null);
-                        }
-                    }
+if (handle) {
+    this.props.onSetFileHandle(handle);
+} else {
+    this.props.onSetFileHandle(null);
+}
 
                     this.props.requestProjectUpload(loadingState);
                 } else {
