@@ -84,6 +84,8 @@ class SB3Downloader extends React.Component {
         this.props.saveProjectSb3().then(content => {
             this.finishedSaving();
             downloadBlob(this.props.projectFilename, content);
+        }).catch(error => {
+            this.handleSaveError(error);
         });
     }
 
@@ -132,47 +134,57 @@ class SB3Downloader extends React.Component {
         }
     }
 
-saveToLastFileOrNew () {
-    const preferredType = getPreferredFileType();
-    const currentName = this.props.fileHandle ?
-        this.props.fileHandle.name : '';
+    saveToLastFileOrNew () {
+        // If a file was loaded, save directly to that file.
+        // The preferred extension only applies when creating a new file.
+        if (this.props.fileHandle) {
+            return this.saveToLastFile();
+        }
 
-    const currentExtension = currentName.match(/\.(cmp|pmp|snail|sb3|zip)$/i);
-
-    if (
-        this.props.fileHandle &&
-        currentExtension &&
-        currentExtension[1].toLowerCase() === preferredType
-    ) {
-        return this.saveToLastFile();
+        return this.saveAsNew();
     }
-
-    return this.saveAsNew();
-}
 
     async saveToHandle (handle) {
         if (!this.props.canSaveProject) {
             return;
         }
 
-        const writable = await handle.createWritable();
-        this.startedSaving();
+        if (!handle) {
+            throw new Error('No file handle is available.');
+        }
 
-        await new Promise((resolve, reject) => {
+        let writable = null;
+
+        try {
+            const permission = await handle.queryPermission({
+                mode: 'readwrite'
+            });
+
+            if (permission !== 'granted') {
+                throw new Error('Write permission has not been granted for this file.');
+            }
+
+            writable = await handle.createWritable();
+
+            this.startedSaving();
+
             const jszipStream = this.props.saveProjectSb3Stream();
 
             const abortController = new AbortController();
+
             jszipStream.on('error', error => {
                 abortController.abort(error);
             });
 
             let jszipStreamRunning = false;
+
             const pauseJSZipStream = () => {
                 if (jszipStreamRunning) {
                     jszipStreamRunning = false;
                     jszipStream.pause();
                 }
             };
+
             const resumeJSZipStream = () => {
                 if (!jszipStreamRunning) {
                     jszipStreamRunning = true;
@@ -187,18 +199,27 @@ saveToLastFileOrNew () {
                 start: controller => {
                     jszipStream.on('data', data => {
                         controller.enqueue(data);
+
                         if (controller.desiredSize <= 0) {
                             pauseJSZipStream();
                         }
                     });
+
                     jszipStream.on('end', () => {
                         controller.close();
                     });
+
+                    jszipStream.on('error', error => {
+                        controller.error(error);
+                    });
+
                     resumeJSZipStream();
                 },
+
                 pull: () => {
                     resumeJSZipStream();
                 },
+
                 cancel: () => {
                     pauseJSZipStream();
                 }
@@ -207,39 +228,56 @@ saveToLastFileOrNew () {
             }));
 
             const queuedChunks = [];
+
             const fileStream = new WritableStream({
-                write: chunk => {
+                write: async chunk => {
                     queuedChunks.push(chunk);
+
                     const currentSize = getLengthOfByteArrays(queuedChunks);
+
                     if (currentSize >= WRITE_BUFFER_TARGET_SIZE_BYTES) {
                         const newBuffer = concatenateByteArrays(queuedChunks);
                         queuedChunks.length = 0;
-                        return writable.write(newBuffer);
+
+                        await writable.write(newBuffer);
                     }
                 },
+
                 close: async () => {
                     const lastBuffer = concatenateByteArrays(queuedChunks);
-                    if (lastBuffer.byteLength) {
+
+                    if (lastBuffer.byteLength > 0) {
                         await writable.write(lastBuffer);
                     }
+
                     await writable.close();
+                    writable = null;
                 },
-                abort: async () => {
-                    await writable.abort();
+
+                abort: async reason => {
+                    if (writable) {
+                        await writable.abort(reason);
+                        writable = null;
+                    }
                 }
             });
 
-            zipStream.pipeTo(fileStream, {
+            await zipStream.pipeTo(fileStream, {
                 signal: abortController.signal
-            })
-                .then(() => {
-                    this.finishedSaving();
-                    resolve();
-                })
-                .catch(error => {
-                    reject(error);
-                });
-        });
+            });
+
+            this.finishedSaving();
+        } catch (error) {
+            if (writable) {
+                try {
+                    await writable.abort(error);
+                } catch (abortError) {
+                    log.error(abortError);
+                }
+            }
+
+            throw error;
+        }
     }
 
     handleSaveError (e) {
