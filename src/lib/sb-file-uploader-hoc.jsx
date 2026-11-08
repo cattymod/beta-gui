@@ -25,9 +25,6 @@ import {
     closeFileMenu
 } from '../reducers/menus';
 
-/**
- * Higher Order Component to provide behavior for loading local project files into editor.
- */
 const SBFileUploaderHOC = function (WrappedComponent) {
     class SBFileUploaderComponent extends React.Component {
         constructor (props) {
@@ -59,7 +56,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             this.removeFileObjects();
         }
 
-        // Detect Apple devices.
         isAppleDevice () {
             const userAgent = navigator.userAgent || '';
             const platform = navigator.platform || '';
@@ -70,13 +66,11 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             );
         }
 
-        // Step 1: Begin file upload.
         handleStartSelectingFileUpload () {
             this.expectingFileUploadFinish = true;
             this.createFileObjects();
         }
 
-        // Step 2: Create FileReader and file picker.
         createFileObjects () {
             this.removeFileObjects();
 
@@ -129,10 +123,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             } else {
                 this.inputElement = document.createElement('input');
 
-                // Apple devices accept all file formats.
-                // Other devices only accept supported project formats.
-                this.inputElement.accept = isAppleDevice ?
-                    '*/*' :
+                this.inputElement.accept =
                     '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
 
                 this.inputElement.style = 'display: none;';
@@ -144,7 +135,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             }
         }
 
-        // Step 3: Handle selected file.
         handleChange (e) {
             const {
                 intl,
@@ -169,12 +159,16 @@ const SBFileUploaderHOC = function (WrappedComponent) {
 
                 if (uploadAllowed) {
                     const handle = thisFileInput.handle;
+                    const filename = this.fileToUpload.name || '';
 
-if (handle) {
-    this.props.onSetFileHandle(handle);
-} else {
-    this.props.onSetFileHandle(null);
-}
+                    const supportedExtension =
+                        /\.(?:cmp|pmp|snail|zip|sb|sb2|sb3)$/i.test(filename);
+
+                    if (handle && supportedExtension) {
+                        this.props.onSetFileHandle(handle);
+                    } else {
+                        this.props.onSetFileHandle(null);
+                    }
 
                     this.props.requestProjectUpload(loadingState);
                 } else {
@@ -185,9 +179,6 @@ if (handle) {
             }
         }
 
-        // Step 4: Redux handles project upload state.
-
-        // Step 5: Wait for project upload state.
         handleFinishedLoadingUpload () {
             this.expectingFileUploadFinish = false;
 
@@ -199,18 +190,14 @@ if (handle) {
             }
         }
 
-        // Get project title, always using configured save extension.
-
         getProjectTitleFromFilename (fileInputFilename) {
-    if (!fileInputFilename) return '';
+            if (!fileInputFilename) return '';
 
-    // Remove the file extension.
-    const filename = fileInputFilename.replace(/\.[^/.]+$/, '');
+            const filename = fileInputFilename.replace(/\.[^/.]+$/, '');
 
-    // Limit project title to 100 characters.
-    return filename.substring(0, 100);
-}
-        // Step 6: Load project data.
+            return filename.substring(0, 100);
+        }
+
         onload () {
             if (this.fileReader) {
                 this.props.onLoadingStarted();
@@ -247,7 +234,6 @@ if (handle) {
             }
         }
 
-        // Step 7: Clean up temporary objects.
         removeFileObjects () {
             if (this.inputElement && this.inputElement.parentNode) {
                 this.inputElement.parentNode.removeChild(this.inputElement);
@@ -315,7 +301,12 @@ if (handle) {
     };
 
     SBFileUploaderComponent.defaultProps = {
-        showOpenFilePicker: null
+        showOpenFilePicker:
+            typeof window !== 'undefined' &&
+            typeof window.showOpenFilePicker === 'function' &&
+            !navigator.userAgent.includes('Android') ?
+                window.showOpenFilePicker.bind(window) :
+                null
     };
 
     const mapStateToProps = (state, ownProps) => {
