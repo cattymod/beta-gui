@@ -135,8 +135,6 @@ class SB3Downloader extends React.Component {
     }
 
     saveToLastFileOrNew () {
-        // If a file was loaded, save directly to that file.
-        // The preferred extension only applies when creating a new file.
         if (this.props.fileHandle) {
             return this.saveToLastFile();
         }
@@ -156,12 +154,18 @@ class SB3Downloader extends React.Component {
         let writable = null;
 
         try {
-            const permission = await handle.queryPermission({
+            let permission = await handle.queryPermission({
                 mode: 'readwrite'
             });
 
             if (permission !== 'granted') {
-                throw new Error('Write permission has not been granted for this file.');
+                permission = await handle.requestPermission({
+                    mode: 'readwrite'
+                });
+            }
+
+            if (permission !== 'granted') {
+                throw new Error('Write permission was not granted.');
             }
 
             writable = await handle.createWritable();
@@ -169,7 +173,6 @@ class SB3Downloader extends React.Component {
             this.startedSaving();
 
             const jszipStream = this.props.saveProjectSb3Stream();
-
             const abortController = new AbortController();
 
             jszipStream.on('error', error => {
