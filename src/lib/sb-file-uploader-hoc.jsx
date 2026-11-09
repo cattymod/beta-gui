@@ -93,27 +93,32 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             if (!useHtmlPicker && this.props.showOpenFilePicker) {
                 try {
                     // Call immediately during the user's click event.
-                    const pickerPromise = this.props.showOpenFilePicker({
-                        multiple: false,
-                        ...(isAppleDevice ? {} : {
-                            types: [
-                                {
-                                    description: 'CattyMod Project',
-                                    accept: {
-                                        '*/*': [
-                                            '.cmp',
-                                            '.pmp',
-                                            '.snail',
-                                            '.zip',
-                                            '.sb',
-                                            '.sb2',
-                                            '.sb3'
-                                        ]
-                                    }
+                    const pickerOptions = {
+                        multiple: false
+                    };
+
+                    // Only restrict extensions on non-Apple devices.
+                    if (!isAppleDevice) {
+                        pickerOptions.types = [
+                            {
+                                description: 'CattyMod Project',
+                                accept: {
+                                    '*/*': [
+                                        '.cmp',
+                                        '.pmp',
+                                        '.snail',
+                                        '.zip',
+                                        '.sb',
+                                        '.sb2',
+                                        '.sb3'
+                                    ]
                                 }
-                            ]
-                        })
-                    });
+                            }
+                        ];
+                    }
+
+                    const pickerPromise =
+                        this.props.showOpenFilePicker(pickerOptions);
 
                     pickerPromise.then(async handles => {
                         try {
@@ -155,12 +160,18 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 }
             }
 
-            // HTML picker fallback, including when the setting is enabled.
+            // HTML picker fallback.
             this.inputElement = document.createElement('input');
-            this.inputElement.accept =
-                '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
-            this.inputElement.style.display = 'none';
             this.inputElement.type = 'file';
+            this.inputElement.style.display = 'none';
+
+            // Apple devices can select any file type.
+            // Other devices retain the original extension filter.
+            if (!isAppleDevice) {
+                this.inputElement.accept =
+                    '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
+            }
+
             this.inputElement.onchange = this.handleChange;
 
             document.body.appendChild(this.inputElement);
@@ -199,12 +210,15 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     const supportedExtension =
                         /\.(?:cmp|pmp|snail|zip|sb|sb2|sb3)$/i.test(filename);
 
+                    // Only preserve project file handles for supported extensions.
                     if (handle && supportedExtension) {
                         this.props.onSetFileHandle(handle);
                     } else {
                         this.props.onSetFileHandle(null);
                     }
 
+                    // Upload the selected file.
+                    // Apple devices are not restricted by extension.
                     this.props.requestProjectUpload(loadingState);
                 } else {
                     this.expectingFileUploadFinish = false;
