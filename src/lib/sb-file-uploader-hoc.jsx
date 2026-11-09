@@ -1,3 +1,4 @@
+
 import bindAll from 'lodash.bindall';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -67,6 +68,14 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             );
         }
 
+        useHtmlFilePicker () {
+            try {
+                return localStorage.getItem('cattymod:htmlpicker') === 'true';
+            } catch (err) {
+                return false;
+            }
+        }
+
         handleStartSelectingFileUpload () {
             this.expectingFileUploadFinish = true;
             this.createFileObjects();
@@ -76,11 +85,13 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             this.removeFileObjects();
 
             const isAppleDevice = this.isAppleDevice();
+            const useHtmlPicker = this.useHtmlFilePicker();
 
             this.fileReader = new FileReader();
             this.fileReader.onload = this.onload;
 
-            if (this.props.showOpenFilePicker) {
+            // Use the native picker unless the HTML picker setting is enabled.
+            if (!useHtmlPicker && this.props.showOpenFilePicker) {
                 try {
                     // Call immediately during the user's click event.
                     const pickerPromise = this.props.showOpenFilePicker({
@@ -136,16 +147,16 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                             log.error(err);
                         }
                     });
+
+                    return;
                 } catch (err) {
                     this.expectingFileUploadFinish = false;
                     this.removeFileObjects();
                     log.error(err);
                 }
-
-                return;
             }
 
-            // Android and unsupported-browser fallback.
+            // HTML picker fallback, including when the setting is enabled.
             this.inputElement = document.createElement('input');
             this.inputElement.accept =
                 '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
