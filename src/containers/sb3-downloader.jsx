@@ -51,6 +51,17 @@ const concatenateByteArrays = arrays => {
 };
 
 /**
+ * Check whether the HTML file picker setting is enabled.
+ */
+const useHtmlFilePicker = () => {
+    try {
+        return localStorage.getItem('cattymod:htmlpicker') === 'true';
+    } catch (err) {
+        return false;
+    }
+};
+
+/**
  * CattyMod Project saver component passes a downloadProject function to its child.
  */
 class SB3Downloader extends React.Component {
@@ -80,7 +91,9 @@ class SB3Downloader extends React.Component {
         if (!this.props.canSaveProject) {
             return;
         }
+
         this.startedSaving();
+
         this.props.saveProjectSb3().then(content => {
             this.finishedSaving();
             downloadBlob(this.props.projectFilename, content);
@@ -93,8 +106,16 @@ class SB3Downloader extends React.Component {
         if (!this.props.canSaveProject) {
             return;
         }
+
+        // Use the regular download when HTML picker mode is enabled.
+        if (useHtmlFilePicker() || !this.props.showSaveFilePicker) {
+            this.downloadProject();
+            return;
+        }
+
         try {
             const fileType = getPreferredFileType();
+
             const handle = await this.props.showSaveFilePicker({
                 suggestedName: this.props.projectFilename,
                 types: [
@@ -115,9 +136,12 @@ class SB3Downloader extends React.Component {
                 ],
                 excludeAcceptAllOption: true
             });
+
             await this.saveToHandle(handle);
             this.props.onSetFileHandle(handle);
+
             const title = getProjectTitleFromFilename(handle.name);
+
             if (title) {
                 this.props.onSetProjectTitle(title);
             }
@@ -127,6 +151,12 @@ class SB3Downloader extends React.Component {
     }
 
     async saveToLastFile () {
+        // Existing file handles are only usable with the File System Access API.
+        if (useHtmlFilePicker() || !this.props.showSaveFilePicker) {
+            this.downloadProject();
+            return;
+        }
+
         try {
             await this.saveToHandle(this.props.fileHandle);
         } catch (e) {
@@ -135,6 +165,10 @@ class SB3Downloader extends React.Component {
     }
 
     saveToLastFileOrNew () {
+        if (useHtmlFilePicker() || !this.props.showSaveFilePicker) {
+            return this.downloadProject();
+        }
+
         if (this.props.fileHandle) {
             return this.saveToLastFile();
         }
@@ -287,6 +321,7 @@ class SB3Downloader extends React.Component {
         if (e && e.name === 'AbortError') {
             return;
         }
+
         log.error(e);
         this.props.onShowSaveErrorAlert();
     }
@@ -295,10 +330,15 @@ class SB3Downloader extends React.Component {
         const {
             children
         } = this.props;
+
+        // HTML picker mode uses regular downloads instead.
+        const useHtmlPicker = useHtmlFilePicker();
+        const hasNativePicker = Boolean(this.props.showSaveFilePicker);
+
         return children(
             this.props.className,
             this.downloadProject,
-            this.props.showSaveFilePicker ? {
+            !useHtmlPicker && hasNativePicker ? {
                 available: true,
                 name: this.props.fileHandle ? this.props.fileHandle.name : null,
                 saveAsNew: this.saveAsNew,
@@ -320,7 +360,6 @@ const getPreferredFileType = () => {
     return validTypes.includes(savedType) ? savedType : 'cmp';
 };
 
-
 const getProjectFilename = (curTitle, defaultTitle) => {
     let filenameTitle = curTitle;
 
@@ -338,7 +377,6 @@ const getProjectFilename = (curTitle, defaultTitle) => {
 
     return `${filenameTitle.substring(0, 100)}.${fileType}`;
 };
-
 
 SB3Downloader.propTypes = {
     children: PropTypes.func,
@@ -362,9 +400,12 @@ SB3Downloader.propTypes = {
 
 SB3Downloader.defaultProps = {
     className: '',
-    showSaveFilePicker: typeof showSaveFilePicker === 'function' && !navigator.userAgent.includes('Android') ?
-        window.showSaveFilePicker.bind(window) :
-        null
+    showSaveFilePicker:
+        typeof window !== 'undefined' &&
+        typeof window.showSaveFilePicker === 'function' &&
+        !navigator.userAgent.includes('Android') ?
+            window.showSaveFilePicker.bind(window) :
+            null
 };
 
 const mapStateToProps = state => ({
