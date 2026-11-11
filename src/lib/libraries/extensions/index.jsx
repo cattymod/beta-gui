@@ -396,20 +396,17 @@ export default [
     {
         name: (
             <FormattedMessage
-                defaultMessage="{APP_NAME} Blocks"
-                description="Name of the strange 'TurboWarp Blocks' extension"
+                defaultMessage="CattyMod Blocks"
+                description="Name of the strange 'CattyMod Blocks' extension"
                 id="tw.twExtension.name"
-                values={{
-                    APP_NAME
-                }}
             />
         ),
         extensionId: 'tw',
         iconURL: twIcon,
         description: (
             <FormattedMessage
-                defaultMessage="Weird new blocks."
-                description="Description of the strange 'TurboWarp Blocks' extension"
+                defaultMessage="A collection of useful, unusual, and CattyMod-exclusive blocks."
+                description="Description of the strange 'CattyMod Blocks' extension"
                 id="tw.twExtension.description"
             />
         ),
