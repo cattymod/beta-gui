@@ -1,34 +1,29 @@
 import React from 'react';
 import {isScratchDesktop} from '../../lib/isScratchDesktop';
+import {hasChromium157FilePickerBug} from '../../lib/tw-file-system-access';
 import CloseButton from '../close-button/close-button.jsx';
 import styles from './tw-news.css';
 
-// Set to true by the CattyMod Mirror workflow before compiling.
-const mirrored = false;
+const LOCAL_STORAGE_KEY = 'tw:closedNews';
+const NEWS_ID = 'chromium-file-pickers';
 
-const LOCAL_STORAGE_KEY = 'cattymod:closedNews';
+const newsAppliesToUser = () => hasChromium157FilePickerBug();
 
-const NEWS_ITEMS = {
-    beta: {
-        id: 'cattymod-beta',
-        body: (
-            <>
-                You are currently on CattyMod Beta.
-            </>
-        )
-    },
-    mirrored: {
-        id: 'cattymod-mirrored',
-        body: (
-            <>
-                This is a mirror of CattyMod. To get the latest changes, try going to{' '}
-                <a href="https://cattymod.app/" target="_blank" rel="noopener noreferrer">
-                    cattymod.app
-                </a>.
-            </>
-        )
-    }
-};
+const NewsBody = () => (
+    <div
+        className={styles.text}
+        lang="en"
+    >
+        <div>
+            {/* eslint-disable-next-line max-len */}
+            {'The latest version of Chrome and Edge has a bug that broke our open and save file dialogs.'}
+        </div>
+        <div>
+            {/* eslint-disable-next-line max-len */}
+            {'Until they fix it, saving projects will always download a new copy of your project instead of overwriting the original file.'}
+        </div>
+    </div>
+);
 
 const getCurrentNews = () => {
     if (mirrored === true) {
