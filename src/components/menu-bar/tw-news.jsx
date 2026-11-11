@@ -4,23 +4,44 @@ import {hasChromium157FilePickerBug} from '../../lib/tw-file-system-access';
 import CloseButton from '../close-button/close-button.jsx';
 import styles from './tw-news.css';
 
-const LOCAL_STORAGE_KEY = 'tw:closedNews';
-const NEWS_ID = 'chromium-file-pickers';
+// Set to true by the CattyMod Mirror workflow before compiling.
+const mirrored = false;
+
+const LOCAL_STORAGE_KEY = 'cattymod:closedNews';
+
+const NEWS_ITEMS = {
+    beta: {
+        id: 'cattymod-beta',
+        body: (
+            <>
+                You are currently on CattyMod Beta.
+            </>
+        )
+    },
+    mirrored: {
+        id: 'cattymod-mirrored',
+        body: (
+            <>
+                This is a mirror of CattyMod. To get the latest changes, try going to{' '}
+                <a href="https://cattymod.app/" target="_blank" rel="noopener noreferrer">
+                    cattymod.app
+                </a>.
+            </>
+        )
+    }
+};
 
 const newsAppliesToUser = () => hasChromium157FilePickerBug();
 
-const NewsBody = () => (
-    <div
-        className={styles.text}
-        lang="en"
-    >
+const FilePickerNewsBody = () => (
+    <div className={styles.body}>
         <div>
             {/* eslint-disable-next-line max-len */}
             {'The latest version of Chrome and Edge has a bug that broke our open and save file dialogs.'}
         </div>
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'Until they fix it, saving projects will always download a new copy of your project instead of overwriting the original file.'}
+            {'If you\'re affected, you can go to Settings → Expand → Projects → Force HTML File Picker to fix this issue.'}
         </div>
     </div>
 );
@@ -58,9 +79,13 @@ class TWNews extends React.Component {
         super(props);
 
         const news = getCurrentNews();
+        const filePickerNewsApplies = newsAppliesToUser();
 
         this.state = {
-            closed: news ? getIsClosedInLocalStorage(news.id) : false
+            closed: news
+                ? getIsClosedInLocalStorage(news.id)
+                : getIsClosedInLocalStorage('chromium-file-pickers'),
+            filePickerNewsApplies
         };
 
         this.handleClose = this.handleClose.bind(this);
@@ -68,10 +93,9 @@ class TWNews extends React.Component {
 
     handleClose() {
         const news = getCurrentNews();
+        const newsId = news ? news.id : 'chromium-file-pickers';
 
-        if (!news) return;
-
-        markAsClosedInLocalStorage(news.id);
+        markAsClosedInLocalStorage(newsId);
 
         this.setState({
             closed: true
@@ -88,14 +112,9 @@ class TWNews extends React.Component {
             return null;
         }
 
-        // The official studio must not display any banner.
-        if (hostname === 'studio.cattymod.app') {
-            return null;
-        }
-
-        // Show the mirror or beta banner when applicable.
         const news = getCurrentNews();
 
+        // Show the mirror or beta banner when applicable.
         if (news) {
             if (this.state.closed) {
                 return null;
@@ -115,18 +134,41 @@ class TWNews extends React.Component {
             );
         }
 
-        // Other hosted pages are not official CattyMod pages.
-        return (
-            <div className={styles.news}>
-                <div className={styles.body}>
-                    This page is not officially by CattyMod.{' '}
-                    <a href="https://cattymod.app/">
-                        <strong>Go to cattymod.app</strong>
-                    </a>
-                    {' '}to get a private and powerful Scratch mod.
+        // Show the Chromium file picker warning only to affected users.
+        if (this.state.filePickerNewsApplies) {
+            if (this.state.closed) {
+                return null;
+            }
+
+            return (
+                <div className={styles.news}>
+                    <CloseButton
+                        className={styles.closeButton}
+                        onClick={this.handleClose}
+                    />
+
+                    <FilePickerNewsBody />
                 </div>
-            </div>
-        );
+            );
+        }
+
+        // Other hosted pages are not official CattyMod pages.
+        if (hostname !== 'cattymod.app' &&
+            hostname !== 'studio.cattymod.app') {
+            return (
+                <div className={styles.news}>
+                    <div className={styles.body}>
+                        This page is not officially by CattyMod.{' '}
+                        <a href="https://cattymod.app/">
+                            <strong>Go to cattymod.app</strong>
+                        </a>
+                        {' '}to get a private and powerful Scratch mod.
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
     }
 }
 
