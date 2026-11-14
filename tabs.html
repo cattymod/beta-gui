@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CattyMod Tabs</title>
+    <style>
+      :root {
+        --bg: #f5f6f7;
+        --panel: #fff;
+        --border: #d9dde3;
+        --tab-border: #cfd5de;
+        --text: #1f2328;
+        --muted: #6b7280;
+        --blue: #1a73e8;
+        --blue-2: #1769d2;
+        --shadow: 0 10px 30px rgba(0, 0, 0, .08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Horizontal tabs */
+      .topbar {
+        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+        padding: 0 12px;
+        flex: 0 0 auto;
+      }
+
+      .window-spacer {
+        height: 4px;
+        margin: 0 0 4px;
+      }
+
+      .tabs {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        overflow: auto;
+        padding-bottom: 8px;
+      }
+
+      .tab,
+      .home-link,
+      .new-tab-btn {
+        border: 1px solid var(--tab-border);
+        border-bottom: none;
+        background: #eef1f6;
+        color: var(--muted);
+        padding: 10px 12px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 42px;
+        white-space: nowrap;
+        max-width: 320px;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .tab {
+        padding-right: 10px;
+        min-width: 120px;
+      }
+
+      .tab .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 13px;
+        font-weight: 600;
+        flex: 1 1 auto;
+      }
+
+      .active {
+        background: #fff;
+        color: var(--text);
+        box-shadow: var(--shadow);
+      }
+
+      .active::after {
+        content: "";
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: -1px;
+        height: 2px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--blue), var(--blue-2));
+      }
+
+      .home-link,
+      .new-tab-btn {
+        width: 42px;
+        padding: 0;
+        justify-content: center;
+        flex: 0 0 42px;
+      }
+
+      .button-title {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .tab-x {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        line-height: 1;
+        opacity: .75;
+      }
+
+      .tab-x:hover {
+        border-color: var(--tab-border);
+        background: rgba(0, 0, 0, .04);
+        opacity: 1;
+      }
+
+      /* Main content */
+      .content {
+        flex: 1;
+        background: #fff;
+        overflow: hidden;
+        min-height: 0;
+        position: relative;
+      }
+
+      .frames {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #fff;
+        display: none;
+      }
+
+      iframe.active {
+        display: block;
+      }
+
+      .frames iframe {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Vertical sidebar */
+      /* Vertical sidebar */
+      body.vertical-tabs {
+        flex-direction: row;
+      }
+
+      body.vertical-tabs .topbar {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 42px;
+        min-width: 42px;
+        max-width: 42px;
+        height: 100vh;
+        padding: 8px 0;
+        background: var(--panel);
+        border-right: 1px solid var(--border);
+        border-bottom: none;
+        overflow: hidden;
+        transition:
+          width .25s ease,
+          min-width .25s ease,
+          max-width .25s ease,
+          box-shadow .25s ease;
+      }
+
+      body.vertical-tabs .topbar:hover {
+        width: 230px;
+        min-width: 230px;
+        max-width: 230px;
+        box-shadow: 8px 0 25px rgba(0, 0, 0, .16);
+      }
+
+      body.vertical-tabs .window-spacer {
+        display: none;
+      }
+
+      body.vertical-tabs .tabs {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 5px;
+        width: 230px;
+        min-width: 230px;
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 0 0 8px;
+      }
+
+      /* Home and Add buttons */
+      body.vertical-tabs .home-link,
+      body.vertical-tabs .new-tab-btn {
+        width: 42px;
+        min-width: 42px;
+        max-width: 42px;
+        height: 42px;
+        min-height: 42px;
+        padding: 0;
+        justify-content: center;
+        border: none;
+        border-radius: 0;
+        gap: 10px;
+        transition:
+          width .25s ease,
+          min-width .25s ease,
+          max-width .25s ease,
+          padding .25s ease,
+          border-radius .25s ease;
+      }
+
+      body.vertical-tabs .button-title {
+        display: inline;
+        opacity: 0;
+        transform: translateX(-8px);
+        white-space: nowrap;
+        pointer-events: none;
+        transition:
+          opacity .18s ease,
+          transform .25s ease;
+      }
+
+      body.vertical-tabs .topbar:hover .home-link,
+      body.vertical-tabs .topbar:hover .new-tab-btn {
+        width: 230px;
+        min-width: 230px;
+        max-width: 230px;
+        padding: 0 10px;
+        justify-content: flex-start;
+        border-radius: 8px;
+      }
+
+      body.vertical-tabs .topbar:hover .button-title {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Project tabs */
+      body.vertical-tabs .tab {
+        width: 42px;
+        min-width: 42px;
+        max-width: 42px;
+        height: 42px;
+        min-height: 42px;
+        padding: 0;
+        justify-content: center;
+        border: none;
+        border-radius: 0;
+        transition:
+          width .25s ease,
+          min-width .25s ease,
+          max-width .25s ease,
+          padding .25s ease,
+          border-radius .25s ease,
+          gap .25s ease;
+      }
+
+      body.vertical-tabs .file-icon {
+        display: block;
+        flex: 0 0 20px;
+      }
+
+      body.vertical-tabs .tab .title {
+        display: block;
+        opacity: 0;
+        transform: translateX(-8px);
+        pointer-events: none;
+        white-space: nowrap;
+        transition:
+          opacity .18s ease,
+          transform .25s ease;
+      }
+
+      body.vertical-tabs .tab-x {
+        display: flex;
+        opacity: 0;
+        transform: translateX(-5px);
+        pointer-events: none;
+        transition:
+          opacity .18s ease,
+          transform .25s ease;
+      }
+
+      body.vertical-tabs .topbar:hover .tab {
+        width: 230px;
+        min-width: 230px;
+        max-width: 230px;
+        padding: 0 10px;
+        justify-content: flex-start;
+        gap: 10px;
+        border-radius: 8px;
+      }
+
+      body.vertical-tabs .topbar:hover .tab .title {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+
+      body.vertical-tabs .topbar:hover .tab-x {
+        opacity: .75;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+
+      /* Active tab */
+      body.vertical-tabs .active::after {
+        left: 0;
+        top: 7px;
+        bottom: 7px;
+        right: auto;
+        width: 3px;
+        height: auto;
+      }
+
+      /* Editor stays stationary */
+      body.vertical-tabs .content {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        margin-left: 42px;
+        width: calc(100% - 42px);
+      }
+
+      /* Context menu */
+      .context-menu {
+        position: fixed;
+        z-index: 10000;
+        display: none;
+        min-width: 230px;
+        padding: 5px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, .18);
+      }
+
+      .context-menu.open {
+        display: block;
+      }
+
+      .context-menu button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 10px 12px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text);
+        text-align: left;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .context-menu button:hover {
+        background: #eef1f6;
+      }
+
+      /* Confirmation modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 16px;
+      }
+
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal {
+        width: min(520px, 100%);
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .22);
+        overflow: hidden;
+      }
+
+      .modal-header {
+        padding: 14px 16px;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .modal-close {
+        border: 1px solid var(--tab-border);
+        background: #fff;
+        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .modal-body {
+        padding: 14px 16px 6px;
+        color: var(--text);
+        line-height: 1.4;
+      }
+
+      .modal-actions {
+        padding: 12px 16px 16px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .btn {
+        border: 1px solid var(--tab-border);
+        background: #f3f5f8;
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn.primary {
+        border-color: rgba(26, 115, 232, .35);
+        background: linear-gradient(180deg, #1a73e8, #1769d2);
+        color: #fff;
+      }
+
+      .btn:focus {
+        outline: 2px solid rgba(26, 115, 232, .35);
+        outline-offset: 2px;
+      }
+
+      /* Hide Home and Add text in horizontal mode */
+      body:not(.vertical-tabs) .button-title {
+        display: none;
+      }
+
+      /* Prevent icons from moving during sidebar animation */
+      body.vertical-tabs .file-icon,
+      body.vertical-tabs .home-link svg,
+      body.vertical-tabs .new-tab-btn svg {
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Keep icons centered when collapsed */
+      body.vertical-tabs:not(:has(.topbar:hover)) .tab,
+      body.vertical-tabs:not(:has(.topbar:hover)) .home-link,
+      body.vertical-tabs:not(:has(.topbar:hover)) .new-tab-btn {
+        justify-content: flex-start;
+        padding-left: 11px;
+      }
+
+      /* Keep text from interfering with icon positioning */
+      body.vertical-tabs .tab .title,
+      body.vertical-tabs .button-title {
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      /* Prevent icons from moving during sidebar animation */
+      body.vertical-tabs .file-icon,
+      body.vertical-tabs .home-link svg,
+      body.vertical-tabs .new-tab-btn svg {
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Keep icons centered when collapsed */
+      body.vertical-tabs:not(:has(.topbar:hover)) .tab,
+      body.vertical-tabs:not(:has(.topbar:hover)) .home-link,
+      body.vertical-tabs:not(:has(.topbar:hover)) .new-tab-btn {
+        justify-content: flex-start;
+        padding-left: 11px;
+      }
+
+      /* Keep text from interfering with icon positioning */
+      body.vertical-tabs .tab .title,
+      body.vertical-tabs .button-title {
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      body.vertical-tabs .tab .title {
+        text-align: left;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="window-spacer" aria-hidden="true"></div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+    <div class="content">
+      <div class="frames" id="frames"></div>
+    </div>
+    <!-- Context menu -->
+    <div class="context-menu" id="contextMenu" role="menu">
+      <button type="button" id="toggleTabsMode" role="menuitem"> Show Tabs Vertically </button>
+    </div>
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmOverlay" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="modal-header">
+          <div id="confirmTitle">Close tab?</div>
+          <button class="modal-close" id="confirmX" aria-label="Close dialog">×</button>
+        </div>
+        <div class="modal-body" id="confirmMessage"> Are you sure? You might lose your work if it's unsaved. </div>
+        <div class="modal-actions">
+          <button class="btn" id="confirmCancel" type="button">Cancel</button>
+          <button class="btn primary" id="confirmOk" type="button">Close tab</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      function getEditorURL() {
+        const url = new URL(window.location.href);
+        const tabsIndex = url.pathname.indexOf("/tabs");
+        if (tabsIndex !== -1) {
+          url.pathname = url.pathname.slice(0, tabsIndex) + "/editor";
+        } else {
+          url.pathname = url.pathname.replace(/\/?$/, "/editor");
+        }
+        url.search = "?showprojectpage";
+        url.hash = "";
+        return url.href;
+      }
+      const HOME_URL = new URL(window.location.pathname.replace(/\/tabs(?:\/.*)?$/, "/"), window.location.origin).href;
+      const EDITOR_URL = getEditorURL();
+      const tabsEl = document.getElementById("tabs");
+      const framesEl = document.getElementById("frames");
+      const contextMenu = document.getElementById("contextMenu");
+      const toggleTabsModeBtn = document.getElementById("toggleTabsMode");
+      const tabs = new Map();
+      let activeTabId = null;
+      let homeBtnEl = null;
+      let newTabBtnEl = null;
+      const confirmOverlay = document.getElementById("confirmOverlay");
+      const confirmX = document.getElementById("confirmX");
+      const confirmCancel = document.getElementById("confirmCancel");
+      const confirmOk = document.getElementById("confirmOk");
+      let pendingConfirm = null;
+      /* Tab mode storage */
+      function getTabsMode() {
+        const saved = localStorage.getItem("cattymod:tabsMode");
+        return saved === "vertical" ? "vertical" : "horizontal";
+      }
+
+      function setTabsMode(mode) {
+        const validMode = mode === "vertical" ? "vertical" : "horizontal";
+        document.body.classList.toggle("vertical-tabs", validMode === "vertical");
+        localStorage.setItem("cattymod:tabsMode", validMode);
+        updateContextMenuLabel();
+      }
+
+      function updateContextMenuLabel() {
+        toggleTabsModeBtn.textContent = getTabsMode() === "vertical" ? "Show Tabs Horizontally" : "Show Tabs Vertically";
+      }
+      /* Context menu */
+      function showContextMenu(x, y) {
+        contextMenu.classList.add("open");
+        const width = contextMenu.offsetWidth;
+        const height = contextMenu.offsetHeight;
+        contextMenu.style.left = Math.max(8, Math.min(x, window.innerWidth - width - 8)) + "px";
+        contextMenu.style.top = Math.max(8, Math.min(y, window.innerHeight - height - 8)) + "px";
+        updateContextMenuLabel();
+      }
+
+      function hideContextMenu() {
+        contextMenu.classList.remove("open");
+      }
+      tabsEl.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        showContextMenu(e.clientX, e.clientY);
+      });
+      toggleTabsModeBtn.addEventListener("click", () => {
+        setTabsMode(getTabsMode() === "vertical" ? "horizontal" : "vertical");
+        hideContextMenu();
+      });
+      document.addEventListener("click", (e) => {
+        if (!contextMenu.contains(e.target)) hideContextMenu();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") hideContextMenu();
+      });
+      window.addEventListener("resize", hideContextMenu);
+      /* Confirmation modal */
+      function openConfirmModal() {
+        confirmOverlay.classList.add("open");
+        confirmOverlay.setAttribute("aria-hidden", "false");
+        return new Promise((resolve) => {
+          pendingConfirm = resolve;
+        });
+      }
+
+      function closeConfirmModal() {
+        confirmOverlay.classList.remove("open");
+        confirmOverlay.setAttribute("aria-hidden", "true");
+        pendingConfirm = null;
+      }
+      confirmOk.addEventListener("click", () => {
+        if (pendingConfirm) pendingConfirm(true);
+        closeConfirmModal();
+      });
+      confirmCancel.addEventListener("click", () => {
+        if (pendingConfirm) pendingConfirm(false);
+        closeConfirmModal();
+      });
+      confirmX.addEventListener("click", () => {
+        if (pendingConfirm) pendingConfirm(false);
+        closeConfirmModal();
+      });
+      confirmOverlay.addEventListener("click", (e) => {
+        if (e.target === confirmOverlay) {
+          if (pendingConfirm) pendingConfirm(false);
+          closeConfirmModal();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (!confirmOverlay.classList.contains("open")) return;
+        if (e.key === "Escape") {
+          if (pendingConfirm) pendingConfirm(false);
+          closeConfirmModal();
+        }
+      });
+      /* Active tab */
+      function setActive(tabId) {
+        if (activeTabId === tabId) return;
+        for (const [id, info] of tabs.entries()) {
+          info.tabEl.classList.toggle("active", id === tabId);
+          info.iframe.classList.toggle("active", id === tabId);
+        }
+        activeTabId = tabId;
+      }
+      /* Home button */
+      function makeHomeTab() {
+        const home = document.createElement("button");
+        home.type = "button";
+        home.className = "home-link";
+        home.title = "Home";
+        home.setAttribute("aria-label", "Home");
+        home.setAttribute("aria-current", "page");
+        home.innerHTML = `
+        
+	
+	
+	<svg width="20" height="20" viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg">
+		<path fill="currentColor"
+                d="M12 3 2 12h2v9h6v-6h4v6h6v-9h2z"/>
+	</svg>
+	<span class="button-title">Home</span>
+      `;
+        home.addEventListener("click", () => {
+          window.location.href = HOME_URL;
+        });
+        return home;
+      }
+      /* New tab button */
+      function makeNewTabButton() {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "new-tab-btn";
+        btn.title = "New tab";
+        btn.setAttribute("aria-label", "New tab");
+        btn.innerHTML = `
+        
+	
+	
+	<svg width="20" height="20" viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg"
+             fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+		<path d="M12 5v14"/>
+		<path d="M5 12h14"/>
+	</svg>
+	<span class="button-title">Add</span>
+      `;
+        btn.addEventListener("click", () => createProjectTab());
+        return btn;
+      }
+      /* Close tab */
+      async function handleCloseClick(tabId) {
+        const ok = await openConfirmModal();
+        if (!ok) return;
+        closeTab(tabId);
+      }
+      /* Project title */
+      function processTitle(rawTitle) {
+        if (!rawTitle) return "Project";
+        const trimmed = rawTitle.trim();
+        if (trimmed === "CattyMod - Scratch, Supercharged") {
+          return "Project";
+        }
+        if (trimmed.length > 11) {
+          return trimmed.slice(0, -11).trim();
+        }
+        return trimmed;
+      }
+      /* Create project tab */
+      function createProjectTab() {
+        const tabId = `tab-${crypto.randomUUID?.() ?? Math.random().toString(16).slice(2)}`;
+        const tab = document.createElement("button");
+        tab.type = "button";
+        tab.className = "tab";
+        tab.setAttribute("role", "tab");
+        tab.setAttribute("aria-label", "Project");
+        const fileIcon = document.createElement("span");
+        fileIcon.className = "file-icon";
+        fileIcon.innerHTML = `
+        
+	
+	
+	<svg width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+		<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/>
+		<path d="M14 2v6h6"/>
+	</svg>
+      `;
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = "Project";
+        const x = document.createElement("button");
+        x.type = "button";
+        x.className = "tab-x";
+        x.title = "Close tab";
+        x.setAttribute("aria-label", "Close tab");
+        x.textContent = "×";
+        tab.appendChild(fileIcon);
+        tab.appendChild(title);
+        tab.appendChild(x);
+        const iframe = document.createElement("iframe");
+        iframe.title = "Project";
+        iframe.src = EDITOR_URL;
+
+        function updateTabTitle() {
+          try {
+            const rawTitle = iframe.contentDocument?.title;
+            const finalTitle = processTitle(rawTitle);
+            if (finalTitle) {
+              title.textContent = finalTitle;
+              iframe.title = finalTitle;
+              tab.setAttribute("aria-label", finalTitle);
+            }
+          } catch {}
+        }
+        iframe.addEventListener("load", () => {
+          updateTabTitle();
+          try {
+            const observer = new MutationObserver(updateTabTitle);
+            const titleElement = iframe.contentDocument.querySelector("title");
+            if (titleElement) {
+              observer.observe(titleElement, {
+                childList: true,
+                subtree: true,
+                characterData: true
+              });
+            }
+          } catch {}
+          setInterval(updateTabTitle, 500);
+        });
+        tab.addEventListener("click", () => {
+          setActive(tabId);
+          setTimeout(() => {
+            try {
+              const t = iframe.contentWindow?.document?.title;
+              const finalTitle = processTitle(t);
+              if (finalTitle) title.textContent = finalTitle;
+            } catch {}
+          }, 200);
+        });
+        x.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleCloseClick(tabId);
+        });
+        framesEl.appendChild(iframe);
+        tabsEl.insertBefore(tab, newTabBtnEl);
+        tabs.set(tabId, {
+          tabEl: tab,
+          iframe,
+          titleEl: title
+        });
+        setActive(tabId);
+        const poll = setInterval(() => {
+          const info = tabs.get(tabId);
+          if (!info) {
+            clearInterval(poll);
+            return;
+          }
+          try {
+            const t = iframe.contentWindow?.document?.title;
+            const finalTitle = processTitle(t);
+            if (finalTitle && info.titleEl.textContent !== finalTitle) {
+              info.titleEl.textContent = finalTitle;
+              info.tabEl.setAttribute("aria-label", finalTitle);
+            }
+          } catch {}
+        }, 1000);
+      }
+      /* Remove tab */
+      function closeTab(tabId) {
+        const info = tabs.get(tabId);
+        if (!info) return;
+        info.tabEl.remove();
+        info.iframe.remove();
+        tabs.delete(tabId);
+        const remaining = Array.from(tabs.keys());
+        if (activeTabId === tabId) {
+          if (remaining.length) {
+            setActive(remaining[0]);
+          } else {
+            activeTabId = null;
+            window.location.href = HOME_URL;
+          }
+        } else if (remaining.length === 0) {
+          window.location.href = HOME_URL;
+        }
+      }
+      /* Initialize */
+      function init() {
+        homeBtnEl = makeHomeTab();
+        newTabBtnEl = makeNewTabButton();
+        tabsEl.appendChild(homeBtnEl);
+        tabsEl.appendChild(newTabBtnEl);
+        setTabsMode(getTabsMode());
+        createProjectTab();
+      }
+      init();
+    </script>
+  </body>
+</html>
