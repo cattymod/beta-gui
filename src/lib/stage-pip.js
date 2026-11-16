@@ -35,6 +35,15 @@ const openStagePiP = async vm => {
         return;
     }
 
+    // Read FPS from the URL.
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedFPS = Number(urlParams.get('fps'));
+    const fps = Number.isFinite(requestedFPS) && requestedFPS > 0
+        ? Math.min(requestedFPS, 240)
+        : 30;
+
+    const frameInterval = 1000 / fps;
+
     try {
         // Close an existing PiP window first.
         if (document.pictureInPictureElement) {
@@ -61,7 +70,7 @@ const openStagePiP = async vm => {
         await pipVideo.play();
         await pipVideo.requestPictureInPicture();
 
-        // Redraw the renderer and request a captured frame.
+        // Render and request frames at the requested FPS.
         pipFrameInterval = window.setInterval(() => {
             if (
                 !pipVideo ||
@@ -84,7 +93,9 @@ const openStagePiP = async vm => {
             } catch (error) {
                 console.warn('PiP frame update failed:', error);
             }
-        }, 1000 / 30);
+        }, frameInterval);
+
+        console.log(`PiP rendering at ${fps} FPS`);
 
         pipVideo.addEventListener('leavepictureinpicture', () => {
             cleanupStagePiP();
