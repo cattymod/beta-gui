@@ -47,6 +47,7 @@ import {APP_NAME} from '../lib/brand.js';
 import {initMenuAnimations} from '../lib/menuAnimations.js';
 import {removeScratch} from '../lib/removeScratch.js';
 import {startTour} from '../lib/tour.js';
+import {startAllMods} from '../lib/mods.js';
 
 import styles from './interface.css';
 
@@ -250,6 +251,16 @@ class Interface extends React.Component {
     }
     componentDidMount () {
     this.cleanupMenuAnimations = initMenuAnimations();
+
+    // Automatically start custom mods outside embeds.
+    if (
+        !isEmbedded &&
+        !window.location.pathname.includes('/embed')
+    ) {
+        startAllMods().catch(error => {
+            console.error('[CattyMod] Failed to start custom mods:', error);
+        });
+    }
 
     if (localStorage.getItem('cattymod:removeScratch') === 'true') {
         this.cleanupScratchRemoval = removeScratch();
