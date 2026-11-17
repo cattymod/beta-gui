@@ -47,7 +47,7 @@ import {APP_NAME} from '../lib/brand.js';
 import {initMenuAnimations} from '../lib/menuAnimations.js';
 import {removeScratch} from '../lib/removeScratch.js';
 import {startTour} from '../lib/tour.js';
-import {startAllMods} from '../lib/mods.js';
+import {startAllMods} from '../lib/modRuntime.js';
 
 import styles from './interface.css';
 
