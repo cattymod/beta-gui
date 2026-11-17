@@ -1172,6 +1172,287 @@
       body.gradient-accent .setting-title a {
         color: var(--accent);
       }
+
+      /* Mods */
+      .mods-view[hidden] {
+        display: none !important;
+      }
+
+      .mods-pack-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mods-pack-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--card);
+        color: var(--text);
+        text-align: left;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+        transition: .15s ease;
+      }
+
+      .mods-pack-card:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .mods-pack-card>i {
+        width: 19px;
+        height: 19px;
+        flex-shrink: 0;
+        color: var(--muted);
+      }
+
+      .mods-pack-icon {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+        color: var(--accent);
+        border-radius: 12px;
+      }
+
+      .mods-pack-icon>i {
+        width: 25px;
+        height: 25px;
+      }
+
+      .mods-pack-icon img {
+        width: 29px;
+        height: 29px;
+        object-fit: contain;
+      }
+
+      /* The TurboWarp asset is white, so invert it in light mode. */
+      body:not(.dark):not(.midnight) .turbowarp-mod-icon {
+        filter: brightness(0);
+      }
+
+      body.dark .turbowarp-mod-icon,
+      body.midnight .turbowarp-mod-icon {
+        filter: none;
+      }
+
+      .mods-pack-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .mods-pack-title {
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      .mods-pack-description {
+        margin-top: 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+
+      /* Back navigation */
+      .mods-back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        margin-bottom: 18px;
+        background: var(--input);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .mods-back-button:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+
+      .mods-back-button i {
+        width: 17px;
+        height: 17px;
+      }
+
+      /* Custom Mods */
+      .custom-mod-list {
+        border-top: 1px solid var(--border);
+      }
+
+      .custom-mod-empty {
+        padding: 35px 18px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .custom-mod-empty i {
+        display: block;
+        width: 30px;
+        height: 30px;
+        margin: 0 auto 12px;
+        opacity: .6;
+      }
+
+      .custom-mod-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .custom-mod-item:last-child {
+        border-bottom: 0;
+      }
+
+      .custom-mod-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .custom-mod-name {
+        font-size: 14px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+      }
+
+      .custom-mod-type {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .custom-mod-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .mods-small-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 10px;
+        background: var(--input);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .mods-small-button:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+
+      .mods-small-button i {
+        width: 15px;
+        height: 15px;
+      }
+
+      .mods-small-button.delete {
+        color: #e53935;
+      }
+
+      .mods-small-button.delete:hover {
+        border-color: #e53935;
+      }
+
+      /* Warning */
+      .mods-warning {
+        margin-top: 20px;
+        padding: 17px;
+        background: color-mix(in srgb, #e53935 7%, var(--card));
+        border: 1px solid color-mix(in srgb, #e53935 30%, var(--border));
+        border-radius: 12px;
+      }
+
+      .mods-warning-heading {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #e53935;
+      }
+
+      .mods-warning-heading i {
+        width: 19px;
+        height: 19px;
+      }
+
+      .mods-warning p {
+        margin: 10px 0 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      /* Editor */
+      .mods-editor-padding {
+        padding: 0 18px 18px;
+      }
+
+      .mods-code-editor {
+        display: block;
+        width: 100%;
+        min-height: 260px;
+        resize: vertical;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        tab-size: 2;
+      }
+
+      .mods-editor-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+      }
+
+      .mods-editor-actions .primary-button {
+        margin-top: 14px;
+      }
+
+      @media (max-width: 700px) {
+        .mods-pack-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .custom-mod-item {
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+
+        .custom-mod-actions {
+          width: 100%;
+        }
+
+        .mods-add-button {
+          margin-top: 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1648,11 +1929,111 @@
           <!-- MODS -->
           <section id="page-mods" class="page" style="display:none;">
             <div class="page-header">
-              <h1>Mods</h1>
-              <p>Discover and manage your CattyMod mods.</p>
+              <h1 id="mods-heading">Mods</h1>
+              <p id="mods-description">Modify CattyMod to your liking!</p>
             </div>
-            <div class="mods-container">
-              <iframe src="/addons.html" class="mods-frame" title="CattyMod Mods" loading="lazy" allow="clipboard-read; clipboard-write"></iframe>
+            <!-- MOD PACK SELECTION -->
+            <div id="mods-packs-view" class="mods-view">
+              <div class="mods-pack-grid">
+                <button class="mods-pack-card" onclick="openModsView('turbowarp')">
+                  <div class="mods-pack-icon">
+                    <img class="turbowarp-mod-icon" src="https://cattymod.app/assets/turbowarp-empty.png" alt="TurboWarp">
+                  </div>
+                  <div class="mods-pack-info">
+                    <div class="mods-pack-title">TurboWarp Mods</div>
+                    <div class="mods-pack-description"> Browse and manage addons from TurboWarp. </div>
+                  </div>
+                  <i data-lucide="chevron-right"></i>
+                </button>
+                <button class="mods-pack-card" onclick="openModsView('custom')">
+                  <div class="mods-pack-icon">
+                    <i data-lucide="code-2"></i>
+                  </div>
+                  <div class="mods-pack-info">
+                    <div class="mods-pack-title">Custom</div>
+                    <div class="mods-pack-description"> Create and manage your own custom bookmarklets and JavaScript mods. </div>
+                  </div>
+                  <i data-lucide="chevron-right"></i>
+                </button>
+              </div>
+            </div>
+            <!-- TURBOWARP MODS -->
+            <div id="mods-turbowarp-view" class="mods-view" hidden>
+              <button class="mods-back-button" onclick="openModsView('packs')">
+                <i data-lucide="arrow-left"></i> Back to Mods </button>
+              <div class="mods-container">
+                <iframe src="/addons.html" class="mods-frame" title="TurboWarp Mods" loading="lazy" allow="clipboard-read; clipboard-write"></iframe>
+              </div>
+            </div>
+            <!-- CUSTOM MODS -->
+            <div id="mods-custom-view" class="mods-view" hidden>
+              <button class="mods-back-button" onclick="openModsView('packs')">
+                <i data-lucide="arrow-left"></i> Back to Mods </button>
+              <div class="section">
+                <div class="section-title">Custom Mods</div>
+                <div class="card">
+                  <div class="setting-row">
+                    <div class="setting-info">
+                      <div class="setting-title">Your Custom Mods</div>
+                      <div class="setting-description"> Manage your custom bookmarklets and JavaScript mods. </div>
+                    </div>
+                    <button class="primary-button mods-add-button" onclick="createCustomMod()">
+                      <i data-lucide="plus"></i> Add Mod </button>
+                  </div>
+                  <div id="custom-mod-list" class="custom-mod-list"></div>
+                </div>
+              </div>
+              <div class="mods-warning">
+                <div class="mods-warning-heading">
+                  <i data-lucide="shield-alert"></i> Security Warning
+                </div>
+                <p> Only install or run mods from sources you trust. Malicious or untrusted mods may delete your projects, compromise your data, or perform other harmful actions. </p>
+                <p> The CattyMod contributors are not responsible for any damage, data loss, or other consequences resulting from the installation or use of custom mods. </p>
+              </div>
+            </div>
+            <!-- CUSTOM MOD EDITOR -->
+            <div id="mods-editor-view" class="mods-view" hidden>
+              <button class="mods-back-button" onclick="openModsView('custom')">
+                <i data-lucide="arrow-left"></i> Back to Custom Mods </button>
+              <div class="section">
+                <div class="section-title">Mod Details</div>
+                <div class="card">
+                  <div class="setting-row">
+                    <div class="setting-info">
+                      <div class="setting-title">Mod Name</div>
+                      <div class="setting-description"> Choose a name for your custom mod. </div>
+                    </div>
+                  </div>
+                  <div class="mods-editor-padding">
+                    <input id="custom-mod-name" class="text-input" type="text" maxlength="80" placeholder="My Custom Mod" autocomplete="off">
+                  </div>
+                  <div class="setting-row">
+                    <div class="setting-info">
+                      <div class="setting-title">Code Type</div>
+                      <div class="setting-description"> Choose whether you're adding a bookmarklet or JavaScript code. </div>
+                    </div>
+                    <select id="custom-mod-type" class="setting-select">
+                      <option value="bookmarklet">Bookmarklet</option>
+                      <option value="javascript">JavaScript Code</option>
+                    </select>
+                  </div>
+                  <div class="mods-editor-padding">
+                    <label class="input-label" for="custom-mod-code"> Bookmarklet / JavaScript Code </label>
+                    <textarea id="custom-mod-code" class="text-input mods-code-editor" spellcheck="false" autocomplete="off" placeholder="Paste your bookmarklet or JavaScript code here..."></textarea>
+                    <div class="setting-description"> Your code will be stored locally in your browser. </div>
+                    <div class="mods-editor-actions">
+                      <button class="primary-button" onclick="saveCustomMod()">
+                        <i data-lucide="save"></i> Save Mod </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mods-warning">
+                <div class="mods-warning-heading">
+                  <i data-lucide="alert-triangle"></i> Before Running Code
+                </div>
+                <p> JavaScript mods can interact with the website and your browser. Only use code you understand and trust. Never paste code from untrusted sources. </p>
+              </div>
             </div>
           </section>
           <!-- LABS -->
@@ -2277,6 +2658,270 @@
           applySettingsAccent();
         });
       });
+      /* ------------------------- Mods ------------------------- */
+      const BOOKMARKLET_LIST_KEY = "cattymod:bookmarklet";
+      let currentModsView = "packs";
+      let editingCustomMod = null;
+      const modsHeading = document.getElementById("mods-heading");
+      const modsDescription = document.getElementById("mods-description");
+      const modsViews = {
+        packs: document.getElementById("mods-packs-view"),
+        turbowarp: document.getElementById("mods-turbowarp-view"),
+        custom: document.getElementById("mods-custom-view"),
+        editor: document.getElementById("mods-editor-view")
+      };
+      const customModName = document.getElementById("custom-mod-name");
+      const customModCode = document.getElementById("custom-mod-code");
+      const customModType = document.getElementById("custom-mod-type");
+      const customModList = document.getElementById("custom-mod-list");
+      /* Get bookmarklet names */
+      function getCustomModNames() {
+        try {
+          const names = JSON.parse(localStorage.getItem(BOOKMARKLET_LIST_KEY) || "[]");
+          return Array.isArray(names) ? names.filter(name => typeof name === "string") : [];
+        } catch {
+          return [];
+        }
+      }
+      /* Convert names into safe storage keys */
+      function getCustomModKey(name) {
+        const slug = name.trim().replace(/[^a-zA-Z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+        if (!slug) {
+          throw new Error("Please enter a valid mod name.");
+        }
+        return `cattymod:bookmarklet:${slug}`;
+      }
+      /* Navigate between Mod Pack pages */
+      function openModsView(view, updateHash = true) {
+        if (!Object.hasOwn(modsViews, view)) {
+          view = "packs";
+        }
+        currentModsView = view;
+        Object.entries(modsViews).forEach(([name, element]) => {
+          element.hidden = name !== view;
+        });
+        const pageInfo = {
+          packs: {
+            title: "Mods",
+            description: "Choose how you want to customize CattyMod."
+          },
+          turbowarp: {
+            title: "TurboWarp Mods",
+            description: "Browse addons from TurboWarp."
+          },
+          custom: {
+            title: "Custom Mods",
+            description: "Manage your own bookmarklets and JavaScript mods."
+          },
+          editor: {
+            title: customModType.value === "javascript" ? "JavaScript Code Editor" : "Bookmarklet Editor",
+            description: "Create and edit your custom mods."
+          }
+        };
+        modsHeading.textContent = pageInfo[view].title;
+        modsDescription.textContent = pageInfo[view].description;
+        if (view === "custom") {
+          renderCustomMods();
+        }
+        if (view === "editor") {
+          updateModEditorHash();
+        } else if (updateHash) {
+          history.replaceState(null, "", view === "packs" ? "#mods" : `#mods-${view}`);
+        }
+        applySettingsAccent();
+        lucide.createIcons();
+      }
+      /* Open the correct editor URL */
+      function updateModEditorHash() {
+        const suffix = customModType.value === "javascript" ? "-extra" : "";
+        history.replaceState(null, "", `#mods-editor${suffix}`);
+        if (modsHeading) {
+          modsHeading.textContent = customModType.value === "javascript" ? "JavaScript Code Editor" : "Bookmarklet Editor";
+        }
+      }
+      /* Create a new mod */
+      function createCustomMod() {
+        editingCustomMod = null;
+        customModName.value = "";
+        customModCode.value = "";
+        customModType.value = "bookmarklet";
+        openModsView("editor");
+        customModName.focus();
+      }
+      /* Edit an existing mod */
+      function editCustomMod(name) {
+        const code = localStorage.getItem(getCustomModKey(name));
+        if (code === null) {
+          alert("This mod could not be found.");
+          renderCustomMods();
+          return;
+        }
+        editingCustomMod = name;
+        customModName.value = name;
+        customModCode.value = code;
+        customModType.value = code.trimStart().startsWith("javascript:") ? "bookmarklet" : "javascript";
+        openModsView("editor");
+      }
+      /* Save a custom mod */
+      function saveCustomMod() {
+        const name = customModName.value.trim();
+        const code = customModCode.value.trim();
+        const names = getCustomModNames();
+        if (!name) {
+          alert("Please enter a mod name.");
+          customModName.focus();
+          return;
+        }
+        if (!code) {
+          alert("Please enter some code.");
+          customModCode.focus();
+          return;
+        }
+        let newKey;
+        try {
+          newKey = getCustomModKey(name);
+        } catch (error) {
+          alert(error.message);
+          return;
+        }
+        const existingName = names.find(existing => existing !== editingCustomMod && getCustomModKey(existing) === newKey);
+        if (existingName) {
+          alert("Another mod already uses this storage key. Please choose a different name.");
+          return;
+        }
+        // Remove the old entry when a mod is renamed.
+        if (editingCustomMod && editingCustomMod !== name) {
+          localStorage.removeItem(getCustomModKey(editingCustomMod));
+          const oldIndex = names.indexOf(editingCustomMod);
+          if (oldIndex !== -1) {
+            names.splice(oldIndex, 1);
+          }
+        }
+        // Save the code under its individual storage key.
+        localStorage.setItem(newKey, code);
+        // Add the name to the bookmarklet list if necessary.
+        if (!names.includes(name)) {
+          names.push(name);
+        }
+        localStorage.setItem(BOOKMARKLET_LIST_KEY, JSON.stringify(names));
+        editingCustomMod = name;
+        alert("Your custom mod has been saved!");
+        openModsView("custom");
+      }
+      /* Delete a custom mod */
+      function deleteCustomMod(name) {
+        if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+          return;
+        }
+        const names = getCustomModNames();
+        const key = getCustomModKey(name);
+        localStorage.removeItem(key);
+        const updatedNames = names.filter(item => item !== name);
+        localStorage.setItem(BOOKMARKLET_LIST_KEY, JSON.stringify(updatedNames));
+        renderCustomMods();
+      }
+      /* Run a custom mod */
+      function runCustomMod(name) {
+        const code = localStorage.getItem(getCustomModKey(name));
+        if (code === null) {
+          alert("This mod could not be found.");
+          return;
+        }
+        if (!confirm(`Run "${name}"?\n\nOnly run custom mods from sources you trust.`)) {
+          return;
+        }
+        executeCustomMod(code, name);
+      }
+      /* Execute JavaScript or bookmarklet code */
+      function executeCustomMod(code, name) {
+        try {
+          let source = code.trim();
+          // Remove the bookmarklet protocol if present.
+          if (source.toLowerCase().startsWith("javascript:")) {
+            source = source.slice("javascript:".length);
+            try {
+              source = decodeURIComponent(source);
+            } catch {
+              // Keep the original source if decoding fails.
+            }
+          }
+          // Run in the current page context.
+          const execute = new Function(source);
+          execute.call(window);
+        } catch (error) {
+          console.error(`Error running custom mod "${name}":`, error);
+          alert(`Could not run "${name}".\n\n${error.message}`);
+        }
+      }
+      /* Run code directly from the editor */
+      function runCustomModFromEditor() {
+        const code = customModCode.value.trim();
+        if (!code) {
+          alert("Please enter some code first.");
+          return;
+        }
+        if (!confirm("Run this code?\n\nOnly run code from sources you trust.")) {
+          return;
+        }
+        executeCustomMod(code, customModName.value.trim() || "Unsaved Mod");
+      }
+      /* Render the custom mod list */
+      function renderCustomMods() {
+        if (!customModList) return;
+        const names = getCustomModNames();
+        customModList.replaceChildren();
+        if (names.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "custom-mod-empty";
+          const icon = document.createElement("i");
+          icon.setAttribute("data-lucide", "package-open");
+          const message = document.createElement("div");
+          message.textContent = "You haven't added any custom mods yet.";
+          empty.append(icon, message);
+          customModList.appendChild(empty);
+          lucide.createIcons();
+          return;
+        }
+        names.forEach(name => {
+          const item = document.createElement("div");
+          item.className = "custom-mod-item";
+          const info = document.createElement("div");
+          info.className = "custom-mod-info";
+          const title = document.createElement("div");
+          title.className = "custom-mod-name";
+          title.textContent = name;
+          const type = document.createElement("div");
+          type.className = "custom-mod-type";
+          type.textContent = "Custom Bookmarklet / JavaScript Mod";
+          info.append(title, type);
+          const actions = document.createElement("div");
+          actions.className = "custom-mod-actions";
+
+          function makeButton(label, iconName, callback, extraClass = "") {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `mods-small-button ${extraClass}`;
+            const icon = document.createElement("i");
+            icon.setAttribute("data-lucide", iconName);
+            const text = document.createElement("span");
+            text.textContent = label;
+            button.append(icon, text);
+            button.addEventListener("click", callback);
+            return button;
+          }
+          actions.append(makeButton("Edit", "pencil", () => editCustomMod(name)), makeButton("Delete", "trash-2", () => deleteCustomMod(name), "delete"));
+          item.append(info, actions);
+          customModList.appendChild(item);
+        });
+        lucide.createIcons();
+      }
+      /* Change editor mode */
+      customModType.addEventListener("change", () => {
+        if (currentModsView === "editor") {
+          updateModEditorHash();
+          modsDescription.textContent = customModType.value === "javascript" ? "Write or edit your JavaScript custom mod." : "Create or edit your custom bookmarklet.";
+        }
+      });
       /* ------------------------- Navigation Position ------------------------- */
       const navPositionSelect = document.getElementById("nav-position-select");
 
@@ -2354,17 +2999,53 @@
         if (updateHash) {
           history.replaceState(null, "", "#" + pageName);
         }
+        if (pageName === "mods") {
+          openModsView("packs", false);
+        }
         applySettingsAccent();
       }
 
       function loadPageFromHash() {
         const hash = window.location.hash.slice(1).toLowerCase();
+        // Handle Mods navigation.
+        if (hash === "mods") {
+          showPage("mods", false);
+          openModsView("packs", false);
+          return;
+        }
+        if (hash === "mods-packs") {
+          showPage("mods", false);
+          openModsView("packs", false);
+          return;
+        }
+        if (hash === "mods-turbowarp") {
+          showPage("mods", false);
+          openModsView("turbowarp", false);
+          return;
+        }
+        if (hash === "mods-custom") {
+          showPage("mods", false);
+          openModsView("custom", false);
+          return;
+        }
+        if (hash === "mods-editor") {
+          showPage("mods", false);
+          customModType.value = "bookmarklet";
+          openModsView("editor", false);
+          return;
+        }
+        if (hash === "mods-editor-extra") {
+          showPage("mods", false);
+          customModType.value = "javascript";
+          openModsView("editor", false);
+          return;
+        }
         if (VALID_PAGES.includes(hash)) {
           showPage(hash, false);
-        } else {
-          history.replaceState(null, "", "#general");
-          showPage("general", false);
+          return;
         }
+        history.replaceState(null, "", "#general");
+        showPage("general", false);
       }
       navButtons.forEach(button => {
         button.addEventListener("click", () => {
@@ -2536,6 +3217,7 @@
       loadPageFromHash();
       loadScratchElements();
       loadHtmlFilePicker();
+      renderCustomMods();
       /* ------------------------- Lucide Icons ------------------------- */
       lucide.createIcons();
     </script>
