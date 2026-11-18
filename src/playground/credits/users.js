@@ -8,9 +8,24 @@ const shuffle = list => {
     return list;
 };
 
+const getServer = () => {
+    const server = localStorage.getItem('cattymod:server');
+
+    if (server) {
+        return server.replace(/\/+$/, '');
+    }
+
+    return window.location.hostname === 'turbowarp.org' ||
+        window.location.hostname.endsWith('.turbowarp.org') ||
+        window.location.hostname === 'turbowarp.xyz' ||
+        window.location.hostname.endsWith('.turbowarp.xyz')
+        ? `https://${window.location.hostname}`
+        : 'https://trampoline.turbowarp.org';
+};
+
 const fromHardcoded = ({userID = '0', username}) => {
     const result = {
-        image: `https://trampoline.turbowarp.org/avatars/${userID}`,
+        image: `${getServer()}/avatars/${userID}`,
         text: username
     };
     if (username && userID !== '0') {
