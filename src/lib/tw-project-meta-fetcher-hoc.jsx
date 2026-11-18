@@ -7,14 +7,29 @@ import {setProjectTitle} from '../reducers/project-title';
 import {setAuthor, setDescription} from '../reducers/tw';
 import {ProjectUnavailableLegalReasons} from './tw-load-project-error';
 
+const getServer = () => {
+    const server = localStorage.getItem('cattymod:server');
+
+    if (server) {
+        return server.replace(/\/+$/, '');
+    }
+
+    return 'https://trampoline.turbowarp.org';
+};
+
 export const fetchProjectMeta = async projectId => {
-    // When people reopen tabs, sometimes the browser is *very* aggressive about caching even when the
-    // trampoline says not to, so we're going to try putting a cache buster in here.
+    // Cache buster
     const cacheBuster = `?rudebuster=${Math.random()}`;
-    const urls = [
-        `https://trampoline.turbowarp.org/api/projects/${projectId}${cacheBuster}`,
-        `https://trampoline.turbowarp.xyz/api/projects/${projectId}${cacheBuster}`
+
+    const server = getServer();
+
+    const urls = server === 'https://trampoline.turbowarp.org' ? [
+        `${server}/api/projects/${projectId}${cacheBuster}`,
+        'https://trampoline.turbowarp.xyz/api/projects/' + projectId + cacheBuster
+    ] : [
+        `${server}/api/projects/${projectId}${cacheBuster}`
     ];
+
     let firstError;
     for (const url of urls) {
         try {
@@ -81,7 +96,7 @@ const TWProjectMetaFetcherHOC = function (WrappedComponent) {
                             this.props.onSetProjectTitle(title);
                         }
                         const authorName = data.author.username;
-                        const authorThumbnail = `https://trampoline.turbowarp.org/avatars/${data.author.id}`;
+                        const authorThumbnail = `${getServer()}/avatars/${data.author.id}`;
                         this.props.onSetAuthor(authorName, authorThumbnail);
                         const instructions = data.instructions || '';
                         const credits = data.description || '';
