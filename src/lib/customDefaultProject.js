@@ -1,8 +1,19 @@
 export const CUSTOM_DEFAULT_PROJECT_KEY =
     'cattymod:customDefaultProject';
 
-const TRAMPOLINE_API =
-    'https://trampoline.turbowarp.org/api/projects/';
+const getServer = () => {
+    try {
+        const server = window.localStorage.getItem('cattymod:server');
+
+        if (server && server.trim()) {
+            return server.trim().replace(/\/+$/, '');
+        }
+    } catch (e) {
+        // Ignore localStorage errors.
+    }
+
+    return 'https://trampoline.turbowarp.org';
+};
 
 const SCRATCH_PROJECTS_API =
     'https://projects.scratch.mit.edu/';
@@ -75,7 +86,7 @@ export const clearCustomDefaultProject = () => {
 };
 
 /*
- * Get project metadata from TurboWarp Trampoline.
+ * Get project metadata from the configured server.
  */
 export const getCustomDefaultProjectData =
     async projectId => {
@@ -89,7 +100,7 @@ export const getCustomDefaultProjectData =
         }
 
         const response = await fetch(
-            `${TRAMPOLINE_API}${encodeURIComponent(id)}`
+            `${getServer()}/api/projects/${encodeURIComponent(id)}`
         );
 
         if (!response.ok) {
