@@ -1,9 +1,3 @@
-
-/* =========================================================
-   CattyMod - Custom Mod Runtime
-   src/lib/mods.js
-   ========================================================= */
-
 const MOD_LIST_KEY = "cattymod:bookmarklet";
 const MOD_STORAGE_PREFIX = "cattymod:bookmarklet:";
 
