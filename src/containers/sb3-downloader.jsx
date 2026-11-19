@@ -127,7 +127,7 @@ class SB3Downloader extends React.Component {
                 suggestedName: this.props.projectFilename,
                 types: [
                     {
-                        description: fileTypeDescriptions[fileType] || 'Custom File Type',
+                        description: fileTypeDescriptions[fileType] || 'Custom Project',
                         accept: {
                             'application/octet-stream': [
                                 `.${fileType}`
