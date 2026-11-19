@@ -14,9 +14,8 @@ import log from '../lib/log';
 const getProjectTitleFromFilename = fileInputFilename => {
     if (!fileInputFilename) return '';
 
-    const matches = fileInputFilename.match(
-        /^(.*)\.(?:cmp|zip|pmp|snail|sb3|sb2|sb)$/i
-    );
+    // Accept any file extension.
+    const matches = fileInputFilename.match(/^(.*)\.[^.]+$/i);
 
     if (!matches) return '';
 
@@ -116,17 +115,19 @@ class SB3Downloader extends React.Component {
         try {
             const fileType = getPreferredFileType();
 
+            const fileTypeDescriptions = {
+                cmp: 'CattyMod Project',
+                sb3: 'Scratch Project',
+                pmp: 'PenguinMod Project',
+                snail: 'Snail IDE Project',
+                zip: 'Generic Project'
+            };
+
             const handle = await this.props.showSaveFilePicker({
                 suggestedName: this.props.projectFilename,
                 types: [
                     {
-                        description: ({
-                            cmp: 'CattyMod Project',
-                            sb3: 'Scratch Project',
-                            pmp: 'PenguinMod Project',
-                            snail: 'Snail IDE Project',
-                            zip: 'Generic Project'
-                        })[fileType] || 'CattyMod Project',
+                        description: fileTypeDescriptions[fileType] || 'Custom File Type',
                         accept: {
                             'application/octet-stream': [
                                 `.${fileType}`
@@ -134,7 +135,8 @@ class SB3Downloader extends React.Component {
                         }
                     }
                 ],
-                excludeAcceptAllOption: true
+                // Allow all file types.
+                excludeAcceptAllOption: false
             });
 
             await this.saveToHandle(handle);
@@ -355,9 +357,13 @@ class SB3Downloader extends React.Component {
 
 const getPreferredFileType = () => {
     const validTypes = ['cmp', 'pmp', 'snail', 'sb3', 'zip'];
-    const savedType = localStorage.getItem('cattymod:saveFileType');
-
-    return validTypes.includes(savedType) ? savedType : 'cmp';
+    
+    try {
+        const savedType = localStorage.getItem('cattymod:saveFileType');
+        return savedType || 'cmp';
+    } catch (err) {
+        return 'cmp';
+    }
 };
 
 const getProjectFilename = (curTitle, defaultTitle) => {
@@ -369,9 +375,9 @@ const getProjectFilename = (curTitle, defaultTitle) => {
 
     const fileType = getPreferredFileType();
 
-    // Remove an existing supported project extension.
+    // Remove any existing file extension.
     filenameTitle = filenameTitle.replace(
-        /\.(?:cmp|zip|pmp|snail|sb3|sb2|sb)$/i,
+        /\.[^.]+$/i,
         ''
     );
 
