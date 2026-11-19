@@ -75,6 +75,44 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             }
         }
 
+        getSupportedExtensions () {
+            const extensions = [
+                'cmp',
+                'pmp',
+                'snail',
+                'zip',
+                'sb',
+                'sb2',
+                'sb3'
+            ];
+
+            // Read the custom extension from localStorage.
+            try {
+                const customFileType = localStorage.getItem('cattymod:saveFileType');
+
+                if (customFileType) {
+                    // Remove a leading dot if one was saved.
+                    const normalizedExtension = customFileType
+                        .trim()
+                        .replace(/^\./, '')
+                        .toLowerCase();
+
+                    // Only add it if it isn't already supported.
+                    if (
+                        normalizedExtension &&
+                        /^[a-z0-9_-]+$/.test(normalizedExtension) &&
+                        !extensions.includes(normalizedExtension)
+                    ) {
+                        extensions.push(normalizedExtension);
+                    }
+                }
+            } catch (err) {
+                // Ignore localStorage errors.
+            }
+
+            return extensions;
+        }
+
         handleStartSelectingFileUpload () {
             this.expectingFileUploadFinish = true;
             this.createFileObjects();
@@ -85,6 +123,10 @@ const SBFileUploaderHOC = function (WrappedComponent) {
 
             const isAppleDevice = this.isAppleDevice();
             const useHtmlPicker = this.useHtmlFilePicker();
+            const supportedExtensions = this.getSupportedExtensions();
+
+            const extensionList = supportedExtensions
+                .map(extension => `.${extension}`);
 
             this.fileReader = new FileReader();
             this.fileReader.onload = this.onload;
@@ -92,7 +134,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             // Use the native picker unless the HTML picker setting is enabled.
             if (!useHtmlPicker && this.props.showOpenFilePicker) {
                 try {
-                    // Call immediately during the user's click event.
                     const pickerOptions = {
                         multiple: false
                     };
@@ -103,15 +144,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                             {
                                 description: 'CattyMod Project',
                                 accept: {
-                                    '*/*': [
-                                        '.cmp',
-                                        '.pmp',
-                                        '.snail',
-                                        '.zip',
-                                        '.sb',
-                                        '.sb2',
-                                        '.sb3'
-                                    ]
+                                    '*/*': extensionList
                                 }
                             }
                         ];
@@ -166,10 +199,9 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             this.inputElement.style.display = 'none';
 
             // Apple devices can select any file type.
-            // Other devices retain the original extension filter.
+            // Other devices use supported extensions, including custom ones.
             if (!isAppleDevice) {
-                this.inputElement.accept =
-                    '.cmp,.pmp,.snail,.zip,.sb,.sb2,.sb3';
+                this.inputElement.accept = extensionList.join(',');
             }
 
             this.inputElement.onchange = this.handleChange;
@@ -207,10 +239,17 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     const handle = thisFileInput.handle;
                     const filename = this.fileToUpload.name || '';
 
-                    const supportedExtension =
-                        /\.(?:cmp|pmp|snail|zip|sb|sb2|sb3)$/i.test(filename);
+                    const supportedExtensions = this.getSupportedExtensions();
 
-                    // Only preserve project file handles for supported extensions.
+                    const extensionMatch = filename.match(/\.([^.]+)$/);
+                    const fileExtension = extensionMatch ?
+                        extensionMatch[1].toLowerCase() :
+                        '';
+
+                    const supportedExtension =
+                        supportedExtensions.includes(fileExtension);
+
+                    // Preserve file handles for supported and custom extensions.
                     if (handle && supportedExtension) {
                         this.props.onSetFileHandle(handle);
                     } else {
@@ -218,7 +257,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     }
 
                     // Upload the selected file.
-                    // Apple devices are not restricted by extension.
                     this.props.requestProjectUpload(loadingState);
                 } else {
                     this.expectingFileUploadFinish = false;
