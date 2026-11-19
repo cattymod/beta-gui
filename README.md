@@ -1,6 +1,6 @@
 # CattyMod GUI
 
-[scratch-gui](https://github.com/scratchfoundation/scratch-gui) modified for use in [TurboWarp](https://turbowarp.org/) then modified for [CattyMod](https://cattymod.app).
+[scratch-gui](https://github.com/scratchfoundation/scratch-gui) modified for use in [TurboWarp](https://turbowarp.org/) then modified for [CattyMod](https://cattymod.app), aka the best Scratch Mod!
 
 ## Building the Editor
 
