@@ -1782,7 +1782,12 @@
                     <option value="snail">Snail (Snail IDE Project)</option>
                     <option value="sb3">SB3 (Scratch Project)</option>
                     <option value="zip">ZIP (Generic Project)</option>
+                    <option value="custom">Custom</option>
                   </select>
+                </div>
+                <div id="custom-file-type-options" class="setting-options collapsed">
+                  <label class="input-label" for="custom-project-file-extension">Custom file extension</label>
+                  <input id="custom-project-file-extension" class="text-input" type="text" placeholder="e.g. myformat or tar.gz" autocomplete="off" spellcheck="false">
                 </div>
                 <div class="setting-row">
                   <div class="setting-info">
@@ -2580,29 +2585,67 @@
       }
       /* ------------------------- Custom File Type ------------------------- */
       const projectFileTypeSelect = document.getElementById("project-file-type-select");
+      const customFileTypeOptions = document.getElementById("custom-file-type-options");
+      const customProjectFileExtension = document.getElementById("custom-project-file-extension");
       const VALID_PROJECT_FILE_TYPES = ["cmp", "pmp", "snail", "sb3", "zip"];
+
+      function updateCustomFileTypeVisibility() {
+        if (!customFileTypeOptions || !projectFileTypeSelect) return;
+        customFileTypeOptions.classList.toggle("collapsed", projectFileTypeSelect.value !== "custom");
+      }
 
       function getPreferredProjectFileType() {
         const saved = localStorage.getItem(SAVE_FILE_TYPE_KEY);
-        return VALID_PROJECT_FILE_TYPES.includes(saved) ? saved : "cmp";
+        if (!saved) return "cmp";
+        return VALID_PROJECT_FILE_TYPES.includes(saved) ? saved : "custom";
       }
 
       function loadPreferredProjectFileType() {
-        if (projectFileTypeSelect) {
-          projectFileTypeSelect.value = getPreferredProjectFileType();
+        if (!projectFileTypeSelect) return;
+        const saved = localStorage.getItem(SAVE_FILE_TYPE_KEY) || "cmp";
+        projectFileTypeSelect.value = VALID_PROJECT_FILE_TYPES.includes(saved) ? saved : "custom";
+        if (customProjectFileExtension) {
+          customProjectFileExtension.value = projectFileTypeSelect.value === "custom" ? saved.replace(/^\.+/, "") : "";
         }
+        updateCustomFileTypeVisibility();
       }
 
       function setPreferredProjectFileType(type) {
-        if (!VALID_PROJECT_FILE_TYPES.includes(type)) {
-          type = "cmp";
+        if (type === "custom") {
+          updateCustomFileTypeVisibility();
+          if (customProjectFileExtension) customProjectFileExtension.focus();
+          return;
         }
+        if (!VALID_PROJECT_FILE_TYPES.includes(type)) return;
         localStorage.setItem(SAVE_FILE_TYPE_KEY, type);
         loadPreferredProjectFileType();
       }
+
+      function saveCustomProjectFileExtension() {
+        if (!customProjectFileExtension) return;
+        const extension = customProjectFileExtension.value.trim().replace(/^\.+/, "");
+        if (!extension || /[\\/\s]/.test(extension)) {
+          customProjectFileExtension.setCustomValidity("Enter a file extension without spaces or path separators.");
+          customProjectFileExtension.reportValidity();
+          return;
+        }
+        customProjectFileExtension.setCustomValidity("");
+        localStorage.setItem(SAVE_FILE_TYPE_KEY, extension);
+      }
+
       if (projectFileTypeSelect) {
         projectFileTypeSelect.addEventListener("change", () => {
           setPreferredProjectFileType(projectFileTypeSelect.value);
+        });
+      }
+      if (customProjectFileExtension) {
+        customProjectFileExtension.addEventListener("change", saveCustomProjectFileExtension);
+        customProjectFileExtension.addEventListener("keydown", event => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            saveCustomProjectFileExtension();
+            customProjectFileExtension.blur();
+          }
         });
       }
       /* ------------------------- HTML File Picker ------------------------- */
