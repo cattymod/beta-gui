@@ -1,4 +1,3 @@
-
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -95,8 +94,8 @@ class FeaturedProjects extends React.Component {
                         href={`https://scratch.mit.edu/studios/${this.props.studio}/`}
                     >
                         <FormattedMessage
-                            defaultMessage="View studio on Scratch."
-                            description="Link to turbowarp featured projects studio"
+                            defaultMessage="View studio on Scratch"
+                            description="Link to CattyMod Selects studio"
                             id="tw.featuredProjectsStudio"
                         />
                     </a>
