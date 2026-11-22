@@ -37,11 +37,11 @@ const FilePickerNewsBody = () => (
     <div className={styles.body}>
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'The latest version of Chrome and Edge has a bug that broke our open and save file dialogs.'}
+            {'Your Browser has a bug that broke our open and save file dialogs.'}
         </div>
         <div>
             {/* eslint-disable-next-line max-len */}
-            {'If you\'re affected, you can go to Settings → Expand → Projects → Force HTML File Picker to fix this issue.'}
+            {'To fix this, you can go to Settings → Expand → Projects → Force HTML File Picker, or update your browser.'}
         </div>
     </div>
 );
