@@ -25,26 +25,6 @@ import {
     closeFileMenu
 } from '../reducers/menus';
 
-/**
- * Wait for the browser to draw the current state of the page to the screen.
- * @returns {Promise<void>} Resolves after the next frame is drawn.
- */
-const waitForPaint = () => new Promise(resolve => {
-    // Animation frame callbacks run just before the frame is drawn, so wait for one more task.
-    requestAnimationFrame(() => setTimeout(resolve));
-    // In case we get hidden, don't wait forever for a frame that won't come.
-    setTimeout(resolve, 100);
-});
-
-/**
- * Higher Order Component to provide behavior for loading local project files into editor.
- * @param {React.Component} WrappedComponent the component to add project file loading functionality to
- * @returns {React.Component} WrappedComponent with project file loading functionality added
- *
- * <SBFileUploaderHOC>
- *     <WrappedComponent />
- * </SBFileUploaderHOC>
- */
 const SBFileUploaderHOC = function (WrappedComponent) {
     class SBFileUploaderComponent extends React.Component {
         constructor (props) {
@@ -57,7 +37,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 'handleStartSelectingFileUpload',
                 'handleChange',
                 'onload',
-                'onerror',
                 'removeFileObjects'
             ]);
 
@@ -87,63 +66,12 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 (platform === 'MacIntel' && navigator.maxTouchPoints > 1)
             );
         }
-        // step 2: create a FileReader and an <input> element, and issue a
-        // pseudo-click to it. That will open the file chooser dialog.
-        createFileObjects () {
-            // redo step 7, in case it got skipped last time and its objects are
-            // still in memory
-            this.removeFileObjects();
-            // create fileReader
-            this.fileReader = new FileReader();
-            this.fileReader.onload = this.onload;
-            this.fileReader.onerror = this.onerror;
-            // tw: Use FS API when available
-            if (this.props.showOpenFilePicker) {
-                (async () => {
-                    try {
-                        const [handle] = await this.props.showOpenFilePicker({
-                            multiple: false,
-                            types: [
-                                {
-                                    description: 'Scratch Project',
-                                    accept: {
-                                        // Chrome on Android tracks the MIME type of files that get downloaded and
-                                        // then actually enforces that the type must match in showOpenFilePicker()
-                                        // and does not allow the user to override the filter. As Scratch projects have
-                                        // no well-defined and well-adopted MIME types, we can't assume anything about
-                                        // what MIME type they are saved with, so we have to use the most broad MIME
-                                        // type here. Otherwise some users just won't be able to load files for no
-                                        // fault of their own.
-                                        '*/*': ['.sb', '.sb2', '.sb3']
-                                    }
-                                }
-                            ]
-                        });
-                        const file = await handle.getFile();
-                        this.handleChange({
-                            target: {
-                                files: [file],
-                                handle: handle
-                            }
-                        });
-                    } catch (err) {
-                        // If the user aborted it, that's not an error.
-                        if (err && err.name === 'AbortError') {
-                            return;
-                        }
-                        log.error(err);
-                    }
-                })();
-            } else {
-                // create <input> element and add it to DOM
-                this.inputElement = document.createElement('input');
-                this.inputElement.accept = '.sb,.sb2,.sb3';
-                this.inputElement.style = 'display: none;';
-                this.inputElement.type = 'file';
-                this.inputElement.onchange = this.handleChange; // connects to step 3
-                document.body.appendChild(this.inputElement);
-                // simulate a click to open file chooser dialog
-                this.inputElement.click();
+
+        useHtmlFilePicker () {
+            try {
+                return localStorage.getItem('cattymod:htmlpicker') === 'true';
+            } catch (err) {
+                return false;
             }
         }
 
@@ -343,9 +271,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             this.expectingFileUploadFinish = false;
 
             if (this.fileToUpload && this.fileReader) {
-                this.props.onLoadingStarted();
-                // begin to read data from the file. When finished,
-                // cues step 6 using the reader's onload callback
                 this.fileReader.readAsArrayBuffer(this.fileToUpload);
             } else {
                 this.props.cancelFileUpload(this.props.loadingState);
@@ -363,17 +288,14 @@ const SBFileUploaderHOC = function (WrappedComponent) {
 
         onload () {
             if (this.fileReader) {
-                const data = this.fileReader.result;
+                this.props.onLoadingStarted();
+
                 const filename = this.fileToUpload && this.fileToUpload.name;
                 let loadingSuccess = false;
-                // Loading can block the main thread for a long time, or could be extremely quick.
-                // So we want to make sure we show the loading screen at least briefly.
-                waitForPaint()
-                    .then(() => {
-                        // tw: stop when loading new project
-                        this.props.vm.quit();
-                        return this.props.vm.loadProject(data);
-                    })
+
+                this.props.vm.quit();
+
+                this.props.vm.loadProject(this.fileReader.result)
                     .then(() => {
                         if (filename) {
                             const uploadedProjectTitle =
@@ -399,18 +321,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     });
             }
         }
-        // The file could not be read. The loading screen is already open, so it has to be closed.
-        onerror () {
-            if (this.fileReader) {
-                const error = this.fileReader.error;
-                log.error(error);
-                this.props.onLoadingFailed(error);
-                this.props.onLoadingFinished(this.props.loadingState, false);
-                this.removeFileObjects();
-            }
-        }
-        // step 7: remove the <input> element from the DOM and clear reader and
-        // fileToUpload reference, so those objects can be garbage collected
+
         removeFileObjects () {
             if (this.inputElement && this.inputElement.parentNode) {
                 this.inputElement.parentNode.removeChild(this.inputElement);
