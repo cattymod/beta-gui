@@ -2130,6 +2130,28 @@
               </div>
               <p class="about-description"> Imagine, Program, Share. </p>
             </div>
+            <div style="height:16px;"></div>
+            <div class="card about-card">
+              <div class="about-header">
+                <img class="about-logo" src="https://react.dev/images/brand/logo_dark.svg" alt="React">
+                <div>
+                  <div class="about-name">React</div>
+                  <div class="about-version">By React Foundation</div>
+                </div>
+              </div>
+              <p class="about-description"> The library for web and native user interfaces. </p>
+            </div>
+            <div style="height:16px;"></div>
+            <div class="card about-card">
+              <div class="about-header">
+                <img class="about-logo" id="lucide-logo" src="https://lucide.dev/logo.light.svg" alt="Lucide">
+                <div>
+                  <div class="about-name">Lucide Icons</div>
+                  <div class="about-version">By Lucide Maintainers</div>
+                </div>
+              </div>
+              <p class="about-description"> Beautiful & consistent icons Made by the community. </p>
+            </div>
           </section>
         </div>
       </main>
@@ -2217,6 +2239,12 @@
         }
       }
 
+      function updateLucideLogo() {
+        const logo = document.getElementById("lucide-logo");
+        if (!logo) return;
+        logo.src = getCurrentGuiTheme() === "light" ? "https://lucide.dev/logo.light.svg" : "https://lucide.dev/logo.dark.svg";
+      }
+
       function updateTheme(updater) {
         const current = readTheme() || {};
         const newTheme = {
@@ -2225,6 +2253,7 @@
         updater(newTheme);
         localStorage.setItem(THEME_KEY, JSON.stringify(newTheme));
         applyTheme();
+        updateLucideLogo()
         applySettingsAccent();
         loadBlockStyle();
         loadAccent();
@@ -2632,7 +2661,6 @@
         customProjectFileExtension.setCustomValidity("");
         localStorage.setItem(SAVE_FILE_TYPE_KEY, extension);
       }
-
       if (projectFileTypeSelect) {
         projectFileTypeSelect.addEventListener("change", () => {
           setPreferredProjectFileType(projectFileTypeSelect.value);
@@ -3350,6 +3378,7 @@
       loadHtmlFilePicker();
       renderCustomMods();
       loadTrampolineServer();
+      updateLucideLogo();
       /* ------------------------- Lucide Icons ------------------------- */
       lucide.createIcons();
     </script>
